@@ -9,6 +9,9 @@ export default function AdminPage() {
   const [contactMsgs, setContactMsgs] = useState([])
   const [tab, setTab] = useState('overview')
   const [loading, setLoading] = useState(true)
+  const [deleteModal, setDeleteModal] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+  const [toast, setToast] = useState(null)
 
   useEffect(() => { load() }, [])
 
@@ -43,6 +46,26 @@ export default function AdminPage() {
 
   async function setPropertyStatus(id, status) {
     await supabase.from('properties').update({ status }).eq('id', id)
+    load()
+  }
+
+  async function confirmDeleteProperty() {
+    if (!deleteModal) return
+    setDeleting(true)
+    const prop = allProps.find(p => p.id === deleteModal.id)
+    if (prop?.property_images?.length > 0) {
+      const paths = prop.property_images
+        .map(img => {
+          try { return new URL(img.image_url).pathname.split('/property-images/')[1] } catch { return null }
+        })
+        .filter(Boolean)
+      if (paths.length > 0) await supabase.storage.from('property-images').remove(paths)
+    }
+    await supabase.from('properties').delete().eq('id', deleteModal.id)
+    setDeleteModal(null)
+    setDeleting(false)
+    setToast('✓ Listing deleted')
+    setTimeout(() => setToast(null), 3000)
     load()
   }
 
@@ -183,7 +206,7 @@ export default function AdminPage() {
             <div key={p.id} style={{
               background: 'var(--white)', border: '1px solid var(--line)',
               borderRadius: 'var(--radius)', padding: 16,
-              display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 16, alignItems: 'center'
+              display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: 12, alignItems: 'center'
             }}>
               <div>
                 <strong>{p.title}</strong>
@@ -208,6 +231,11 @@ export default function AdminPage() {
                 <option value="leased">Leased</option>
                 <option value="draft">Draft</option>
               </select>
+              <button onClick={() => setDeleteModal({ id: p.id, title: p.title })}
+                className="btn btn-ghost"
+                style={{ padding: '6px 12px', fontSize: 13, color: '#B91C1C' }}>
+                Delete
+              </button>
             </div>
           ))}
         </div>
@@ -234,6 +262,26 @@ export default function AdminPage() {
           ))}
         </div>
       )}
+      {deleteModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 'var(--radius-lg)', padding: 32, maxWidth: 480, width: '100%', boxShadow: 'var(--shadow-lg)' }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: 12 }}>Delete listing?</h3>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: 24 }}>
+              Delete <strong>{deleteModal.title}</strong>? This permanently removes the listing, all photos, and any inquiries. This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button onClick={() => setDeleteModal(null)} className="btn btn-ghost" disabled={deleting}>Cancel</button>
+              <button onClick={confirmDeleteProperty} className="btn" disabled={deleting}
+                style={{ background: '#B91C1C', color: 'white', padding: '10px 20px' }}>
+                {deleting ? 'Deleting…' : 'Delete permanently'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {toast && <div className="toast">{toast}</div>}
+
       {tab === 'contact' && (
         <div style={{ display: 'grid', gap: 8 }}>
           {contactMsgs.length === 0 ? (
