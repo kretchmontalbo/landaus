@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
 import ReportCard from '../components/ReportCard.jsx'
+import VerificationCard from '../components/VerificationCard.jsx'
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null)
@@ -9,6 +10,7 @@ export default function AdminPage() {
   const [allInqs, setAllInqs] = useState([])
   const [contactMsgs, setContactMsgs] = useState([])
   const [reports, setReports] = useState([])
+  const [verifications, setVerifications] = useState([])
   const [tab, setTab] = useState('overview')
   const [loading, setLoading] = useState(true)
   const [deleteModal, setDeleteModal] = useState(null)
@@ -19,12 +21,13 @@ export default function AdminPage() {
 
   async function load() {
     setLoading(true)
-    const [usersRes, propsRes, inqsRes, contactRes, reportsRes] = await Promise.all([
+    const [usersRes, propsRes, inqsRes, contactRes, reportsRes, vfRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('properties').select('*, profiles(full_name, email), property_images(image_url)').order('created_at', { ascending: false }),
       supabase.from('inquiries').select('*, properties(title)').order('created_at', { ascending: false }),
       supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
-      supabase.from('reports').select('*').order('created_at', { ascending: false })
+      supabase.from('reports').select('*').order('created_at', { ascending: false }),
+      supabase.from('verification_submissions').select('*').order('created_at', { ascending: false })
     ])
     setUsers(usersRes.data || [])
     setAllProps(propsRes.data || [])
@@ -47,6 +50,12 @@ export default function AdminPage() {
     for (const g of guideTargets.data || []) byId[g.id] = g
     for (const pr of profTargets.data || []) byId[pr.id] = pr
     setReports(reportsList.map(r => ({ ...r, target: byId[r.target_id] || null })))
+
+    // Enrich verification submissions with profile info
+    const vfList = vfRes.data || []
+    const vfById = {}
+    for (const u of usersRes.data || []) vfById[u.id] = u
+    setVerifications(vfList.map(v => ({ ...v, profile: vfById[v.user_id] || null })))
     setStats({
       users: usersRes.data?.length || 0,
       landlords: (usersRes.data || []).filter(u => u.user_type === 'landlord').length,
@@ -91,6 +100,7 @@ export default function AdminPage() {
 
   const pendingProps = allProps.filter(p => p.status === 'pending_review')
   const newReports = reports.filter(r => !r.status || r.status === 'new')
+  const pendingVfs = verifications.filter(v => v.status === 'pending' || v.status === 'under_review' || v.status === 'needs_more_info' || !v.status)
 
   if (loading) return <div style={{ padding: 64, textAlign: 'center' }}>Loading admin panel…</div>
 
@@ -121,11 +131,12 @@ export default function AdminPage() {
       </div>
 
       <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
-        {['reports', 'pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
+        {['reports', 'verifications', 'pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`search-tab ${tab === t ? 'active' : ''}`}
             style={
               t === 'pending' ? { background: pendingProps.length > 0 ? '#FEF3C7' : undefined, color: pendingProps.length > 0 ? '#92400E' : undefined }
               : t === 'reports' && newReports.length > 0 ? { background: '#FEE2E2', color: '#991B1B' }
+              : t === 'verifications' && pendingVfs.length > 0 ? { background: '#FEE2E2', color: '#991B1B' }
               : {}
             }>
             {t === 'pending' ? `Pending Review (${pendingProps.length})`
@@ -133,6 +144,10 @@ export default function AdminPage() {
                   marginLeft: 8, background: 'var(--accent-hot)', color: 'white',
                   borderRadius: 999, padding: '1px 8px', fontSize: 11, fontWeight: 700
                 }}>{newReports.length}</span>}</>)
+              : t === 'verifications' ? (<>Verifications{pendingVfs.length > 0 && <span style={{
+                  marginLeft: 8, background: 'var(--accent-hot)', color: 'white',
+                  borderRadius: 999, padding: '1px 8px', fontSize: 11, fontWeight: 700
+                }}>{pendingVfs.length}</span>}</>)
               : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
@@ -147,6 +162,19 @@ export default function AdminPage() {
             </div>
           ) : (
             reports.map(r => <ReportCard key={r.id} report={r} onSaved={load} />)
+          )}
+        </div>
+      )}
+
+      {tab === 'verifications' && (
+        <div style={{ display: 'grid', gap: 12 }}>
+          {verifications.length === 0 ? (
+            <div className="empty-state">
+              <h3>No verification submissions yet</h3>
+              <p>Landlords submitting ID and ownership docs will appear here.</p>
+            </div>
+          ) : (
+            verifications.map(v => <VerificationCard key={v.id} submission={v} onUpdated={load} />)
           )}
         </div>
       )}
