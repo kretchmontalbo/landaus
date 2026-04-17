@@ -106,18 +106,39 @@ function Footer() {
             <Link to="/search?state=NSW">NSW</Link>
             <Link to="/search?state=VIC">VIC</Link>
             <Link to="/search?state=QLD">QLD</Link>
+            <Link to="/search?state=WA">WA</Link>
+            <Link to="/search?state=SA">SA</Link>
+            <Link to="/search?state=TAS">TAS</Link>
+            <Link to="/search?state=ACT">ACT</Link>
+            <Link to="/search?state=NT">NT</Link>
+          </div>
+          <div>
+            <h4>For Renters</h4>
+            <Link to="/search">Find a home</Link>
+            <Link to="/suburbs">Suburb Guides</Link>
+            <Link to="/signup">Sign up</Link>
+            <Link to="/about">How it works</Link>
           </div>
           <div>
             <h4>For Landlords</h4>
-            <Link to="/signup">Sign up</Link>
-            <Link to="/list-property">List Property</Link>
+            <Link to="/list-property">List property</Link>
+            <Link to="/signup">Landlord signup</Link>
             <Link to="/dashboard">Dashboard</Link>
+            <Link to="/about">Why LandAus</Link>
+          </div>
+          <div>
+            <h4>For Agents</h4>
+            <Link to="/signup">Agent signup</Link>
+            <Link to="/list-property">Bulk upload</Link>
+            <Link to="/dashboard">Agency dashboard</Link>
+            <Link to="/contact">Partnership</Link>
           </div>
           <div>
             <h4>Company</h4>
-            <Link to="/suburbs">Suburb Guides</Link>
-            <Link to="/">About</Link>
-            <Link to="/">Contact</Link>
+            <Link to="/about">About</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
           </div>
         </div>
         <div className="footer-bottom">
