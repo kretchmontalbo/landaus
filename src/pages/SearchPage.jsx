@@ -31,7 +31,8 @@ export default function SearchPage() {
     if (maxPrice) query = query.lte('price_per_week', parseInt(maxPrice))
     if (minBeds) query = query.gte('bedrooms', parseInt(minBeds))
 
-    query = query.order('created_at', { ascending: false })
+    query = query.order('is_featured', { ascending: false, nullsFirst: false })
+                 .order('created_at', { ascending: false })
     const { data } = await query
     setProperties(data || [])
     setLoading(false)
