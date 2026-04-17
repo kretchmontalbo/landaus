@@ -1,5 +1,13 @@
 {
   "regions": ["syd1"],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.landaus.com.au" }],
+      "destination": "https://landaus.com.au/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
