@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import ReportButton from '../components/ReportButton.jsx'
+import VerifiedBadge from '../components/VerifiedBadge.jsx'
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
@@ -19,7 +20,7 @@ export default function PropertyDetailPage() {
     setLoading(true)
     const { data } = await supabase
       .from('properties')
-      .select('*, property_images(image_url, display_order)')
+      .select('*, property_images(image_url, display_order), profiles(full_name, verified)')
       .eq('id', id)
       .single()
     setProperty(data)
@@ -152,6 +153,12 @@ export default function PropertyDetailPage() {
         </div>
 
         <aside className="inquiry-card">
+          {property.profiles?.full_name && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10, fontSize: 14, color: 'var(--ink-soft)' }}>
+              <span>Listed by <strong style={{ color: 'var(--ink)' }}>{property.profiles.full_name}</strong></span>
+              {property.profiles.verified && <VerifiedBadge size={14} showLabel />}
+            </div>
+          )}
           <h3>Interested?</h3>
           <p className="sub">Send the landlord a message. No account required.</p>
           <form onSubmit={handleInquiry}>

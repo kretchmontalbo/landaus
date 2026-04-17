@@ -20,7 +20,7 @@ export default function HomePage() {
     setLoading(true)
     const { data } = await supabase
       .from('properties')
-      .select('*, property_images(image_url, display_order)')
+      .select('*, property_images(image_url, display_order), profiles(verified)')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(6)

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import VerifiedBadge from './VerifiedBadge.jsx'
 
 export default function PropertyCard({ property }) {
   const img = property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800'
@@ -30,9 +31,9 @@ export default function PropertyCard({ property }) {
         </button>
       </div>
       <div className="property-body">
-        <div className="property-price">
-          ${property.price_per_week}
-          <small> / week</small>
+        <div className="property-price" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span>${property.price_per_week}<small> / week</small></span>
+          {property.profiles?.verified && <VerifiedBadge size={16} />}
         </div>
         <div className="property-address">
           {displayTitle}<br />

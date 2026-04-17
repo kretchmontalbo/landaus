@@ -22,7 +22,7 @@ export default function SearchPage() {
     setLoading(true)
     let query = supabase
       .from('properties')
-      .select('*, property_images(image_url, display_order)')
+      .select('*, property_images(image_url, display_order), profiles(verified)')
       .eq('status', 'active')
 
     if (suburb) query = query.ilike('suburb', `%${suburb}%`)

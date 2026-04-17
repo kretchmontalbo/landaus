@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
+import VerifiedBadge from '../components/VerifiedBadge.jsx'
 
 export default function DashboardPage() {
   const { user, profile } = useAuth()
@@ -69,12 +70,32 @@ export default function DashboardPage() {
   return (
     <section className="section">
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 600, letterSpacing: '-0.02em' }}>
-          Hi {profile?.full_name?.split(' ')[0] || 'there'} 👋
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 600, letterSpacing: '-0.02em', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <span>Hi {profile?.full_name?.split(' ')[0] || 'there'} 👋</span>
+          {profile?.verified && (
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: 'var(--mint-soft)', color: 'var(--accent)',
+              padding: '4px 12px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+              fontFamily: 'var(--font-body)', border: '1px solid var(--mint-deep)'
+            }}>
+              <VerifiedBadge size={14} /> Verified landlord
+            </span>
+          )}
         </h1>
         <p style={{ color: 'var(--ink-soft)', fontSize: 17, marginTop: 6 }}>
           Manage your listings and inquiries here.
         </p>
+        {!profile?.verified && (
+          <Link to="/get-verified" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12,
+            background: 'var(--mint)', color: 'var(--accent)',
+            padding: '8px 16px', borderRadius: 999, fontSize: 14, fontWeight: 600,
+            border: '1px solid var(--mint-deep)'
+          }}>
+            ✓ Get verified — free
+          </Link>
+        )}
       </div>
 
       {/* Stats */}
