@@ -13,6 +13,10 @@ import SuburbGuidesPage from './pages/SuburbGuidesPage.jsx'
 import SuburbDetailPage from './pages/SuburbDetailPage.jsx'
 import EditPropertyPage from './pages/EditPropertyPage.jsx'
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx'
+import PrivacyPage from './pages/PrivacyPage.jsx'
+import TermsPage from './pages/TermsPage.jsx'
+import AboutPage from './pages/AboutPage.jsx'
+import ContactPage from './pages/ContactPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx'
 
@@ -34,6 +38,10 @@ export default function App() {
           <Route path="/property/:id" element={<PropertyDetailPage />} />
           <Route path="/suburbs" element={<SuburbGuidesPage />} />
           <Route path="/suburbs/:slug" element={<SuburbDetailPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

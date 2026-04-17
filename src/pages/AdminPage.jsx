@@ -6,6 +6,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState([])
   const [allProps, setAllProps] = useState([])
   const [allInqs, setAllInqs] = useState([])
+  const [contactMsgs, setContactMsgs] = useState([])
   const [tab, setTab] = useState('overview')
   const [loading, setLoading] = useState(true)
 
@@ -13,14 +14,16 @@ export default function AdminPage() {
 
   async function load() {
     setLoading(true)
-    const [usersRes, propsRes, inqsRes] = await Promise.all([
+    const [usersRes, propsRes, inqsRes, contactRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('properties').select('*, profiles(full_name, email), property_images(image_url)').order('created_at', { ascending: false }),
-      supabase.from('inquiries').select('*, properties(title)').order('created_at', { ascending: false })
+      supabase.from('inquiries').select('*, properties(title)').order('created_at', { ascending: false }),
+      supabase.from('contact_messages').select('*').order('created_at', { ascending: false })
     ])
     setUsers(usersRes.data || [])
     setAllProps(propsRes.data || [])
     setAllInqs(inqsRes.data || [])
+    setContactMsgs(contactRes.data || [])
     setStats({
       users: usersRes.data?.length || 0,
       landlords: (usersRes.data || []).filter(u => u.user_type === 'landlord').length,
@@ -229,6 +232,34 @@ export default function AdminPage() {
               <p style={{ fontSize: 14, marginTop: 8, color: 'var(--ink)' }}>"{i.message}"</p>
             </div>
           ))}
+        </div>
+      )}
+      {tab === 'contact' && (
+        <div style={{ display: 'grid', gap: 8 }}>
+          {contactMsgs.length === 0 ? (
+            <div className="empty-state">
+              <h3>No contact messages</h3>
+              <p>Messages from the contact form will appear here.</p>
+            </div>
+          ) : (
+            contactMsgs.map(m => (
+              <div key={m.id} style={{
+                background: 'var(--white)', border: '1px solid var(--line)',
+                borderRadius: 'var(--radius)', padding: 16
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <strong>{m.name}</strong>
+                  <span style={{ fontSize: 12, color: 'var(--ink-muted)' }}>
+                    {new Date(m.created_at).toLocaleDateString('en-AU')}
+                  </span>
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 8 }}>
+                  <a href={`mailto:${m.email}`} style={{ color: 'var(--accent)' }}>{m.email}</a>
+                </div>
+                <p style={{ fontSize: 14, color: 'var(--ink)', lineHeight: 1.6 }}>{m.message}</p>
+              </div>
+            ))
+          )}
         </div>
       )}
     </section>
