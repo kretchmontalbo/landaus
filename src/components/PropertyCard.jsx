@@ -2,11 +2,20 @@ import { Link } from 'react-router-dom'
 
 export default function PropertyCard({ property }) {
   const img = property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800'
+  const isDemo = property.title?.startsWith('[DEMO]')
+  const displayTitle = isDemo ? property.title.replace(/^\[DEMO\]\s*/, '') : property.title
 
   return (
     <Link to={`/property/${property.id}`} className="property-card">
       <div className="property-image">
-        <img src={img} alt={property.title} />
+        <img src={img} alt={displayTitle} />
+        {isDemo && (
+          <span style={{
+            position: 'absolute', top: 14, right: 56,
+            background: '#FBBF24', color: '#78350F', borderRadius: 999,
+            fontSize: 11, padding: '4px 10px', fontWeight: 700, zIndex: 2
+          }}>🎭 DEMO LISTING</span>
+        )}
         {property.newcomer_friendly && (
           <span className="property-badge">✨ Newcomer friendly</span>
         )}
@@ -26,7 +35,7 @@ export default function PropertyCard({ property }) {
           <small> / week</small>
         </div>
         <div className="property-address">
-          {property.street_address && <>{property.street_address}<br /></>}
+          {displayTitle}<br />
           {property.suburb}, {property.state} {property.postcode}
         </div>
         <div className="property-meta">

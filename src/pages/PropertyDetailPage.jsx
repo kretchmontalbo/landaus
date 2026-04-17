@@ -66,18 +66,29 @@ export default function PropertyDetailPage() {
   }
 
   const img = property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=1600'
+  const isDemo = property.title?.startsWith('[DEMO]')
+  const displayTitle = isDemo ? property.title.replace(/^\[DEMO\]\s*/, '') : property.title
 
   return (
     <div className="detail-wrap">
       <Link to="/search" className="back-link">← Back to results</Link>
 
+      {isDemo && (
+        <div style={{
+          background: '#FEF3C7', border: '1px solid #F59E0B', borderRadius: 12,
+          padding: '16px 20px', marginBottom: 20, fontSize: 14, lineHeight: 1.6, color: '#78350F'
+        }}>
+          🎭 <strong>This is a demonstration listing.</strong> It's here to show you how LandAus works — don't send an inquiry, no one will receive it. Real listings from verified landlords are coming soon!
+        </div>
+      )}
+
       <div className="detail-gallery">
-        <img src={img} alt={property.title} />
+        <img src={img} alt={displayTitle} />
       </div>
 
       <div className="detail-grid">
         <div>
-          <h1 className="detail-title">{property.title}</h1>
+          <h1 className="detail-title">{displayTitle}</h1>
           <p className="detail-address">
             📍 {property.street_address && `${property.street_address}, `}
             {property.suburb}, {property.state} {property.postcode}
@@ -185,9 +196,10 @@ export default function PropertyDetailPage() {
             <button
               type="submit"
               className="btn btn-dark btn-block"
-              disabled={submitting}
+              disabled={submitting || isDemo}
+              style={isDemo ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
-              {submitting ? 'Sending…' : 'Send inquiry →'}
+              {isDemo ? 'Demo listing — inquiries disabled' : submitting ? 'Sending…' : 'Send inquiry →'}
             </button>
           </form>
         </aside>
