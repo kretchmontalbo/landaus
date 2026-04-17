@@ -1,23 +1,21 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../lib/auth.jsx'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase.js'
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('')
+export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-  const { signIn } = useAuth()
   const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
     setLoading(true)
-    const { error } = await signIn(email, password)
+    const { error } = await supabase.auth.updateUser({ password })
     setLoading(false)
     if (error) setError(error.message)
-    else navigate('/dashboard')
+    else navigate('/login')
   }
 
   return (
@@ -32,22 +30,19 @@ export default function LoginPage() {
             width: 56, height: 56, margin: '0 auto 16px',
             background: 'var(--mint)', borderRadius: 16,
             display: 'grid', placeItems: 'center', fontSize: 28
-          }}>🏡</div>
+          }}>🔒</div>
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: 30,
             fontWeight: 600, marginBottom: 6, letterSpacing: '-0.02em'
-          }}>Welcome back</h1>
-          <p style={{ color: 'var(--ink-soft)', fontSize: 15 }}>Log in to manage your listings</p>
+          }}>Set new password</h1>
+          <p style={{ color: 'var(--ink-soft)', fontSize: 15 }}>Choose a strong password for your account.</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-field">
-            <label>Email</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
-          </div>
-          <div className="form-field">
-            <label>Password</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+            <label>New password</label>
+            <input type="password" required minLength={6} value={password}
+              onChange={e => setPassword(e.target.value)} />
           </div>
 
           {error && (
@@ -58,17 +53,9 @@ export default function LoginPage() {
           )}
 
           <button type="submit" className="btn btn-dark btn-block" disabled={loading}>
-            {loading ? 'Logging in…' : 'Log in →'}
+            {loading ? 'Updating…' : 'Update password →'}
           </button>
-
-          <p style={{ textAlign: 'center', marginTop: 14, fontSize: 14 }}>
-            <Link to="/forgot-password" style={{ color: 'var(--ink-muted)' }}>Forgot password?</Link>
-          </p>
         </form>
-
-        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--ink-soft)' }}>
-          No account? <Link to="/signup" style={{ color: 'var(--accent)', fontWeight: 600 }}>Sign up free</Link>
-        </p>
       </div>
     </div>
   )

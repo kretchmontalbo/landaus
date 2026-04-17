@@ -11,6 +11,8 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import AdminPage from './pages/AdminPage.jsx'
 import SuburbGuidesPage from './pages/SuburbGuidesPage.jsx'
 import SuburbDetailPage from './pages/SuburbDetailPage.jsx'
+import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
+import ResetPasswordPage from './pages/ResetPasswordPage.jsx'
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, isAdmin, loading } = useAuth()
@@ -32,6 +34,8 @@ export default function App() {
           <Route path="/suburbs/:slug" element={<SuburbDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/list-property" element={
             <ProtectedRoute><ListPropertyPage /></ProtectedRoute>
           } />
