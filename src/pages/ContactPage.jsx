@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { isValidEmail } from '../lib/validation.js'
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -8,6 +9,11 @@ export default function ContactPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!isValidEmail(form.email)) {
+      setToast('Please enter a valid email address.')
+      setTimeout(() => setToast(null), 4000)
+      return
+    }
     setSubmitting(true)
     const { error } = await supabase.from('contact_messages').insert({
       name: form.name, email: form.email, message: form.message

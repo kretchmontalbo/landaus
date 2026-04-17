@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth.jsx'
+import PasswordInput from '../components/PasswordInput.jsx'
+import { isValidEmail } from '../lib/validation.js'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,6 +15,10 @@ export default function LoginPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
     setLoading(true)
     const { error } = await signIn(email, password)
     setLoading(false)
@@ -47,7 +53,7 @@ export default function LoginPage() {
           </div>
           <div className="form-field">
             <label>Password</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+            <PasswordInput required value={password} onChange={e => setPassword(e.target.value)} />
           </div>
 
           {error && (

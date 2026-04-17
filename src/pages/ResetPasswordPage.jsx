@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
+import PasswordInput from '../components/PasswordInput.jsx'
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -11,6 +13,14 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.')
+      return
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.')
+      return
+    }
     setLoading(true)
     const { error } = await supabase.auth.updateUser({ password })
     setLoading(false)
@@ -41,8 +51,13 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit}>
           <div className="form-field">
             <label>New password</label>
-            <input type="password" required minLength={6} value={password}
+            <PasswordInput required minLength={6} value={password}
               onChange={e => setPassword(e.target.value)} />
+          </div>
+          <div className="form-field">
+            <label>Confirm new password</label>
+            <PasswordInput required minLength={6} value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)} />
           </div>
 
           {error && (

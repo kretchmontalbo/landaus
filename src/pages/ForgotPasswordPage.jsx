@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
+import { isValidEmail } from '../lib/validation.js'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -11,6 +12,10 @@ export default function ForgotPasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address.')
+      return
+    }
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/reset-password'
