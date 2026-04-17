@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
 import ReportCard from '../components/ReportCard.jsx'
 import VerificationCard from '../components/VerificationCard.jsx'
+import { clearFlagCache } from '../lib/featureFlags.js'
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null)
@@ -11,6 +12,7 @@ export default function AdminPage() {
   const [contactMsgs, setContactMsgs] = useState([])
   const [reports, setReports] = useState([])
   const [verifications, setVerifications] = useState([])
+  const [flags, setFlags] = useState([])
   const [tab, setTab] = useState('overview')
   const [loading, setLoading] = useState(true)
   const [deleteModal, setDeleteModal] = useState(null)
@@ -29,6 +31,9 @@ export default function AdminPage() {
       supabase.from('reports').select('*').order('created_at', { ascending: false }),
       supabase.from('verification_submissions').select('*').order('created_at', { ascending: false })
     ])
+
+    const { data: flagData } = await supabase.from('feature_flags').select('*').order('key')
+    setFlags(flagData || [])
     setUsers(usersRes.data || [])
     setAllProps(propsRes.data || [])
     setAllInqs(inqsRes.data || [])
@@ -75,6 +80,12 @@ export default function AdminPage() {
 
   async function setPropertyStatus(id, status) {
     await supabase.from('properties').update({ status }).eq('id', id)
+    load()
+  }
+
+  async function toggleFlag(key, current) {
+    await supabase.from('feature_flags').update({ enabled: !current }).eq('key', key)
+    clearFlagCache()
     load()
   }
 
@@ -131,7 +142,7 @@ export default function AdminPage() {
       </div>
 
       <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
-        {['reports', 'verifications', 'pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
+        {['reports', 'verifications', 'pending', 'overview', 'users', 'properties', 'inquiries', 'contact', 'settings'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`search-tab ${tab === t ? 'active' : ''}`}
             style={
               t === 'pending' ? { background: pendingProps.length > 0 ? '#FEF3C7' : undefined, color: pendingProps.length > 0 ? '#92400E' : undefined }
@@ -353,6 +364,19 @@ export default function AdminPage() {
 
       {toast && <div className="toast">{toast}</div>}
 
+      {tab === 'settings' && (
+        <div>
+          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, marginBottom: 16 }}>Feature flags</h3>
+          <div style={{ display: 'grid', gap: 10 }}>
+            {flags.length === 0 ? (
+              <p style={{ color: 'var(--ink-muted)', fontSize: 14 }}>No flags configured.</p>
+            ) : flags.map(f => (
+              <FlagToggle key={f.key} flag={f} onToggle={() => toggleFlag(f.key, f.enabled)} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {tab === 'contact' && (
         <div style={{ display: 'grid', gap: 8 }}>
           {contactMsgs.length === 0 ? (
@@ -382,6 +406,46 @@ export default function AdminPage() {
         </div>
       )}
     </section>
+  )
+}
+
+const FLAG_META = {
+  featured_listings_enabled: { label: 'Featured listings (paid boosts)', desc: 'Allow landlords to pay to pin their listing to the top of search.' },
+  premium_subscriptions_enabled: { label: 'Premium subscriptions', desc: 'Monthly plans for landlords with multiple properties.' },
+  paid_verification_enabled: { label: 'Paid verification', desc: 'Charge a fee for expedited verification review.' },
+  partner_commissions_enabled: { label: 'Partner commissions', desc: 'Referral commissions for agents.' },
+  tenant_application_fees_enabled: { label: 'Tenant application fees', desc: 'NOT RECOMMENDED — fees charged to tenants on application.', warn: true }
+}
+
+function FlagToggle({ flag, onToggle }) {
+  const meta = FLAG_META[flag.key] || { label: flag.key, desc: flag.description || '' }
+  return (
+    <div style={{
+      background: 'var(--white)', border: `1px solid ${meta.warn ? '#FCA5A5' : 'var(--line)'}`,
+      borderRadius: 'var(--radius)', padding: 16,
+      display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'space-between'
+    }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <strong style={{ fontSize: 14 }}>{meta.label}</strong>
+          {meta.warn && <span style={{ fontSize: 10, padding: '1px 6px', background: '#FEE2E2', color: '#991B1B', borderRadius: 4, fontWeight: 700 }}>NOT RECOMMENDED</span>}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--ink-muted)', marginTop: 2 }}>{meta.desc}</div>
+        <div style={{ fontSize: 11, color: 'var(--ink-muted)', marginTop: 2, fontFamily: 'monospace' }}>{flag.key}</div>
+      </div>
+      <button onClick={onToggle} style={{
+        width: 52, height: 28, borderRadius: 999,
+        background: flag.enabled ? 'var(--accent)' : 'var(--line)',
+        position: 'relative', transition: 'background 0.15s',
+        border: 'none', cursor: 'pointer', flexShrink: 0
+      }} aria-label={`Toggle ${meta.label}`}>
+        <span style={{
+          position: 'absolute', top: 3, left: flag.enabled ? 27 : 3,
+          width: 22, height: 22, borderRadius: '50%', background: 'white',
+          transition: 'left 0.15s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+        }} />
+      </button>
+    </div>
   )
 }
 
