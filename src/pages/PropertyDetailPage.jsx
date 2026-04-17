@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
+import ReportButton from '../components/ReportButton.jsx'
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
@@ -144,6 +145,10 @@ export default function PropertyDetailPage() {
               <p>Available from <strong>{new Date(property.available_from).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</strong></p>
             </div>
           )}
+
+          <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
+            <ReportButton targetType="property" targetId={property.id} />
+          </div>
         </div>
 
         <aside className="inquiry-card">

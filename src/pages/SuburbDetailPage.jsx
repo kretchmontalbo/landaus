@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
+import ReportButton from '../components/ReportButton.jsx'
 
 export default function SuburbDetailPage() {
   const { slug } = useParams()
@@ -144,6 +145,10 @@ export default function SuburbDetailPage() {
             </div>
           </div>
         )}
+
+        <div style={{ marginTop: 48, paddingTop: 20, borderTop: '1px solid var(--line)' }}>
+          <ReportButton targetType="suburb_guide" targetId={guide.id} />
+        </div>
       </section>
     </>
   )
