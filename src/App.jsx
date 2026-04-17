@@ -13,6 +13,7 @@ import SuburbGuidesPage from './pages/SuburbGuidesPage.jsx'
 import SuburbDetailPage from './pages/SuburbDetailPage.jsx'
 import EditPropertyPage from './pages/EditPropertyPage.jsx'
 import AccountSettingsPage from './pages/AccountSettingsPage.jsx'
+import GetVerifiedPage from './pages/GetVerifiedPage.jsx'
 import PrivacyPage from './pages/PrivacyPage.jsx'
 import TermsPage from './pages/TermsPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
@@ -57,6 +58,9 @@ export default function App() {
           } />
           <Route path="/account" element={
             <ProtectedRoute><AccountSettingsPage /></ProtectedRoute>
+          } />
+          <Route path="/get-verified" element={
+            <ProtectedRoute><GetVerifiedPage /></ProtectedRoute>
           } />
           <Route path="/admin" element={
             <ProtectedRoute adminOnly><AdminPage /></ProtectedRoute>
