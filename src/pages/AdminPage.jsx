@@ -15,7 +15,7 @@ export default function AdminPage() {
     setLoading(true)
     const [usersRes, propsRes, inqsRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-      supabase.from('properties').select('*, profiles(full_name, email)').order('created_at', { ascending: false }),
+      supabase.from('properties').select('*, profiles(full_name, email), property_images(image_url)').order('created_at', { ascending: false }),
       supabase.from('inquiries').select('*, properties(title)').order('created_at', { ascending: false })
     ])
     setUsers(usersRes.data || [])
@@ -42,6 +42,8 @@ export default function AdminPage() {
     await supabase.from('properties').update({ status }).eq('id', id)
     load()
   }
+
+  const pendingProps = allProps.filter(p => p.status === 'pending_review')
 
   if (loading) return <div style={{ padding: 64, textAlign: 'center' }}>Loading admin panel…</div>
 
@@ -71,13 +73,64 @@ export default function AdminPage() {
         <Stat label="New inquiries" value={stats.newInquiries} icon="✉️" highlight={stats.newInquiries > 0} />
       </div>
 
-      <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24 }}>
-        {['overview', 'users', 'properties', 'inquiries'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`search-tab ${tab === t ? 'active' : ''}`}>
-            {t.charAt(0).toUpperCase() + t.slice(1)}
+      <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
+        {['pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
+          <button key={t} onClick={() => setTab(t)} className={`search-tab ${tab === t ? 'active' : ''}`}
+            style={t === 'pending' ? { background: pendingProps.length > 0 ? '#FEF3C7' : undefined, color: pendingProps.length > 0 ? '#92400E' : undefined } : {}}>
+            {t === 'pending' ? `Pending Review (${pendingProps.length})` : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
+
+      {tab === 'pending' && (
+        <div style={{ display: 'grid', gap: 12 }}>
+          {pendingProps.length === 0 ? (
+            <div className="empty-state">
+              <h3>No pending listings</h3>
+              <p>All caught up! New first-time listings will appear here for review.</p>
+            </div>
+          ) : (
+            pendingProps.map(p => (
+              <div key={p.id} style={{
+                background: 'var(--white)', border: '1px solid #F59E0B',
+                borderRadius: 'var(--radius-lg)', padding: 20
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12 }}>
+                  <div>
+                    <strong style={{ fontSize: 18 }}>{p.title}</strong>
+                    <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 2 }}>
+                      {p.suburb}, {p.state} · ${p.price_per_week}/wk · 🛏 {p.bedrooms} 🛁 {p.bathrooms}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-muted)', marginTop: 4 }}>
+                      by {p.profiles?.full_name || p.profiles?.email || 'Anonymous'} · {new Date(p.created_at).toLocaleDateString('en-AU')}
+                    </div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: 12 }}>
+                  {p.description}
+                </p>
+                {p.property_images?.length > 0 && (
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto' }}>
+                    {p.property_images.map((img, i) => (
+                      <img key={i} src={img.image_url} alt="" style={{
+                        width: 120, height: 90, objectFit: 'cover', borderRadius: 8, flexShrink: 0
+                      }} />
+                    ))}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => setPropertyStatus(p.id, 'active')} className="btn btn-primary" style={{ padding: '8px 20px', fontSize: 14 }}>
+                    ✓ Approve
+                  </button>
+                  <button onClick={() => setPropertyStatus(p.id, 'archived')} className="btn btn-ghost" style={{ padding: '8px 20px', fontSize: 14, color: '#B91C1C' }}>
+                    ✕ Reject
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {tab === 'overview' && (
         <div style={{ background: 'var(--mint-pale)', padding: 24, borderRadius: 'var(--radius-lg)' }}>
@@ -147,6 +200,7 @@ export default function AdminPage() {
               <select value={p.status} onChange={e => setPropertyStatus(p.id, e.target.value)}
                 style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13 }}>
                 <option value="active">Active</option>
+                <option value="pending_review">Pending Review</option>
                 <option value="archived">Archived</option>
                 <option value="leased">Leased</option>
                 <option value="draft">Draft</option>

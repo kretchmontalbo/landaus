@@ -108,14 +108,17 @@ export default function DashboardPage() {
                     borderRadius: 10
                   }} />
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
                       <strong style={{ fontSize: 16 }}>{p.title}</strong>
                       <span style={{
                         fontSize: 11, padding: '2px 8px', borderRadius: 999,
-                        background: p.status === 'active' ? 'var(--mint-soft)' : 'var(--line-soft)',
-                        color: p.status === 'active' ? 'var(--accent)' : 'var(--ink-muted)',
+                        background: p.status === 'active' ? 'var(--mint-soft)' : p.status === 'pending_review' ? '#FEF3C7' : 'var(--line-soft)',
+                        color: p.status === 'active' ? 'var(--accent)' : p.status === 'pending_review' ? '#92400E' : 'var(--ink-muted)',
                         fontWeight: 600
-                      }}>{p.status}</span>
+                      }}>{p.status === 'pending_review' ? '⏳ Awaiting review' : p.status}</span>
+                      {p.status === 'pending_review' && (
+                        <span style={{ fontSize: 12, color: '#92400E' }}>(usually within 24 hours)</span>
+                      )}
                     </div>
                     <div style={{ fontSize: 14, color: 'var(--ink-soft)' }}>
                       {p.suburb}, {p.state} · ${p.price_per_week}/wk · 🛏 {p.bedrooms} 🛁 {p.bathrooms}

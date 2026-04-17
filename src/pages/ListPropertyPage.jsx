@@ -107,8 +107,11 @@ export default function ListPropertyPage() {
       )
     }
 
-    setToast({ text: '✓ Listing published! Redirecting to your dashboard…' })
-    setTimeout(() => navigate('/dashboard'), 1500)
+    const msg = property.status === 'pending_review'
+      ? '✓ Listing submitted! First-time listings are reviewed within 24 hours. Future listings go live instantly.'
+      : '✓ Listing published! Redirecting to your dashboard…'
+    setToast({ text: msg })
+    setTimeout(() => navigate('/dashboard'), 2500)
   }
 
   return (
