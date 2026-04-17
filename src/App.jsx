@@ -12,6 +12,7 @@ import AdminPage from './pages/AdminPage.jsx'
 import SuburbGuidesPage from './pages/SuburbGuidesPage.jsx'
 import SuburbDetailPage from './pages/SuburbDetailPage.jsx'
 import EditPropertyPage from './pages/EditPropertyPage.jsx'
+import AccountSettingsPage from './pages/AccountSettingsPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx'
 
@@ -45,6 +46,9 @@ export default function App() {
           } />
           <Route path="/dashboard" element={
             <ProtectedRoute><DashboardPage /></ProtectedRoute>
+          } />
+          <Route path="/account" element={
+            <ProtectedRoute><AccountSettingsPage /></ProtectedRoute>
           } />
           <Route path="/admin" element={
             <ProtectedRoute adminOnly><AdminPage /></ProtectedRoute>

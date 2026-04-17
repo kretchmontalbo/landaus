@@ -66,6 +66,10 @@ function Nav() {
                       style={{ display: 'block', padding: '8px 12px', borderRadius: 8, fontSize: 14 }}>
                       + List a Property
                     </Link>
+                    <Link to="/account" onClick={() => setMenuOpen(false)}
+                      style={{ display: 'block', padding: '8px 12px', borderRadius: 8, fontSize: 14 }}>
+                      Account Settings
+                    </Link>
                     <button onClick={handleLogout}
                       style={{ width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: 8, fontSize: 14, color: 'var(--ink)' }}>
                       Sign out
