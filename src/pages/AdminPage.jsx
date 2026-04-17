@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
+import ReportCard from '../components/ReportCard.jsx'
 
 export default function AdminPage() {
   const [stats, setStats] = useState(null)
@@ -7,6 +8,7 @@ export default function AdminPage() {
   const [allProps, setAllProps] = useState([])
   const [allInqs, setAllInqs] = useState([])
   const [contactMsgs, setContactMsgs] = useState([])
+  const [reports, setReports] = useState([])
   const [tab, setTab] = useState('overview')
   const [loading, setLoading] = useState(true)
   const [deleteModal, setDeleteModal] = useState(null)
@@ -17,16 +19,34 @@ export default function AdminPage() {
 
   async function load() {
     setLoading(true)
-    const [usersRes, propsRes, inqsRes, contactRes] = await Promise.all([
+    const [usersRes, propsRes, inqsRes, contactRes, reportsRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('properties').select('*, profiles(full_name, email), property_images(image_url)').order('created_at', { ascending: false }),
       supabase.from('inquiries').select('*, properties(title)').order('created_at', { ascending: false }),
-      supabase.from('contact_messages').select('*').order('created_at', { ascending: false })
+      supabase.from('contact_messages').select('*').order('created_at', { ascending: false }),
+      supabase.from('reports').select('*').order('created_at', { ascending: false })
     ])
     setUsers(usersRes.data || [])
     setAllProps(propsRes.data || [])
     setAllInqs(inqsRes.data || [])
     setContactMsgs(contactRes.data || [])
+
+    // Enrich reports with target details
+    const reportsList = reportsRes.data || []
+    const propIds = reportsList.filter(r => r.target_type === 'property').map(r => r.target_id)
+    const guideIds = reportsList.filter(r => r.target_type === 'suburb_guide').map(r => r.target_id)
+    const profIds = reportsList.filter(r => r.target_type === 'profile').map(r => r.target_id)
+
+    const [propTargets, guideTargets, profTargets] = await Promise.all([
+      propIds.length ? supabase.from('properties').select('id, title, suburb, state').in('id', propIds) : { data: [] },
+      guideIds.length ? supabase.from('suburb_guides').select('id, suburb, state').in('id', guideIds) : { data: [] },
+      profIds.length ? supabase.from('profiles').select('id, full_name, email').in('id', profIds) : { data: [] }
+    ])
+    const byId = {}
+    for (const p of propTargets.data || []) byId[p.id] = p
+    for (const g of guideTargets.data || []) byId[g.id] = g
+    for (const pr of profTargets.data || []) byId[pr.id] = pr
+    setReports(reportsList.map(r => ({ ...r, target: byId[r.target_id] || null })))
     setStats({
       users: usersRes.data?.length || 0,
       landlords: (usersRes.data || []).filter(u => u.user_type === 'landlord').length,
@@ -70,6 +90,7 @@ export default function AdminPage() {
   }
 
   const pendingProps = allProps.filter(p => p.status === 'pending_review')
+  const newReports = reports.filter(r => !r.status || r.status === 'new')
 
   if (loading) return <div style={{ padding: 64, textAlign: 'center' }}>Loading admin panel…</div>
 
@@ -100,13 +121,35 @@ export default function AdminPage() {
       </div>
 
       <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24, flexWrap: 'wrap' }}>
-        {['pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
+        {['reports', 'pending', 'overview', 'users', 'properties', 'inquiries', 'contact'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`search-tab ${tab === t ? 'active' : ''}`}
-            style={t === 'pending' ? { background: pendingProps.length > 0 ? '#FEF3C7' : undefined, color: pendingProps.length > 0 ? '#92400E' : undefined } : {}}>
-            {t === 'pending' ? `Pending Review (${pendingProps.length})` : t.charAt(0).toUpperCase() + t.slice(1)}
+            style={
+              t === 'pending' ? { background: pendingProps.length > 0 ? '#FEF3C7' : undefined, color: pendingProps.length > 0 ? '#92400E' : undefined }
+              : t === 'reports' && newReports.length > 0 ? { background: '#FEE2E2', color: '#991B1B' }
+              : {}
+            }>
+            {t === 'pending' ? `Pending Review (${pendingProps.length})`
+              : t === 'reports' ? (<>Reports{newReports.length > 0 && <span style={{
+                  marginLeft: 8, background: 'var(--accent-hot)', color: 'white',
+                  borderRadius: 999, padding: '1px 8px', fontSize: 11, fontWeight: 700
+                }}>{newReports.length}</span>}</>)
+              : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
+
+      {tab === 'reports' && (
+        <div style={{ display: 'grid', gap: 12 }}>
+          {reports.length === 0 ? (
+            <div className="empty-state">
+              <h3>No reports yet</h3>
+              <p>User-submitted reports will appear here for review.</p>
+            </div>
+          ) : (
+            reports.map(r => <ReportCard key={r.id} report={r} onSaved={load} />)
+          )}
+        </div>
+      )}
 
       {tab === 'pending' && (
         <div style={{ display: 'grid', gap: 12 }}>
