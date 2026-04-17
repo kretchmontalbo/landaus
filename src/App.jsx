@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import AdminPage from './pages/AdminPage.jsx'
 import SuburbGuidesPage from './pages/SuburbGuidesPage.jsx'
 import SuburbDetailPage from './pages/SuburbDetailPage.jsx'
+import EditPropertyPage from './pages/EditPropertyPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx'
 
@@ -38,6 +39,9 @@ export default function App() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/list-property" element={
             <ProtectedRoute><ListPropertyPage /></ProtectedRoute>
+          } />
+          <Route path="/edit-property/:id" element={
+            <ProtectedRoute><EditPropertyPage /></ProtectedRoute>
           } />
           <Route path="/dashboard" element={
             <ProtectedRoute><DashboardPage /></ProtectedRoute>

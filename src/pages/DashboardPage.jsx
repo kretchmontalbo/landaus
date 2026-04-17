@@ -9,6 +9,8 @@ export default function DashboardPage() {
   const [inquiries, setInquiries] = useState([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('properties')
+  const [deleteModal, setDeleteModal] = useState(null)
+  const [deleting, setDeleting] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => { if (user) load() }, [user])
@@ -17,7 +19,7 @@ export default function DashboardPage() {
     setLoading(true)
     const { data: props } = await supabase
       .from('properties')
-      .select('*, property_images(image_url)')
+      .select('*, property_images(id, image_url)')
       .eq('owner_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -32,9 +34,21 @@ export default function DashboardPage() {
     setLoading(false)
   }
 
-  async function deleteProperty(id) {
-    if (!confirm('Delete this listing? This cannot be undone.')) return
-    await supabase.from('properties').delete().eq('id', id)
+  async function confirmDelete() {
+    if (!deleteModal) return
+    setDeleting(true)
+    const prop = properties.find(p => p.id === deleteModal)
+    if (prop?.property_images?.length > 0) {
+      const paths = prop.property_images
+        .map(img => {
+          try { return new URL(img.image_url).pathname.split('/property-images/')[1] } catch { return null }
+        })
+        .filter(Boolean)
+      if (paths.length > 0) await supabase.storage.from('property-images').remove(paths)
+    }
+    await supabase.from('properties').delete().eq('id', deleteModal)
+    setDeleteModal(null)
+    setDeleting(false)
     load()
   }
 
@@ -124,12 +138,13 @@ export default function DashboardPage() {
                       {p.suburb}, {p.state} · ${p.price_per_week}/wk · 🛏 {p.bedrooms} 🛁 {p.bathrooms}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 6 }}>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     <Link to={`/property/${p.id}`} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>View</Link>
+                    <Link to={`/edit-property/${p.id}`} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>Edit</Link>
                     <button onClick={() => toggleStatus(p.id, p.status)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>
                       {p.status === 'active' ? 'Archive' : 'Activate'}
                     </button>
-                    <button onClick={() => deleteProperty(p.id)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13, color: '#B91C1C' }}>Delete</button>
+                    <button onClick={() => setDeleteModal(p.id)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13, color: '#B91C1C' }}>Delete</button>
                   </div>
                 </div>
               ))}
@@ -189,6 +204,29 @@ export default function DashboardPage() {
               </div>
             ))
           )}
+        </div>
+      )}
+      {deleteModal && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20
+        }}>
+          <div style={{
+            background: 'var(--white)', borderRadius: 'var(--radius-lg)',
+            padding: 32, maxWidth: 440, width: '100%', boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: 12 }}>Delete this listing?</h3>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: 24 }}>
+              This will permanently remove the listing, all photos, and any inquiries received. This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button onClick={() => setDeleteModal(null)} className="btn btn-ghost" disabled={deleting}>Cancel</button>
+              <button onClick={confirmDelete} className="btn" disabled={deleting}
+                style={{ background: '#B91C1C', color: 'white', padding: '10px 20px' }}>
+                {deleting ? 'Deleting…' : 'Delete permanently'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>
