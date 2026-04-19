@@ -32,6 +32,7 @@ function Nav() {
         </Link>
         <div className="nav-links">
           <Link to="/search" className="nav-link">Browse</Link>
+          <Link to="/for-landlords" className="nav-link">For Landlords</Link>
           <Link to="/suburbs" className="nav-link">Suburb Guides</Link>
           {user ? (
             <>
@@ -128,20 +129,12 @@ function Footer() {
             <Link to="/list-property">List property</Link>
             <Link to="/signup">Landlord signup</Link>
             <Link to="/dashboard">Dashboard</Link>
-            <Link to="/about">Why LandAus</Link>
-          </div>
-          <div>
-            <h4>For Agents</h4>
-            <Link to="/signup">Agent signup</Link>
-            <Link to="/list-property">Bulk upload</Link>
-            <Link to="/dashboard">Agency dashboard</Link>
-            <Link to="/contact">Partnership</Link>
+            <Link to="/for-landlords">Why LandAus</Link>
           </div>
           <div>
             <h4>Company</h4>
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
-            <Link to="/pricing">Pricing</Link>
             <Link to="/privacy">Privacy</Link>
             <Link to="/terms">Terms</Link>
           </div>
