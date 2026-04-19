@@ -27,8 +27,11 @@ const CITY_PRESETS = [
   { name: 'Canberra', lat: -35.2809, lng: 149.1300, zoom: 11 }
 ]
 
-const LIGHT_TILE = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-const DARK_TILE = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+const LIGHT_TILE = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+const DARK_TILE = 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
+const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+const TILE_SUBDOMAINS = 'abcd'
+const TILE_MAX_ZOOM = 20
 
 function makeIcon({ color, emoji, isProperty = false }) {
   const html = isProperty
@@ -273,10 +276,9 @@ export default function NewcomerMapPage() {
           <TileLayer
             key={isDark ? 'dark' : 'light'}
             url={isDark ? DARK_TILE : LIGHT_TILE}
-            attribution={isDark
-              ? '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'
-              : '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-            }
+            attribution={TILE_ATTRIBUTION}
+            subdomains={TILE_SUBDOMAINS}
+            maxZoom={TILE_MAX_ZOOM}
           />
 
           <FlyTo target={flyTarget} />

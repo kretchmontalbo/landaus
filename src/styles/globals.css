@@ -37,14 +37,17 @@
 /* ---------- DARK MODE ---------- */
 [data-theme="dark"] {
   --ink: #E8F5F0;
-  --ink-soft: #B8C5D6;
-  --ink-muted: #8B9BB1;
+  --ink-soft: #B8CBD6;     /* brighter for readability on navy */
+  --ink-muted: #8FA4B3;    /* brighter for readability on navy */
   --bg: #0A1628;
-  --white: #12243A;     /* surfaces previously white become dark card */
+  --white: #12243A;        /* surfaces previously white become dark card */
   --line: #24364E;
   --line-soft: #1A2A42;
   --mint-pale: #0F2338;
   --mint-soft: #13304A;
+  --accent: #5FEBAB;       /* brighter mint for accent text/links on dark */
+  --accent-text: #8FE9CC;  /* italic flourish emphasis on dark */
+  --accent-muted: #6FD4A5; /* secondary accents on dark */
   color-scheme: dark;
 }
 [data-theme="dark"] .nav { background: var(--white); border-bottom-color: var(--line); }
@@ -52,6 +55,47 @@
 [data-theme="dark"] .btn-dark { background: var(--mint); color: var(--ink); }
 [data-theme="dark"] .btn-dark:hover { background: var(--mint-deep); }
 [data-theme="dark"] .hero { background: linear-gradient(135deg, #13304A 0%, #0F2338 100%); }
+
+/* Italic flourish emphasis (e.g., "not rejection.") — brighter on dark */
+[data-theme="dark"] .hero-title em,
+[data-theme="dark"] h1 em,
+[data-theme="dark"] h2 em,
+[data-theme="dark"] .final-cta-title em,
+[data-theme="dark"] .numbers-h em { color: var(--accent-text); }
+
+/* Rotating tagline */
+[data-theme="dark"] .hero-tagline { color: var(--accent-text); }
+
+/* Eyebrow pill — mint 12% on light becomes too dim on navy */
+[data-theme="dark"] .eyebrow {
+  background: rgba(143, 233, 204, 0.18);
+  color: var(--accent-text);
+}
+
+/* Stat labels & values on dark */
+[data-theme="dark"] .stat-num { color: var(--ink); }
+[data-theme="dark"] .stat-lbl { color: var(--ink-soft); }
+
+/* Signal tags, property badges, verified pill — bump mint/accent brightness */
+[data-theme="dark"] .signal-tag {
+  background: rgba(143, 233, 204, 0.14);
+  color: var(--accent-text);
+  border-color: var(--mint-deep);
+}
+[data-theme="dark"] .property-badge {
+  background: rgba(178, 252, 228, 0.18);
+  color: var(--accent-text);
+}
+[data-theme="dark"] .btn-primary {
+  background: var(--mint);
+  color: #0A2540;
+}
+[data-theme="dark"] .btn-primary:hover { background: var(--mint-deep); }
+
+/* Trust strip dots and icons stay mint */
+[data-theme="dark"] .trust-dot { background: var(--accent); }
+
+/* Links rendered via inline color: var(--accent) now resolve to brighter mint */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
