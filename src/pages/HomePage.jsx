@@ -5,6 +5,7 @@ import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
 import AnimatedStat from '../components/AnimatedStat.jsx'
 import Arrow from '../components/Arrow.jsx'
+import ModeTabs from '../components/ModeTabs.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 import { useReveal } from '../lib/useReveal.js'
 
@@ -20,6 +21,7 @@ export default function HomePage() {
   const [properties, setProperties] = useState([])
   const [loading, setLoading] = useState(true)
   const [suburb, setSuburb] = useState('')
+  const [stateFilter, setStateFilter] = useState('')
   const [propertyType, setPropertyType] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [mode, setMode] = useState('rent')
@@ -95,18 +97,11 @@ export default function HomePage() {
     e.preventDefault()
     const params = new URLSearchParams()
     params.set('type', mode)
+    if (stateFilter) params.set('state', stateFilter)
     if (suburb) params.set('suburb', suburb)
     if (propertyType) params.set('ptype', propertyType)
     if (maxPrice) params.set('maxPrice', maxPrice)
     navigate(`/search?${params.toString()}`)
-  }
-
-  function selectMode(next) {
-    if (next === 'suburbs') {
-      navigate('/suburbs')
-      return
-    }
-    setMode(next)
   }
 
   return (
@@ -132,39 +127,30 @@ export default function HomePage() {
             Skip the "no rental history" barrier and connect with landlords who welcome you.
           </p>
 
-          <div className="search-tabs" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'rent'}
-              className={`search-tab ${mode === 'rent' ? 'active' : ''}`}
-              onClick={() => selectMode('rent')}
-            >Rent</button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'buy'}
-              className={`search-tab ${mode === 'buy' ? 'active' : ''}`}
-              onClick={() => selectMode('buy')}
-            >
-              Buy <span className="tab-soon" aria-label="Coming soon">soon</span>
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === 'flatmates'}
-              className={`search-tab ${mode === 'flatmates' ? 'active' : ''}`}
-              onClick={() => selectMode('flatmates')}
-            >Flatmates</button>
-            <button
-              type="button"
-              role="tab"
-              className="search-tab"
-              onClick={() => selectMode('suburbs')}
-            >Suburbs</button>
-          </div>
+          <ModeTabs activeTab={mode} />
 
           <form className="search-bar" onSubmit={handleSearch}>
+            <div className="search-input-group">
+              <div style={{ flex: 1 }}>
+                <label>State</label>
+                <select
+                  value={stateFilter}
+                  onChange={(e) => setStateFilter(e.target.value)}
+                  aria-label="State"
+                >
+                  <option value="">All states</option>
+                  <option value="NSW">NSW</option>
+                  <option value="VIC">VIC</option>
+                  <option value="QLD">QLD</option>
+                  <option value="WA">WA</option>
+                  <option value="SA">SA</option>
+                  <option value="TAS">TAS</option>
+                  <option value="ACT">ACT</option>
+                  <option value="NT">NT</option>
+                </select>
+              </div>
+            </div>
+            <div className="search-divider" />
             <div className="search-input-group">
               <div style={{ flex: 1 }}>
                 <label>Suburb</label>

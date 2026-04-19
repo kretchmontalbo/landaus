@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
+import ModeTabs from '../components/ModeTabs.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 
 export default function SearchPage() {
@@ -75,13 +76,24 @@ export default function SearchPage() {
     }
   })
 
+  // Dynamic heading
+  const count = properties.length
+  const noun = count === 1 ? 'home' : 'homes'
+  const qty = loading ? 'Loading' : count
+  let heading
+  if (suburb && state) heading = `${qty} ${noun} in ${suburb}, ${state}`
+  else if (suburb) heading = `${qty} ${noun} in ${suburb}`
+  else if (state) heading = `${qty} ${noun} in ${state}`
+  else heading = loading ? 'Loading homes…' : `${count} ${noun} across Australia`
+
   return (
     <section className="section">
+      <div style={{ marginBottom: 20 }}>
+        <ModeTabs activeTab={listingMode} />
+      </div>
       <div className="section-head">
         <div>
-          <h2 className="section-title">
-            {suburb ? `Homes in ${suburb}` : 'All properties'}
-          </h2>
+          <h2 className="section-title">{heading}</h2>
           <p className="section-sub">
             Every listing is newcomer-friendly. No rental history barriers.
           </p>

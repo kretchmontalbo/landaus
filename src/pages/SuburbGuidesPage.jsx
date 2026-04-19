@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
+import ModeTabs from '../components/ModeTabs.jsx'
 
 export default function SuburbGuidesPage() {
   const [guides, setGuides] = useState([])
@@ -22,8 +23,11 @@ export default function SuburbGuidesPage() {
     <>
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft), var(--mint))',
-        padding: '64px 20px 48px', textAlign: 'center'
+        padding: '48px 20px 48px', textAlign: 'center'
       }}>
+        <div style={{ marginBottom: 24 }}>
+          <ModeTabs activeTab="suburbs" />
+        </div>
         <span className="eyebrow">🧭 Written for newcomers, by people who get it</span>
         <h1 style={{
           fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 52px)',
