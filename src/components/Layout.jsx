@@ -42,6 +42,7 @@ function Nav() {
           <Link to="/search" className="nav-link">Browse</Link>
           <Link to="/for-landlords" className="nav-link">For Landlords</Link>
           <Link to="/for-tenants" className="nav-link">For Tenants</Link>
+          <Link to="/map" className="nav-link">🗺 Map</Link>
           <Link to="/suburbs" className="nav-link">Suburb Guides</Link>
           {user ? (
             <>
@@ -241,6 +242,7 @@ function MobileDrawer({ open, onClose, user, profile, isAdmin, onLogout, theme, 
           <Link to="/search" onClick={onClose} className="mobile-link">Browse</Link>
           <Link to="/for-landlords" onClick={onClose} className="mobile-link">For Landlords</Link>
           <Link to="/for-tenants" onClick={onClose} className="mobile-link">For Tenants</Link>
+          <Link to="/map" onClick={onClose} className="mobile-link">🗺 Map</Link>
           <Link to="/suburbs" onClick={onClose} className="mobile-link">Suburb Guides</Link>
           {user && (
             <>
@@ -303,6 +305,7 @@ function Footer() {
           <div>
             <h4>Browse</h4>
             <Link to="/search">All Properties</Link>
+            <Link to="/map">Interactive map</Link>
             <Link to="/search?state=NSW">NSW</Link>
             <Link to="/search?state=VIC">VIC</Link>
             <Link to="/search?state=QLD">QLD</Link>

@@ -1289,6 +1289,144 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- NEWCOMER MAP ---------- */
+.map-page {
+  display: flex;
+  height: calc(100vh - 73px);
+  min-height: 520px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.map-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  background: var(--white);
+  overflow-y: auto;
+}
+.map-sidebar-inner { padding: 20px 18px 32px; }
+.map-sidebar-h {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 600; letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.map-subh {
+  font-size: 12px; font-weight: 700; color: var(--ink-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  width: 100%; background: transparent; border: none; padding: 0;
+  font-family: inherit;
+}
+.map-collapse { cursor: pointer; }
+.map-filter-group { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line-soft); }
+.map-filter-group:last-child { border-bottom: none; }
+.map-check {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 6px; border-radius: 8px; cursor: pointer;
+  font-size: 14px; color: var(--ink);
+  transition: background 0.12s;
+}
+.map-check:hover { background: var(--mint-pale); }
+.map-check input { margin: 0; cursor: pointer; }
+.map-dot {
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  flex-shrink: 0; box-shadow: 0 0 0 2px rgba(255,255,255,0.7);
+}
+.map-field { margin: 10px 6px 0; }
+.map-field label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; }
+.map-field input[type="range"] { width: 100%; accent-color: var(--accent); }
+.map-beds { display: flex; gap: 6px; flex-wrap: wrap; }
+.map-bed-chip {
+  padding: 5px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--white);
+  color: var(--ink-soft); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.map-bed-chip.active { border-color: var(--accent); background: var(--mint-soft); color: var(--accent); }
+.map-bed-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+.map-actions {
+  margin-top: 10px; padding-left: 6px;
+  font-size: 12px; color: var(--ink-muted);
+  display: flex; gap: 6px; align-items: center;
+}
+.map-actions button {
+  background: transparent; border: none; color: var(--accent);
+  cursor: pointer; padding: 0; font-weight: 600; font-size: 12px;
+}
+.map-actions-sep { color: var(--ink-muted); }
+.map-legend { display: grid; gap: 6px; padding: 4px 6px; }
+.map-legend-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--ink-soft);
+}
+.map-cities { display: flex; flex-wrap: wrap; gap: 6px; }
+.map-city {
+  padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--white);
+  color: var(--ink-soft); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.map-city:hover { border-color: var(--accent); color: var(--accent); background: var(--mint-soft); }
+
+.map-wrap {
+  flex: 1; min-width: 0; position: relative;
+}
+.map-info-pill {
+  position: absolute;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px; color: var(--ink-soft);
+  box-shadow: var(--shadow-md);
+  z-index: 500;
+  white-space: nowrap;
+}
+
+/* Custom map pins (Leaflet divIcon) */
+.landaus-marker { background: transparent !important; border: none !important; }
+.map-pin {
+  width: 32px; height: 40px;
+  position: relative;
+  display: grid; place-items: center;
+  filter: drop-shadow(0 2px 4px rgba(10, 37, 64, 0.3));
+}
+.map-pin::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--pin-color);
+  clip-path: path('M16 0 C7.2 0 0 7.2 0 16 C0 24.6 16 40 16 40 S32 24.6 32 16 C32 7.2 24.8 0 16 0 Z');
+}
+.map-pin-inner {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  margin-top: -8px;
+  filter: grayscale(0);
+}
+.map-pin-property::before { background: var(--pin-color, #0B5D3B); }
+.map-pin-property .map-pin-inner { font-size: 16px; }
+
+/* Dark mode adjustments for map UI */
+[data-theme="dark"] .map-sidebar { background: var(--white); }
+[data-theme="dark"] .map-info-pill { background: var(--white); }
+
+/* Responsive: sidebar collapses on narrow screens */
+@media (max-width: 820px) {
+  .map-page { flex-direction: column; height: calc(100vh - 73px); }
+  .map-sidebar {
+    width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .map-wrap { height: 60vh; }
+  .map-info-pill { top: 8px; font-size: 12px; padding: 6px 12px; }
+}
+
 /* ---------- REDUCED MOTION ---------- */
 @media (prefers-reduced-motion: reduce) {
   .hero-tagline { animation: none; }
