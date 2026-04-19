@@ -42,7 +42,7 @@ export default function HomePage() {
     <>
       <section className="hero">
         <div className="hero-inner">
-          <span className="eyebrow">🌏 New to Australia? Welcome home.</span>
+          <span className="eyebrow">🌍 Australia's rental platform for tenants without local rental history</span>
           <h1 className="hero-title">
             Find home, <em>not rejection.</em>
           </h1>

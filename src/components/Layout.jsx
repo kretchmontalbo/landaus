@@ -33,6 +33,7 @@ function Nav() {
         <div className="nav-links">
           <Link to="/search" className="nav-link">Browse</Link>
           <Link to="/for-landlords" className="nav-link">For Landlords</Link>
+          <Link to="/for-tenants" className="nav-link">For Tenants</Link>
           <Link to="/suburbs" className="nav-link">Suburb Guides</Link>
           {user ? (
             <>
@@ -122,7 +123,7 @@ function Footer() {
             <Link to="/search">Find a home</Link>
             <Link to="/suburbs">Suburb Guides</Link>
             <Link to="/signup">Sign up</Link>
-            <Link to="/about">How it works</Link>
+            <Link to="/for-tenants">How it works</Link>
           </div>
           <div>
             <h4>For Landlords</h4>
