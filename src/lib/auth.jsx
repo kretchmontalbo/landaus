@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from './supabase.js'
 
 const AuthContext = createContext({})
@@ -7,6 +8,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     // Check existing session
@@ -16,13 +19,30 @@ export function AuthProvider({ children }) {
       else setLoading(false)
     })
 
+    // Check URL for an email-confirmation handoff (Supabase appends ?type=signup or #type=signup)
+    function isConfirmationCallback() {
+      if (typeof window === 'undefined') return false
+      const hash = window.location.hash.replace(/^#/, '')
+      const hashParams = new URLSearchParams(hash)
+      const search = new URLSearchParams(window.location.search)
+      const type = hashParams.get('type') || search.get('type')
+      return type === 'signup' || type === 'email_change' || type === 'magiclink'
+    }
+
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) loadProfile(session.user.id)
       else {
         setProfile(null)
         setLoading(false)
+      }
+
+      // After a successful email confirmation, send the user to the celebration page
+      if (event === 'SIGNED_IN' && session?.user && isConfirmationCallback()) {
+        if (location.pathname !== '/auth/confirmed') {
+          navigate('/auth/confirmed', { replace: true })
+        }
       }
     })
 
