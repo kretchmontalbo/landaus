@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../lib/auth.jsx'
 
 export default function Layout() {
@@ -13,13 +13,15 @@ export default function Layout() {
 }
 
 function Nav() {
-  const { user, profile, signOut, isAdmin, isLandlord } = useAuth()
+  const { user, profile, signOut, isAdmin } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
   async function handleLogout() {
     await signOut()
     setMenuOpen(false)
+    setMobileOpen(false)
     navigate('/')
   }
 
@@ -87,8 +89,155 @@ function Nav() {
             </>
           )}
         </div>
+
+        {/* Hamburger (mobile only) */}
+        <button
+          className="hamburger"
+          aria-label="Open menu"
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen(true)}
+        >
+          <span /><span /><span />
+        </button>
       </div>
+
+      <MobileDrawer
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        user={user}
+        profile={profile}
+        isAdmin={isAdmin}
+        onLogout={handleLogout}
+      />
     </nav>
+  )
+}
+
+function MobileDrawer({ open, onClose, user, profile, isAdmin, onLogout }) {
+  const closeBtnRef = useRef(null)
+  const drawerRef = useRef(null)
+
+  // Focus management + body scroll lock + Escape key
+  useEffect(() => {
+    if (!open) return
+
+    const previouslyFocused = document.activeElement
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    // Focus the close button when opened
+    const focusTimer = setTimeout(() => closeBtnRef.current?.focus(), 50)
+
+    function onKey(e) {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key !== 'Tab' || !drawerRef.current) return
+
+      // Simple focus trap
+      const focusable = drawerRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
+    return () => {
+      clearTimeout(focusTimer)
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus()
+    }
+  }, [open, onClose])
+
+  return (
+    <>
+      <div
+        className={`mobile-backdrop ${open ? 'is-open' : ''}`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside
+        ref={drawerRef}
+        className={`mobile-drawer ${open ? 'is-open' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Main menu"
+      >
+        <div className="mobile-drawer-head">
+          <span className="logo" style={{ fontSize: 20 }}>
+            <span className="logo-mark" style={{ width: 28, height: 28, fontSize: 16 }}>🏡</span>
+            LandAus
+          </span>
+          <button
+            ref={closeBtnRef}
+            onClick={onClose}
+            aria-label="Close menu"
+            className="mobile-drawer-close"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {user && (
+          <div className="mobile-drawer-user">
+            <div className="mobile-drawer-avatar">
+              {(profile?.full_name?.[0] || user.email?.[0] || '?').toUpperCase()}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profile?.full_name || 'User'}
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--ink-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user.email}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <nav className="mobile-drawer-links">
+          <Link to="/search" onClick={onClose} className="mobile-link">Browse</Link>
+          <Link to="/for-landlords" onClick={onClose} className="mobile-link">For Landlords</Link>
+          <Link to="/for-tenants" onClick={onClose} className="mobile-link">For Tenants</Link>
+          <Link to="/suburbs" onClick={onClose} className="mobile-link">Suburb Guides</Link>
+          {user && (
+            <>
+              <div className="mobile-divider" />
+              <Link to="/dashboard" onClick={onClose} className="mobile-link">Dashboard</Link>
+              <Link to="/account" onClick={onClose} className="mobile-link">Account Settings</Link>
+              {isAdmin && <Link to="/admin" onClick={onClose} className="mobile-link">Admin</Link>}
+            </>
+          )}
+          {!user && (
+            <>
+              <div className="mobile-divider" />
+              <Link to="/login" onClick={onClose} className="mobile-link">Log in</Link>
+              <Link to="/signup" onClick={onClose} className="mobile-link">Sign up</Link>
+            </>
+          )}
+        </nav>
+
+        <div className="mobile-drawer-foot">
+          {user ? (
+            <button onClick={onLogout} className="btn btn-ghost btn-block">
+              Log out
+            </button>
+          ) : (
+            <Link to="/signup" onClick={onClose} className="btn btn-primary btn-block">
+              List for Free →
+            </Link>
+          )}
+        </div>
+      </aside>
+    </>
   )
 }
 
