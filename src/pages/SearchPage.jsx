@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
@@ -12,7 +12,8 @@ export default function SearchPage() {
 
   const suburb = searchParams.get('suburb') || ''
   const state = searchParams.get('state') || ''
-  const propertyType = searchParams.get('type') || ''
+  const listingMode = searchParams.get('type') || 'rent'  // rent | buy | flatmates
+  const propertyType = searchParams.get('ptype') || ''   // apartment | house | ...
   const maxPrice = searchParams.get('maxPrice') || ''
   const minBeds = searchParams.get('beds') || ''
 
@@ -32,6 +33,15 @@ export default function SearchPage() {
     if (propertyType) query = query.eq('property_type', propertyType)
     if (maxPrice) query = query.lte('price_per_week', parseInt(maxPrice))
     if (minBeds) query = query.gte('bedrooms', parseInt(minBeds))
+
+    // Listing-mode filtering (rent / buy / flatmates)
+    if (listingMode === 'buy') {
+      query = query.eq('listing_type', 'buy')
+    } else if (listingMode === 'flatmates') {
+      query = query.eq('listing_type', 'rent').in('property_type', ['room', 'studio'])
+    } else {
+      query = query.eq('listing_type', 'rent')
+    }
 
     query = query.order('is_featured', { ascending: false, nullsFirst: false })
                  .order('created_at', { ascending: false })
@@ -96,7 +106,7 @@ export default function SearchPage() {
           <option value="ACT">ACT</option>
           <option value="NT">NT</option>
         </select>
-        <select value={propertyType} onChange={(e) => updateParam('type', e.target.value)}>
+        <select value={propertyType} onChange={(e) => updateParam('ptype', e.target.value)}>
           <option value="">Any type</option>
           <option value="apartment">Apartment</option>
           <option value="house">House</option>
@@ -145,10 +155,7 @@ export default function SearchPage() {
               ))}
             </div>
           ) : properties.length === 0 ? (
-            <div className="empty-state">
-              <h3>No properties match your search yet</h3>
-              <p>Try widening your filters — fresh listings come in every week.</p>
-            </div>
+            <ModeAwareEmptyState mode={listingMode} />
           ) : (
             <div className="property-grid">{cells}</div>
           )}
@@ -158,5 +165,36 @@ export default function SearchPage() {
         </aside>
       </div>
     </section>
+  )
+}
+
+function ModeAwareEmptyState({ mode }) {
+  if (mode === 'buy') {
+    return (
+      <div className="empty-state">
+        <h3>Buy-to-own listings coming soon.</h3>
+        <p>We're focusing on rentals first. Meanwhile, browse our rental listings.</p>
+        <Link to="/search?type=rent" className="btn btn-dark" style={{ padding: '10px 22px', fontSize: 14, marginTop: 12 }}>
+          Browse rentals →
+        </Link>
+      </div>
+    )
+  }
+  if (mode === 'flatmates') {
+    return (
+      <div className="empty-state">
+        <h3>No flatmate rooms available yet</h3>
+        <p>Check back soon, or browse all listings in the meantime.</p>
+        <Link to="/search?type=rent" className="btn btn-dark" style={{ padding: '10px 22px', fontSize: 14, marginTop: 12 }}>
+          Browse all →
+        </Link>
+      </div>
+    )
+  }
+  return (
+    <div className="empty-state">
+      <h3>No properties match your search yet</h3>
+      <p>Try widening your filters — fresh listings come in every week.</p>
+    </div>
   )
 }

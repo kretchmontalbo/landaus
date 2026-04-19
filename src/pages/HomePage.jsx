@@ -94,11 +94,19 @@ export default function HomePage() {
   function handleSearch(e) {
     e.preventDefault()
     const params = new URLSearchParams()
+    params.set('type', mode)
     if (suburb) params.set('suburb', suburb)
-    if (propertyType) params.set('type', propertyType)
+    if (propertyType) params.set('ptype', propertyType)
     if (maxPrice) params.set('maxPrice', maxPrice)
-    params.set('listing', mode)
     navigate(`/search?${params.toString()}`)
+  }
+
+  function selectMode(next) {
+    if (next === 'suburbs') {
+      navigate('/suburbs')
+      return
+    }
+    setMode(next)
   }
 
   return (
@@ -124,17 +132,36 @@ export default function HomePage() {
             Skip the "no rental history" barrier and connect with landlords who welcome you.
           </p>
 
-          <div className="search-tabs">
+          <div className="search-tabs" role="tablist">
             <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'rent'}
               className={`search-tab ${mode === 'rent' ? 'active' : ''}`}
-              onClick={() => setMode('rent')}
+              onClick={() => selectMode('rent')}
             >Rent</button>
             <button
-              className={`search-tab ${mode === 'sale' ? 'active' : ''}`}
-              onClick={() => setMode('sale')}
-            >Buy</button>
-            <button className="search-tab">Share</button>
-            <button className="search-tab">Suburbs</button>
+              type="button"
+              role="tab"
+              aria-selected={mode === 'buy'}
+              className={`search-tab ${mode === 'buy' ? 'active' : ''}`}
+              onClick={() => selectMode('buy')}
+            >
+              Buy <span className="tab-soon" aria-label="Coming soon">soon</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'flatmates'}
+              className={`search-tab ${mode === 'flatmates' ? 'active' : ''}`}
+              onClick={() => selectMode('flatmates')}
+            >Flatmates</button>
+            <button
+              type="button"
+              role="tab"
+              className="search-tab"
+              onClick={() => selectMode('suburbs')}
+            >Suburbs</button>
           </div>
 
           <form className="search-bar" onSubmit={handleSearch}>

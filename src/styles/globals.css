@@ -312,6 +312,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   gap: 4px;
   margin-bottom: 12px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .search-tab {
   padding: 8px 18px;
@@ -320,10 +321,40 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   font-size: 14px;
   color: var(--ink-soft);
   transition: all 0.15s;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
 }
+.search-tab:hover:not(.active) { color: var(--ink); background: rgba(10, 37, 64, 0.05); }
 .search-tab.active {
   background: var(--ink);
   color: var(--white);
+}
+[data-theme="dark"] .search-tab.active { background: var(--mint); color: #0A2540; }
+.tab-soon {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(10, 37, 64, 0.12);
+  color: var(--ink-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.search-tab.active .tab-soon {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+[data-theme="dark"] .tab-soon {
+  background: rgba(232, 245, 240, 0.12);
+  color: var(--ink-muted);
+}
+@media (max-width: 400px) {
+  .search-tab { padding: 6px 14px; font-size: 13px; }
 }
 .search-input-group {
   flex: 1;
