@@ -113,15 +113,15 @@ export default function HomePage() {
           <div className="stat-strip">
             <div className="stat">
               <div className="stat-num">100%</div>
-              <div className="stat-lbl">Newcomer-friendly listings</div>
+              <div className="stat-lbl">Yes-first listings</div>
             </div>
             <div className="stat">
-              <div className="stat-num">0</div>
-              <div className="stat-lbl">Rental history required</div>
+              <div className="stat-num">✓</div>
+              <div className="stat-lbl">ID-verified landlords</div>
             </div>
             <div className="stat">
-              <div className="stat-num">10+</div>
-              <div className="stat-lbl">Languages supported</div>
+              <div className="stat-num">$0</div>
+              <div className="stat-lbl">Tenant fees, ever</div>
             </div>
           </div>
         </div>
@@ -130,8 +130,8 @@ export default function HomePage() {
       <section className="section">
         <div className="section-head">
           <div>
-            <h2 className="section-title">Featured this week</h2>
-            <p className="section-sub">Hand-picked homes from landlords who welcome everyone.</p>
+            <h2 className="section-title">Explore sample homes</h2>
+            <p className="section-sub">A preview of what real LandAus listings will look like. We're onboarding verified landlords now — your home could be next.</p>
           </div>
           <button
             className="btn btn-ghost"

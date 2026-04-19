@@ -2,38 +2,167 @@ import { Link } from 'react-router-dom'
 
 export default function AboutPage() {
   return (
-    <section style={{ maxWidth: 720, margin: '0 auto', padding: '64px 24px 80px' }}>
-      <h1 style={{
-        fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 600,
-        letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: 32
+    <>
+      {/* Hero */}
+      <section style={{
+        background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',
+        padding: '64px 24px 72px', textAlign: 'center', position: 'relative', overflow: 'hidden'
       }}>
-        Find home,<br />not <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>rejection.</em>
-      </h1>
+        <div style={{ maxWidth: 720, margin: '0 auto', position: 'relative' }}>
+          <span className="eyebrow">About LandAus</span>
+          <h1 style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(40px, 6vw, 64px)',
+            fontWeight: 600, lineHeight: 1.05, letterSpacing: '-0.03em',
+            color: 'var(--ink)', marginBottom: 18
+          }}>
+            Find home, not <em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 500 }}>rejection.</em>
+          </h1>
+          <p style={{
+            fontSize: 18, color: 'var(--ink-soft)', lineHeight: 1.55,
+            maxWidth: 580, margin: '0 auto'
+          }}>
+            Australia's rental portal for the people traditional platforms overlook.
+          </p>
+        </div>
+      </section>
 
-      <div style={{ lineHeight: 1.8, color: 'var(--ink-soft)', fontSize: 17 }}>
-        <p style={{ marginBottom: 24 }}>
-          Moving to Australia is exciting — until you try to rent. Newcomers face a brutal catch-22:
-          you can't get a rental without local references, and you can't get references without a rental.
-          Applications get rejected for "lack of rental history." Real estate agents prioritise locals.
-          The system wasn't built for people starting fresh.
+      {/* Mission */}
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '72px 24px 24px' }}>
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600,
+          letterSpacing: '-0.02em', marginBottom: 14
+        }}>
+          Our mission
+        </h2>
+        <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-soft)' }}>
+          LandAus exists because finding a rental in Australia shouldn't depend on a local rental history
+          you haven't had time to build. We connect immigrants, international students, visa holders, and
+          first-time renters with landlords who welcome them — no rejection, no chasing, no bias.
         </p>
+      </section>
 
-        <p style={{ marginBottom: 24 }}>
-          LandAus exists to change that. Every listing on our platform comes from a landlord who
-          <strong> welcomes newcomers first</strong> — immigrants, international students, skilled visa holders,
-          anyone building a new life in Australia. No rental history? No worries. We connect you directly
-          with landlords who understand that a visa stamp and a job offer should be enough.
+      {/* What we believe */}
+      <section style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px' }}>
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600,
+          letterSpacing: '-0.02em', marginBottom: 32, textAlign: 'center'
+        }}>
+          What we believe
+        </h2>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24
+        }}>
+          <Belief icon="🌟" title="Every tenant deserves a chance">
+            Employment letters, bank statements, and visa documents are proof of responsibility — not rental history.
+          </Belief>
+          <Belief icon="🛡" title="Verified landlords, always">
+            Every landlord on LandAus is ID-verified. Every listing is from an owner who said yes to newcomers upfront.
+          </Belief>
+          <Belief icon="💰" title="Tenants never pay fees">
+            Searching, applying, and inquiring is always 100% free for tenants. We think it should be that way everywhere.
+          </Belief>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px' }}>
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600,
+          letterSpacing: '-0.02em', marginBottom: 24
+        }}>
+          How LandAus works
+        </h2>
+        <div style={{ display: 'grid', gap: 16 }}>
+          <Step n="1" text={<>Landlords list their properties with a <strong>"yes-first" policy</strong></>} />
+          <Step n="2" text={<>Tenants browse, filter by suburb and language, and inquire</>} />
+          <Step n="3" text={<>Landlord and tenant connect directly — <strong>no middlemen, no commissions</strong></>} />
+        </div>
+      </section>
+
+      {/* Who's behind */}
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px 24px' }}>
+        <h2 style={{
+          fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600,
+          letterSpacing: '-0.02em', marginBottom: 14
+        }}>
+          Built in Sydney
+        </h2>
+        <p style={{ fontSize: 17, lineHeight: 1.7, color: 'var(--ink-soft)', marginBottom: 20 }}>
+          LandAus is built by people who understand the newcomer experience firsthand. Our founder spent
+          years in Australian property management at Fulton Lane Realty, watching qualified tenants get
+          turned away over a missing piece of paper. LandAus is our answer.
         </p>
-
-        <p style={{ marginBottom: 40 }}>
-          Built in Sydney in 2026 by people who know the struggle firsthand. Because finding home
-          shouldn't mean proving you belong.
+        <p style={{ fontSize: 14, color: 'var(--ink-muted)', fontStyle: 'italic' }}>
+          Made with 💚 in Sydney · Proudly built for the global community
         </p>
+      </section>
 
-        <Link to="/search" className="btn btn-dark" style={{ padding: '14px 28px', fontSize: 16 }}>
-          Browse listings →
-        </Link>
-      </div>
-    </section>
+      {/* CTA */}
+      <section style={{
+        background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',
+        padding: '72px 24px 88px', textAlign: 'center', marginTop: 48
+      }}>
+        <div style={{ maxWidth: 620, margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4vw, 42px)',
+            fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 14
+          }}>
+            Join the movement
+          </h2>
+          <p style={{
+            fontSize: 17, color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: 28
+          }}>
+            Whether you're looking for a home or have one to offer — be part of building a fairer rental market.
+          </p>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/list-property" className="btn btn-dark" style={{ padding: '14px 28px', fontSize: 15 }}>
+              List a property
+            </Link>
+            <Link to="/search" className="btn btn-ghost" style={{
+              padding: '14px 28px', fontSize: 15, background: 'var(--white)', borderColor: 'var(--white)'
+            }}>
+              Browse homes
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
+function Belief({ icon, title, children }) {
+  return (
+    <div style={{
+      background: 'var(--white)', border: '1px solid var(--line)',
+      borderRadius: 'var(--radius-lg)', padding: 28
+    }}>
+      <div style={{
+        width: 52, height: 52, borderRadius: 14, background: 'var(--mint)',
+        display: 'grid', placeItems: 'center', fontSize: 26, marginBottom: 16
+      }}>{icon}</div>
+      <h3 style={{
+        fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600,
+        marginBottom: 8, letterSpacing: '-0.01em'
+      }}>{title}</h3>
+      <p style={{ color: 'var(--ink-soft)', fontSize: 15, lineHeight: 1.6 }}>{children}</p>
+    </div>
+  )
+}
+
+function Step({ n, text }) {
+  return (
+    <div style={{
+      display: 'flex', gap: 18, alignItems: 'center',
+      background: 'var(--white)', border: '1px solid var(--line)',
+      borderRadius: 'var(--radius)', padding: '18px 20px'
+    }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: '50%',
+        background: 'var(--mint)', color: 'var(--accent)',
+        display: 'grid', placeItems: 'center', fontWeight: 700,
+        fontFamily: 'var(--font-display)', fontSize: 18, flexShrink: 0
+      }}>{n}</div>
+      <span style={{ fontSize: 16, color: 'var(--ink)', lineHeight: 1.5 }}>{text}</span>
+    </div>
   )
 }

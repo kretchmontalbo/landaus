@@ -131,7 +131,7 @@ export default function EmailConfirmedPage() {
             color: 'var(--ink-soft)',
             marginTop: 20
           }}>
-            Questions? Reach us at <a href="mailto:hello@landaus.com.au" style={{ color: 'var(--accent)', fontWeight: 600 }}>hello@landaus.com.au</a>
+            Questions? Reach us at <a href="mailto:kretch.montalbo@gmail.com" style={{ color: 'var(--accent)', fontWeight: 600 }}>hello@landaus.com.au</a>
           </p>
         </div>
       </section>

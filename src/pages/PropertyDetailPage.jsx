@@ -77,10 +77,20 @@ export default function PropertyDetailPage() {
 
       {isDemo && (
         <div style={{
-          background: '#FEF3C7', border: '1px solid #F59E0B', borderRadius: 12,
-          padding: '16px 20px', marginBottom: 20, fontSize: 14, lineHeight: 1.6, color: '#78350F'
+          background: 'var(--mint-soft)', border: '1px solid var(--mint-deep)', borderRadius: 12,
+          padding: '20px 24px', marginBottom: 20, fontSize: 14, lineHeight: 1.6, color: 'var(--accent)'
         }}>
-          🎭 <strong>This is a demonstration listing.</strong> It's here to show you how LandAus works — don't send an inquiry, no one will receive it. Real listings from verified landlords are coming soon!
+          <div style={{ marginBottom: 14 }}>
+            ✨ <strong>This is a sample listing.</strong> It's a preview of how real listings will look on LandAus. We're currently onboarding verified landlords — check back soon, or sign up to list your own property!
+          </div>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <Link to="/list-property" className="btn btn-dark" style={{ padding: '8px 18px', fontSize: 13 }}>
+              List a property
+            </Link>
+            <Link to="/signup" className="btn btn-ghost" style={{ padding: '8px 18px', fontSize: 13, background: 'var(--white)' }}>
+              Get notified
+            </Link>
+          </div>
         </div>
       )}
 
@@ -211,7 +221,7 @@ export default function PropertyDetailPage() {
               disabled={submitting || isDemo}
               style={isDemo ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
-              {isDemo ? 'Demo listing — inquiries disabled' : submitting ? 'Sending…' : 'Send inquiry →'}
+              {isDemo ? 'Inquiries available on real listings soon' : submitting ? 'Sending…' : 'Send inquiry →'}
             </button>
           </form>
         </aside>

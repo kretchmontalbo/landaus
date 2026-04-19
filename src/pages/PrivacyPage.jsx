@@ -50,7 +50,7 @@ export default function PrivacyPage() {
         </Section>
 
         <Section title="Contact us">
-          <p>For privacy-related inquiries, email us at <strong>privacy@landaus.com.au</strong>.</p>
+          <p>For privacy-related inquiries, email us at <a href="mailto:kretch.montalbo@gmail.com" style={{ color: 'var(--accent)', fontWeight: 600 }}>hello@landaus.com.au</a>.</p>
         </Section>
       </div>
     </section>

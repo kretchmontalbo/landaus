@@ -23,9 +23,9 @@ export default function PropertyCard({ property }) {
         {isDemo && !isFeatured && (
           <span style={{
             position: 'absolute', top: 14, right: 56,
-            background: '#FBBF24', color: '#78350F', borderRadius: 999,
-            fontSize: 11, padding: '4px 10px', fontWeight: 700, zIndex: 2
-          }}>🎭 DEMO LISTING</span>
+            background: 'var(--mint)', color: 'var(--accent)', borderRadius: 999,
+            fontSize: 11, padding: '4px 10px', fontWeight: 600, zIndex: 2
+          }}>✨ Sample listing</span>
         )}
         {property.newcomer_friendly && (
           <span className="property-badge">✨ Newcomer friendly</span>
