@@ -34,6 +34,25 @@
   --font-body: 'Inter Tight', -apple-system, sans-serif;
 }
 
+/* ---------- DARK MODE ---------- */
+[data-theme="dark"] {
+  --ink: #E8F5F0;
+  --ink-soft: #B8C5D6;
+  --ink-muted: #8B9BB1;
+  --bg: #0A1628;
+  --white: #12243A;     /* surfaces previously white become dark card */
+  --line: #24364E;
+  --line-soft: #1A2A42;
+  --mint-pale: #0F2338;
+  --mint-soft: #13304A;
+  color-scheme: dark;
+}
+[data-theme="dark"] .nav { background: var(--white); border-bottom-color: var(--line); }
+[data-theme="dark"] .footer { background: var(--white); border-top-color: var(--line); }
+[data-theme="dark"] .btn-dark { background: var(--mint); color: var(--ink); }
+[data-theme="dark"] .btn-dark:hover { background: var(--mint-deep); }
+[data-theme="dark"] .hero { background: linear-gradient(135deg, #13304A 0%, #0F2338 100%); }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -95,8 +114,35 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   font-size: 15px;
   color: var(--ink-soft);
   transition: color 0.15s;
+  position: relative;
 }
 .nav-link:hover { color: var(--ink); }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 100%;
+  bottom: -4px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: right 0.2s ease;
+}
+.nav-link:hover::after { right: 0; }
+
+/* Theme toggle */
+.theme-toggle {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--ink-soft);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.theme-toggle:hover { background: var(--mint-soft); color: var(--ink); }
+.theme-toggle:active { transform: scale(0.95); }
 .btn {
   display: inline-flex;
   align-items: center;
@@ -115,8 +161,9 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 .btn-primary:hover {
   background: var(--mint-deep);
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.02);
   box-shadow: var(--shadow-md);
+  filter: brightness(1.03);
 }
 .btn-dark {
   background: var(--ink);
@@ -124,7 +171,8 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 .btn-dark:hover {
   background: #1a3556;
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.02);
+  filter: brightness(1.08);
 }
 .btn-ghost {
   background: transparent;
@@ -373,7 +421,8 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 .property-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 16px 40px rgba(143, 233, 204, 0.25), 0 4px 12px rgba(10, 37, 64, 0.08);
+  border-color: var(--mint-deep);
 }
 .property-image {
   position: relative;
@@ -933,4 +982,49 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   padding: 16px 20px 24px;
   border-top: 1px solid var(--line);
   background: var(--white);
+}
+
+/* ---------- HERO ROTATING TAGLINE ---------- */
+.hero-tagline {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.2vw, 22px);
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: 20px;
+  min-height: 32px;
+  animation: taglineFade 0.45s ease-out;
+}
+@keyframes taglineFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- SEARCH LAYOUT (main + sidebar) ---------- */
+.search-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.search-sidebar { display: none; }
+@media (min-width: 980px) {
+  .search-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  .search-sidebar {
+    display: block;
+    position: sticky;
+    top: 90px;
+  }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-tagline { animation: none; }
+  .property-card { transition: none; }
+  .property-card:hover { transform: none; }
+  .btn-primary:hover,
+  .btn-dark:hover { transform: none; filter: none; }
+  .property-card:hover .property-image img { transform: none; }
+  .nav-link::after { transition: none; }
 }

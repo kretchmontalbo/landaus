@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
 import VerifiedBadge from '../components/VerifiedBadge.jsx'
+import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
 import { getFeatureFlag } from '../lib/featureFlags.js'
 
 export default function DashboardPage() {
@@ -170,7 +171,7 @@ export default function DashboardPage() {
                     <Link to={`/property/${p.id}`} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>View</Link>
                     <Link to={`/edit-property/${p.id}`} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>Edit</Link>
                     <button onClick={() => setBoostProperty(p)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13, color: '#B47B00' }}>
-                      ⭐ Boost
+                      ✨ Feature
                     </button>
                     <button onClick={() => toggleStatus(p.id, p.status)} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: 13 }}>
                       {p.status === 'active' ? 'Archive' : 'Activate'}
@@ -238,52 +239,7 @@ export default function DashboardPage() {
         </div>
       )}
       {boostProperty && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20
-        }}>
-          <div style={{
-            background: 'var(--white)', borderRadius: 'var(--radius-lg)',
-            padding: 32, maxWidth: 440, width: '100%'
-          }}>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: 8 }}>
-              ⭐ Boost this listing
-            </h3>
-            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 20, lineHeight: 1.6 }}>
-              Pin <strong>{boostProperty.title?.replace(/^\[DEMO\]\s*/, '')}</strong> to the top of search results and add a gold badge.
-            </p>
-
-            {boostEnabled ? (
-              <div style={{ display: 'grid', gap: 10 }}>
-                <button onClick={() => { console.log('[boost] $20/7d', boostProperty.id); alert('Payments coming soon!') }}
-                  className="btn btn-ghost btn-block" style={{ padding: 14, borderColor: '#F7C948' }}>
-                  <strong>$20</strong> · Featured for 7 days
-                </button>
-                <button onClick={() => { console.log('[boost] $50/30d', boostProperty.id); alert('Payments coming soon!') }}
-                  className="btn btn-dark btn-block" style={{ padding: 14 }}>
-                  <strong>$50</strong> · Featured for 30 days (best value)
-                </button>
-              </div>
-            ) : (
-              <div style={{
-                background: 'var(--mint-pale)', padding: 20, borderRadius: 10,
-                border: '1px solid var(--mint-deep)', textAlign: 'center'
-              }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>🚧</div>
-                <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: 6 }}>
-                  Coming soon
-                </strong>
-                <p style={{ fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-                  Paid boosts let you pin your listing to the top of search and add a gold "⭐ Featured" badge. We're finalising pricing — check back soon.
-                </p>
-              </div>
-            )}
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
-              <button onClick={() => setBoostProperty(null)} className="btn btn-ghost">Close</button>
-            </div>
-          </div>
-        </div>
+        <FeatureBoostModal property={boostProperty} onClose={() => setBoostProperty(null)} />
       )}
 
       {deleteModal && (

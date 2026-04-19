@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
+import AdSlot from '../components/AdSlot.jsx'
+import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -33,8 +35,13 @@ export default function SearchPage() {
 
     query = query.order('is_featured', { ascending: false, nullsFirst: false })
                  .order('created_at', { ascending: false })
-    const { data } = await query
-    setProperties(data || [])
+
+    const [{ data }, featuredIds] = await Promise.all([
+      query,
+      getActiveFeaturedIds()
+    ])
+    const merged = applyFeaturedMerge(data || [], featuredIds)
+    setProperties(merged)
     setLoading(false)
   }
 
@@ -44,6 +51,19 @@ export default function SearchPage() {
     else next.delete(key)
     setSearchParams(next)
   }
+
+  // Split cards with an inline ad every 8 cards
+  const cells = []
+  properties.forEach((p, i) => {
+    cells.push(<PropertyCard key={p.id} property={p} />)
+    if ((i + 1) % 8 === 0 && i !== properties.length - 1) {
+      cells.push(
+        <div key={`ad-${i}`} style={{ gridColumn: '1 / -1' }}>
+          <AdSlot layout="horizontal" />
+        </div>
+      )
+    }
+  })
 
   return (
     <section className="section">
@@ -102,28 +122,41 @@ export default function SearchPage() {
         </span>
       </div>
 
-      {loading ? (
-        <div className="property-grid">
-          {[1,2,3,4,5,6].map(i => (
-            <div key={i} className="property-card">
-              <div className="skeleton" style={{ aspectRatio: '4/3' }} />
-              <div style={{ padding: 20 }}>
-                <div className="skeleton" style={{ height: 24, width: '60%', marginBottom: 10 }} />
-                <div className="skeleton" style={{ height: 16, width: '80%' }} />
-              </div>
+      <p style={{
+        fontSize: 12, color: 'var(--ink-muted)', textAlign: 'right',
+        marginTop: -16, marginBottom: 16
+      }}>
+        ✨ Featured listings appear first
+      </p>
+
+      {/* 2-column layout on desktop: main grid + sticky sidebar ad */}
+      <div className="search-layout">
+        <div className="search-main">
+          {loading ? (
+            <div className="property-grid">
+              {[1,2,3,4,5,6].map(i => (
+                <div key={i} className="property-card">
+                  <div className="skeleton" style={{ aspectRatio: '4/3' }} />
+                  <div style={{ padding: 20 }}>
+                    <div className="skeleton" style={{ height: 24, width: '60%', marginBottom: 10 }} />
+                    <div className="skeleton" style={{ height: 16, width: '80%' }} />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : properties.length === 0 ? (
+            <div className="empty-state">
+              <h3>No properties match your search yet</h3>
+              <p>Try widening your filters — fresh listings come in every week.</p>
+            </div>
+          ) : (
+            <div className="property-grid">{cells}</div>
+          )}
         </div>
-      ) : properties.length === 0 ? (
-        <div className="empty-state">
-          <h3>No matches yet</h3>
-          <p>Try widening your filters — new listings come in daily.</p>
-        </div>
-      ) : (
-        <div className="property-grid">
-          {properties.map(p => <PropertyCard key={p.id} property={p} />)}
-        </div>
-      )}
+        <aside className="search-sidebar">
+          <AdSlot layout="sidebar" />
+        </aside>
+      </div>
     </section>
   )
 }

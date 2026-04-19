@@ -3,13 +3,17 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import ReportButton from '../components/ReportButton.jsx'
 import VerifiedBadge from '../components/VerifiedBadge.jsx'
+import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
+import { useAuth } from '../lib/auth.jsx'
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
+  const { user } = useAuth()
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [showFeatureModal, setShowFeatureModal] = useState(false)
   const [form, setForm] = useState({
     name: '', email: '', phone: '', message: '', move_in_date: ''
   })
@@ -74,6 +78,23 @@ export default function PropertyDetailPage() {
   return (
     <div className="detail-wrap">
       <Link to="/search" className="back-link">← Back to results</Link>
+
+      {user && property.owner_id === user.id && !property.is_featured && (
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 16, flexWrap: 'wrap',
+          background: 'var(--mint-pale)', border: '1px solid var(--mint-deep)',
+          padding: '14px 18px', borderRadius: 12, marginBottom: 18
+        }}>
+          <span style={{ fontSize: 14, color: 'var(--ink-soft)' }}>
+            This is your listing. Want more eyes on it?
+          </span>
+          <button onClick={() => setShowFeatureModal(true)} className="btn btn-dark"
+            style={{ padding: '8px 18px', fontSize: 13 }}>
+            ✨ Feature this listing
+          </button>
+        </div>
+      )}
 
       {isDemo && (
         <div style={{
@@ -221,13 +242,17 @@ export default function PropertyDetailPage() {
               disabled={submitting || isDemo}
               style={isDemo ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
-              {isDemo ? 'Inquiries available on real listings soon' : submitting ? 'Sending…' : 'Send inquiry →'}
+              {isDemo ? 'Inquiries available on real listings soon' : submitting ? 'Sending…' : 'Send my inquiry →'}
             </button>
           </form>
         </aside>
       </div>
 
       {toast && <div className="toast">{toast.text}</div>}
+
+      {showFeatureModal && (
+        <FeatureBoostModal property={property} onClose={() => setShowFeatureModal(false)} />
+      )}
     </div>
   )
 }

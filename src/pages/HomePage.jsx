@@ -2,6 +2,17 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
+import AdSlot from '../components/AdSlot.jsx'
+import AnimatedStat from '../components/AnimatedStat.jsx'
+import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
+
+const TAGLINES = [
+  'Find home, not rejection.',
+  'Yes-first rentals.',
+  'Built for the overlooked.',
+  "Your visa isn't a red flag.",
+  'Newcomer-friendly always.'
+]
 
 export default function HomePage() {
   const [properties, setProperties] = useState([])
@@ -10,21 +21,37 @@ export default function HomePage() {
   const [propertyType, setPropertyType] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [mode, setMode] = useState('rent')
+  const [taglineIdx, setTaglineIdx] = useState(0)
   const navigate = useNavigate()
 
   useEffect(() => {
     loadFeatured()
   }, [])
 
+  // Rotating tagline — respect prefers-reduced-motion
+  useEffect(() => {
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    const id = setInterval(() => {
+      setTaglineIdx(i => (i + 1) % TAGLINES.length)
+    }, 4000)
+    return () => clearInterval(id)
+  }, [])
+
   async function loadFeatured() {
     setLoading(true)
-    const { data } = await supabase
-      .from('properties')
-      .select('*, property_images(image_url, display_order), profiles(verified)')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(6)
-    setProperties(data || [])
+    const [{ data }, featuredIds] = await Promise.all([
+      supabase
+        .from('properties')
+        .select('*, property_images(image_url, display_order), profiles(verified)')
+        .eq('status', 'active')
+        .order('is_featured', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(6),
+      getActiveFeaturedIds()
+    ])
+    setProperties(applyFeaturedMerge(data || [], featuredIds))
     setLoading(false)
   }
 
@@ -46,6 +73,13 @@ export default function HomePage() {
           <h1 className="hero-title">
             Find home, <em>not rejection.</em>
           </h1>
+          <div
+            className="hero-tagline"
+            key={taglineIdx}
+            aria-live="polite"
+          >
+            {TAGLINES[taglineIdx]}
+          </div>
           <p className="hero-sub">
             Australia's rental portal built for immigrants, students, and newcomers.
             Skip the "no rental history" barrier and connect with landlords who welcome you.
@@ -112,7 +146,7 @@ export default function HomePage() {
 
           <div className="stat-strip">
             <div className="stat">
-              <div className="stat-num">100%</div>
+              <div className="stat-num"><AnimatedStat to={100} suffix="%" /></div>
               <div className="stat-lbl">Yes-first listings</div>
             </div>
             <div className="stat">
@@ -153,8 +187,8 @@ export default function HomePage() {
           </div>
         ) : properties.length === 0 ? (
           <div className="empty-state">
-            <h3>No properties yet</h3>
-            <p>Be the first to list a home for newcomers.</p>
+            <h3>No listings live yet — but soon</h3>
+            <p>We're hand-onboarding our first landlords now. Be the first to list a home for newcomers.</p>
           </div>
         ) : (
           <div className="property-grid">
@@ -198,6 +232,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 48px', display: 'flex', justifyContent: 'center' }}>
+        <AdSlot layout="horizontal" />
+      </div>
     </>
   )
 }

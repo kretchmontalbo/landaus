@@ -56,7 +56,7 @@ export default function ContactPage() {
               value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
           </div>
           <button type="submit" className="btn btn-dark btn-block" disabled={submitting}>
-            {submitting ? 'Sending…' : 'Send message →'}
+            {submitting ? 'Sending…' : 'Send my message →'}
           </button>
         </form>
       </div>

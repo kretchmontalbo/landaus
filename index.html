@@ -16,6 +16,15 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="LandAus — Find home, not rejection." />
     <meta name="twitter:description" content="Australia's rental portal for newcomers. No rental history required." />
+
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('landaus-theme');
+          if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
