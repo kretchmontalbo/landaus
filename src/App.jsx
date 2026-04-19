@@ -20,6 +20,7 @@ import AboutPage from './pages/AboutPage.jsx'
 import ForLandlordsPage from './pages/ForLandlordsPage.jsx'
 import ForTenantsPage from './pages/ForTenantsPage.jsx'
 import AdvertisePage from './pages/AdvertisePage.jsx'
+import AffordabilityPage from './pages/AffordabilityPage.jsx'
 import ContactPage from './pages/ContactPage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import EmailConfirmedPage from './pages/EmailConfirmedPage.jsx'
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/for-landlords" element={<ForLandlordsPage />} />
           <Route path="/for-tenants" element={<ForTenantsPage />} />
           <Route path="/advertise" element={<AdvertisePage />} />
+          <Route path="/affordability" element={<AffordabilityPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/auth/confirmed" element={<EmailConfirmedPage />} />

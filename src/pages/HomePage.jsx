@@ -362,7 +362,7 @@ function NumbersSection({ activeCount, suburbCount }) {
         </div>
 
         <div ref={cRef} className={`numbers-block reveal ${cShown ? 'revealed' : ''}`} style={{ transitionDelay: '200ms' }}>
-          <div className="numbers-value">6</div>
+          <div className="numbers-value">8</div>
           <div className="numbers-label">States + territories</div>
           <div className="numbers-note">Every corner of Australia.</div>
         </div>

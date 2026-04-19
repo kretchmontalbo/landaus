@@ -316,6 +316,7 @@ function Footer() {
             <h4>For Renters</h4>
             <Link to="/search">Find a home</Link>
             <Link to="/suburbs">Suburb Guides</Link>
+            <Link to="/affordability">Affordability calculator</Link>
             <Link to="/signup">Sign up</Link>
             <Link to="/for-tenants">How it works</Link>
           </div>

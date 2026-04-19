@@ -34,6 +34,9 @@ export default function ForTenantsPage() {
             <Link to="/search" className="btn btn-dark" style={{ padding: '14px 28px', fontSize: 15 }}>
               Start browsing homes →
             </Link>
+            <Link to="/affordability" className="btn btn-ghost" style={{ padding: '14px 28px', fontSize: 15, background: 'var(--white)' }}>
+              Calculate what I can afford →
+            </Link>
           </div>
           <p style={{ fontSize: 14, color: 'var(--ink-soft)' }}>
             <Link to="/signup" style={{ color: 'var(--accent)', fontWeight: 600 }}>Create free account</Link>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
 import { getFeatureFlag } from '../lib/featureFlags.js'
+import { useScrollReveal } from '../hooks/useScrollReveal.js'
 
 export default function PricingPage() {
   const { user } = useAuth()
@@ -136,6 +137,7 @@ export default function PricingPage() {
 }
 
 function PlanCard({ plan, enabled, onSubscribe, onJoinWaitlist }) {
+  const [ref, shown] = useScrollReveal()
   const features = Array.isArray(plan.features) ? plan.features
     : typeof plan.features === 'string' ? plan.features.split(/\n/).filter(Boolean)
     : []
@@ -143,10 +145,13 @@ function PlanCard({ plan, enabled, onSubscribe, onJoinWaitlist }) {
   const highlighted = plan.is_popular || plan.highlighted
 
   return (
-    <div style={{
+    <div ref={ref} style={{
       position: 'relative', background: 'var(--white)',
       border: highlighted ? '2px solid var(--accent)' : '1px solid var(--line)',
-      borderRadius: 'var(--radius-lg)', padding: 28, overflow: 'hidden'
+      borderRadius: 'var(--radius-lg)', padding: 28, overflow: 'hidden',
+      opacity: shown ? 1 : 0,
+      transform: shown ? 'scale(1)' : 'scale(0.95)',
+      transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
     }}>
       {highlighted && (
         <div style={{
