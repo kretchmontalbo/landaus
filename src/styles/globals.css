@@ -79,8 +79,13 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
+  pointer-events: auto;
+  isolation: isolate;
 }
+.nav .nav-inner,
+.nav a,
+.nav button { pointer-events: auto; }
 .nav-inner {
   max-width: 1280px;
   margin: 0 auto;
@@ -910,10 +915,12 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
   box-shadow: -12px 0 40px rgba(10, 37, 64, 0.18);
   visibility: hidden;
+  pointer-events: none;
 }
 .mobile-drawer.is-open {
   transform: translateX(0);
   visibility: visible;
+  pointer-events: auto;
 }
 .mobile-drawer-head {
   display: flex;
@@ -1027,7 +1034,7 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 }
 
 /* ---------- CINEMATIC HERO / AURORA ---------- */
-.hero-cinematic { position: relative; overflow: hidden; }
+.hero-cinematic { position: relative; overflow: hidden; isolation: isolate; }
 .aurora {
   position: absolute;
   border-radius: 50%;
@@ -1035,7 +1042,9 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   opacity: 0.7;
   pointer-events: none;
   will-change: transform;
+  z-index: 0;
 }
+.hero-cinematic .hero-inner { position: relative; z-index: 1; }
 .aurora-a {
   width: 520px; height: 520px;
   background: radial-gradient(circle, rgba(178, 252, 228, 0.9), transparent 65%);
@@ -1068,11 +1077,11 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   transform: translateY(20px);
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
 }
 .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
+  will-change: auto;
 }
 .reveal-left {
   transform: translateX(-24px);
@@ -1371,7 +1380,10 @@ a:hover .brand-arrow { transform: translateX(3px); }
 
 .map-wrap {
   flex: 1; min-width: 0; position: relative;
+  isolation: isolate;
 }
+/* Leaflet's internal panes top out at z-index 800 — our nav is at 1000.
+   isolation: isolate on .map-wrap pins the Leaflet stack inside the map. */
 .map-info-pill {
   position: absolute;
   top: 16px; left: 50%; transform: translateX(-50%);
