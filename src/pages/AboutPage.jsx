@@ -97,6 +97,34 @@ export default function AboutPage() {
         </p>
       </section>
 
+      {/* Landlord callout */}
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px' }}>
+        <div style={{
+          background: 'var(--mint-soft)',
+          border: '1px solid var(--mint)',
+          borderRadius: '12px',
+          padding: '24px',
+          margin: '32px 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px',
+          flexWrap: 'wrap'
+        }}>
+          <div>
+            <p style={{ margin: 0, fontWeight: 600, color: 'var(--ink)' }}>
+              👋 Are you a landlord?
+            </p>
+            <p style={{ margin: '4px 0 0', color: 'var(--ink-soft)', fontSize: '14px' }}>
+              We built this especially for you too. See how LandAus fills your vacancies faster.
+            </p>
+          </div>
+          <Link to="/for-landlords" className="btn btn-dark" style={{ flexShrink: 0 }}>
+            Learn more →
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',
