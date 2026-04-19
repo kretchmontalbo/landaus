@@ -5,6 +5,7 @@ import ReportButton from '../components/ReportButton.jsx'
 import VerifiedBadge from '../components/VerifiedBadge.jsx'
 import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
 import { useAuth } from '../lib/auth.jsx'
+import { trackView } from '../lib/recentViews.js'
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
@@ -18,7 +19,7 @@ export default function PropertyDetailPage() {
     name: '', email: '', phone: '', message: '', move_in_date: ''
   })
 
-  useEffect(() => { load() }, [id])
+  useEffect(() => { load(); trackView(id) }, [id])
 
   async function load() {
     setLoading(true)

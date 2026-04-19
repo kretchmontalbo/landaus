@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
 import AnimatedStat from '../components/AnimatedStat.jsx'
+import Arrow from '../components/Arrow.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
+import { useReveal } from '../lib/useReveal.js'
 
 const TAGLINES = [
   'Find home, not rejection.',
@@ -22,11 +24,45 @@ export default function HomePage() {
   const [maxPrice, setMaxPrice] = useState('')
   const [mode, setMode] = useState('rent')
   const [taglineIdx, setTaglineIdx] = useState(0)
+  const [activeCount, setActiveCount] = useState(null)
+  const [suburbCount, setSuburbCount] = useState(null)
+  const heroInnerRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     loadFeatured()
+    loadCounts()
   }, [])
+
+  // Parallax on hero content
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    let ticking = false
+    function onScroll() {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        if (heroInnerRef.current) {
+          const y = window.scrollY * -0.3
+          heroInnerRef.current.style.transform = `translate3d(0, ${y}px, 0)`
+        }
+        ticking = false
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  async function loadCounts() {
+    const [activeRes, suburbRes] = await Promise.all([
+      supabase.from('properties').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase.from('suburb_guides').select('id', { count: 'exact', head: true })
+    ])
+    setActiveCount(activeRes.count ?? 0)
+    setSuburbCount(suburbRes.count ?? 0)
+  }
 
   // Rotating tagline — respect prefers-reduced-motion
   useEffect(() => {
@@ -67,8 +103,11 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-inner">
+      <section className="hero hero-cinematic">
+        <span className="aurora aurora-a" aria-hidden="true" />
+        <span className="aurora aurora-b" aria-hidden="true" />
+        <span className="aurora aurora-c" aria-hidden="true" />
+        <div className="hero-inner" ref={heroInnerRef}>
           <span className="eyebrow">🌍 Australia's rental platform for tenants without local rental history</span>
           <h1 className="hero-title">
             Find home, <em>not rejection.</em>
@@ -161,6 +200,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <TrustStrip />
+
       <section className="section">
         <div className="section-head">
           <div>
@@ -170,7 +211,7 @@ export default function HomePage() {
           <button
             className="btn btn-ghost"
             onClick={() => navigate('/search')}
-          >View all →</button>
+          >View all<Arrow /></button>
         </div>
 
         {loading ? (
@@ -192,7 +233,11 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="property-grid">
-            {properties.map(p => <PropertyCard key={p.id} property={p} />)}
+            {properties.map((p, i) => (
+              <RevealCard key={p.id} delay={i * 90}>
+                <PropertyCard property={p} />
+              </RevealCard>
+            ))}
           </div>
         )}
       </section>
@@ -233,9 +278,128 @@ export default function HomePage() {
         </div>
       </section>
 
+      <NumbersSection activeCount={activeCount} suburbCount={suburbCount} />
+
+      <FinalCta />
+
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px 48px', display: 'flex', justifyContent: 'center' }}>
         <AdSlot layout="horizontal" />
       </div>
     </>
+  )
+}
+
+/* ---------- Reveal wrapper ---------- */
+function RevealCard({ children, delay = 0 }) {
+  const [ref, shown] = useReveal()
+  return (
+    <div ref={ref} className={`reveal ${shown ? 'revealed' : ''}`} style={{ transitionDelay: `${delay}ms` }}>
+      {children}
+    </div>
+  )
+}
+
+/* ---------- Trust strip ---------- */
+const TRUST_ITEMS = [
+  { icon: '🛡', label: 'ID-verified landlords only' },
+  { icon: '💚', label: 'Free forever for tenants' },
+  { icon: '🏡', label: 'Hand-reviewed listings' },
+  { icon: '🇦🇺', label: 'Built and hosted in Sydney' },
+  { icon: '⭐', label: 'New to Australia? Welcome home.' },
+  { icon: '🔒', label: 'Bank-grade encryption' },
+  { icon: '🌍', label: 'Multilingual support' }
+]
+
+function TrustStrip() {
+  return (
+    <section className="trust-strip" aria-label="Why LandAus is trustworthy">
+      <div className="trust-strip-track">
+        {[...TRUST_ITEMS, ...TRUST_ITEMS].map((t, i) => (
+          <span key={i} className="trust-item">
+            <span className="trust-icon">{t.icon}</span>
+            <span>{t.label}</span>
+            <span className="trust-dot" aria-hidden="true" />
+          </span>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Numbers section ---------- */
+function NumbersSection({ activeCount, suburbCount }) {
+  const [headRef, headShown] = useReveal()
+  const [aRef, aShown] = useReveal()
+  const [bRef, bShown] = useReveal()
+  const [cRef, cShown] = useReveal()
+
+  return (
+    <section className="numbers-section">
+      <div ref={headRef} className={`reveal reveal-left ${headShown ? 'revealed' : ''}`} style={{ textAlign: 'center', marginBottom: 48 }}>
+        <h2 className="numbers-h">
+          The numbers behind the <em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 500 }}>mission.</em>
+        </h2>
+        <p className="numbers-sub">We're just getting started — here's what we're tracking.</p>
+      </div>
+
+      <div className="numbers-grid">
+        <div ref={aRef} className={`numbers-block reveal ${aShown ? 'revealed' : ''}`}>
+          <div className="numbers-value">
+            {activeCount != null ? <AnimatedStat to={activeCount} /> : '—'}
+          </div>
+          <div className="numbers-label">Active listings</div>
+          <div className="numbers-note">
+            {activeCount != null ? `${activeCount} live, growing weekly.` : 'Counting live listings…'}
+          </div>
+        </div>
+
+        <div ref={bRef} className={`numbers-block reveal ${bShown ? 'revealed' : ''}`} style={{ transitionDelay: '100ms' }}>
+          <div className="numbers-value">
+            {suburbCount != null ? <AnimatedStat to={suburbCount} /> : '—'}
+          </div>
+          <div className="numbers-label">Suburbs covered</div>
+          <div className="numbers-note">Honest, newcomer-focused guides.</div>
+        </div>
+
+        <div ref={cRef} className={`numbers-block reveal ${cShown ? 'revealed' : ''}`} style={{ transitionDelay: '200ms' }}>
+          <div className="numbers-value">6</div>
+          <div className="numbers-label">States + territories</div>
+          <div className="numbers-note">Every corner of Australia.</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- Final CTA ---------- */
+function FinalCta() {
+  return (
+    <section className="final-cta">
+      <div className="particles" aria-hidden="true">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <span key={i} className="particle" style={{
+            left: `${(i * 7 + 4) % 100}%`,
+            animationDelay: `${(i * 1.3) % 20}s`,
+            animationDuration: `${18 + (i % 6) * 2}s`,
+            width: `${4 + (i % 3) * 2}px`,
+            height: `${4 + (i % 3) * 2}px`
+          }} />
+        ))}
+      </div>
+      <div className="final-cta-inner">
+        <h2 className="final-cta-title">
+          Ready to find <em style={{ fontStyle: 'italic', color: 'var(--mint)', fontWeight: 500 }}>home?</em>
+        </h2>
+        <p className="final-cta-sub">
+          Create your free profile in 60 seconds. No credit card. No catch.
+        </p>
+        <Link to="/signup" className="btn btn-cta-xl">
+          Create free account<Arrow size={18} />
+        </Link>
+        <p className="final-cta-foot">
+          Are you a landlord? <Link to="/for-landlords" style={{ color: 'var(--mint)', fontWeight: 600 }}>List for free</Link>
+        </p>
+      </div>
+    </section>
   )
 }

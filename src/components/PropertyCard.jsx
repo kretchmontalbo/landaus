@@ -1,17 +1,63 @@
 import { Link } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
 import VerifiedBadge from './VerifiedBadge.jsx'
+import { hasBeenViewed } from '../lib/recentViews.js'
 
-export default function PropertyCard({ property }) {
-  const img = property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800'
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800'
+
+export default function PropertyCard({ property, style }) {
+  const images = property.property_images?.length
+    ? property.property_images
+        .slice()
+        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+        .map(i => i.image_url)
+    : [FALLBACK_IMG]
+
+  const [idx, setIdx] = useState(0)
+  const [hover, setHover] = useState(false)
   const isDemo = property.title?.startsWith('[DEMO]')
   const isFeatured = !!property.is_featured
   const displayTitle = isDemo ? property.title.replace(/^\[DEMO\]\s*/, '') : property.title
+  const verified = property.profiles?.verified || property.profiles?.verification_status === 'approved'
+
+  const [isViewed, setIsViewed] = useState(false)
+  useEffect(() => { setIsViewed(hasBeenViewed(property.id)) }, [property.id])
+
+  // Auto-slideshow — pause on hover, respect reduced motion
+  useEffect(() => {
+    if (images.length < 2 || hover) return
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    const t = setInterval(() => setIdx(i => (i + 1) % images.length), 4000)
+    return () => clearInterval(t)
+  }, [images.length, hover])
 
   return (
-    <Link to={`/property/${property.id}`} className="property-card"
-      style={isFeatured ? { border: '2px solid #F7C948', boxShadow: '0 4px 16px rgba(247, 201, 72, 0.2)' } : {}}>
+    <Link
+      to={`/property/${property.id}`}
+      className="property-card"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={isFeatured
+        ? { border: '2px solid #F7C948', boxShadow: '0 4px 16px rgba(247, 201, 72, 0.2)', ...style }
+        : style}
+    >
       <div className="property-image">
-        <img src={img} alt={displayTitle} />
+        {images.map((src, i) => (
+          <img
+            key={`${src}-${i}`}
+            src={src}
+            alt={displayTitle}
+            style={{
+              position: i === 0 ? 'relative' : 'absolute',
+              inset: 0,
+              opacity: i === idx ? 1 : 0,
+              transition: 'opacity 0.7s ease'
+            }}
+          />
+        ))}
+
         {isFeatured && (
           <span style={{
             position: 'absolute', top: 14, right: 56,
@@ -30,6 +76,38 @@ export default function PropertyCard({ property }) {
         {property.newcomer_friendly && (
           <span className="property-badge">✨ Newcomer friendly</span>
         )}
+        {verified && (
+          <span className="property-verified-shield" title="ID-verified landlord" aria-label="ID-verified landlord">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+          </span>
+        )}
+        {isViewed && (
+          <span
+            className="property-recent-pulse"
+            title="You recently viewed this"
+            aria-label="Recently viewed"
+          />
+        )}
+
+        {/* slideshow dots */}
+        {images.length > 1 && (
+          <div style={{
+            position: 'absolute', bottom: 10, left: 0, right: 0,
+            display: 'flex', gap: 4, justifyContent: 'center', zIndex: 2
+          }}>
+            {images.map((_, i) => (
+              <span key={i} style={{
+                width: 6, height: 6, borderRadius: '50%',
+                background: i === idx ? 'white' : 'rgba(255,255,255,0.55)',
+                transition: 'background 0.25s'
+              }} />
+            ))}
+          </div>
+        )}
+
         <button
           className="property-save"
           onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
@@ -43,7 +121,7 @@ export default function PropertyCard({ property }) {
       <div className="property-body">
         <div className="property-price" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span>${property.price_per_week}<small> / week</small></span>
-          {property.profiles?.verified && <VerifiedBadge size={16} />}
+          {verified && <VerifiedBadge size={16} />}
         </div>
         <div className="property-address">
           {displayTitle}<br />
