@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
+import SecuritySection from '../components/SecuritySection.jsx'
 
 export default function AccountSettingsPage() {
   const { user, profile, updateProfile, signOut } = useAuth()
@@ -29,59 +30,69 @@ export default function AccountSettingsPage() {
 
   async function handleDownloadData() {
     setDownloading(true)
-    const [profileRes, propsRes, inqsRes, savedRes] = await Promise.all([
-      supabase.from('profiles').select('*').eq('id', user.id).single(),
-      supabase.from('properties').select('*, property_images(image_url)').eq('owner_id', user.id),
-      supabase.from('inquiries').select('*').or(`tenant_id.eq.${user.id},email.eq.${user.email}`),
-      supabase.from('saved_properties').select('*').eq('user_id', user.id)
-    ])
+    let data
 
-    const data = {
-      exported_at: new Date().toISOString(),
-      profile: profileRes.data,
-      properties: propsRes.data || [],
-      inquiries: inqsRes.data || [],
-      saved_properties: savedRes.data || []
+    // Preferred: server-side export RPC (respects retention rules and hides soft-deleted rows)
+    const rpc = await supabase.rpc('export_user_data', { p_user_id: user.id })
+    if (rpc.data && !rpc.error) {
+      data = rpc.data
+    } else {
+      // Fallback: client-side assemble
+      const [profileRes, propsRes, inqsRes, savedRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user.id).single(),
+        supabase.from('properties').select('*, property_images(image_url)').eq('owner_id', user.id),
+        supabase.from('inquiries').select('*').or(`tenant_id.eq.${user.id},email.eq.${user.email}`),
+        supabase.from('saved_properties').select('*').eq('user_id', user.id)
+      ])
+      data = {
+        exported_at: new Date().toISOString(),
+        profile: profileRes.data,
+        properties: propsRes.data || [],
+        inquiries: inqsRes.data || [],
+        saved_properties: savedRes.data || []
+      }
     }
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `landaus-my-data-${new Date().toISOString().split('T')[0]}.json`
+    a.download = `landaus-data-export-${user.id}-${new Date().toISOString().split('T')[0]}.json`
     a.click()
     URL.revokeObjectURL(url)
     setDownloading(false)
-    showToast('✓ Data downloaded!')
+    showToast('✓ Data downloaded. Everything we have on file is in that file.')
   }
 
   async function handleDeleteAccount() {
     if (deleteConfirm !== 'DELETE') return
     setDeleting(true)
 
-    const { data: userProps } = await supabase
-      .from('properties')
-      .select('id, property_images(image_url)')
-      .eq('owner_id', user.id)
-
-    if (userProps?.length > 0) {
-      const allPaths = userProps.flatMap(p =>
-        (p.property_images || []).map(img => {
-          try { return new URL(img.image_url).pathname.split('/property-images/')[1] } catch { return null }
-        }).filter(Boolean)
-      )
-      if (allPaths.length > 0) await supabase.storage.from('property-images').remove(allPaths)
-      await supabase.from('properties').delete().eq('owner_id', user.id)
+    // Preferred: soft-delete + 30-day grace RPC
+    const rpc = await supabase.rpc('request_account_deletion')
+    if (rpc.error) {
+      // Fallback: legacy client-side hard delete
+      const { data: userProps } = await supabase
+        .from('properties')
+        .select('id, property_images(image_url)')
+        .eq('owner_id', user.id)
+      if (userProps?.length > 0) {
+        const allPaths = userProps.flatMap(p =>
+          (p.property_images || []).map(img => {
+            try { return new URL(img.image_url).pathname.split('/property-images/')[1] } catch { return null }
+          }).filter(Boolean)
+        )
+        if (allPaths.length > 0) await supabase.storage.from('property-images').remove(allPaths)
+        await supabase.from('properties').delete().eq('owner_id', user.id)
+      }
+      await supabase.from('saved_properties').delete().eq('user_id', user.id)
+      await supabase.from('inquiries').delete().eq('tenant_id', user.id)
+      await supabase.from('profiles').delete().eq('id', user.id)
+      try { await supabase.rpc('delete_user_account') } catch {}
     }
 
-    await supabase.from('saved_properties').delete().eq('user_id', user.id)
-    await supabase.from('inquiries').delete().eq('tenant_id', user.id)
-    await supabase.from('profiles').delete().eq('id', user.id)
     await signOut()
-
-    try { await supabase.rpc('delete_user_account') } catch {}
-
-    navigate('/')
+    navigate('/?deleted=1')
   }
 
   function showToast(text) {
@@ -116,6 +127,9 @@ export default function AccountSettingsPage() {
           </button>
         </form>
       </div>
+
+      {/* Section A2: Security (password + 2FA) */}
+      <SecuritySection onToast={showToast} />
 
       {/* Section B: Download Data */}
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)', padding: 28, marginBottom: 24 }}>
@@ -152,8 +166,18 @@ export default function AccountSettingsPage() {
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: 12, color: '#B91C1C' }}>
               Are you sure?
             </h3>
-            <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, marginBottom: 16 }}>
-              This will permanently delete your account, all your listings, photos, inquiries sent, and saved properties. Type <strong>DELETE</strong> to confirm.
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.65, marginBottom: 16 }}>
+              This will:
+            </p>
+            <ul style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.65, paddingLeft: 18, marginBottom: 14 }}>
+              <li>Hide your profile immediately</li>
+              <li>Delete your verification documents</li>
+              <li>Mark your listings as deleted</li>
+              <li>Permanently erase all your data after a <strong>30-day grace period</strong></li>
+            </ul>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.65, marginBottom: 16 }}>
+              During the grace period, email <a href="mailto:support@landaus.com.au" style={{ color: 'var(--accent)', fontWeight: 600 }}>support@landaus.com.au</a> if you change your mind.
+              Type <strong>DELETE</strong> to confirm.
             </p>
             <div className="form-field">
               <input

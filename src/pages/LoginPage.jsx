@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../lib/auth.jsx'
 import PasswordInput from '../components/PasswordInput.jsx'
 import { isValidEmail } from '../lib/validation.js'
@@ -11,6 +11,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const resetSuccess = params.get('reset') === 'success'
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -46,6 +48,15 @@ export default function LoginPage() {
           <p style={{ color: 'var(--ink-soft)', fontSize: 15 }}>Log in to manage your listings</p>
         </div>
 
+        {resetSuccess && (
+          <div style={{
+            background: 'var(--mint-soft)', color: 'var(--accent)',
+            padding: 12, borderRadius: 10, fontSize: 14, marginBottom: 16, textAlign: 'center',
+            border: '1px solid var(--mint-deep)'
+          }}>
+            ✓ Password updated successfully. Please sign in.
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="form-field">
             <label>Email</label>

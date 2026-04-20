@@ -2,6 +2,7 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../lib/auth.jsx'
 import { getTheme, toggleTheme } from '../lib/theme.js'
+import SessionTimeoutWatcher from './SessionTimeoutWatcher.jsx'
 
 export default function Layout() {
   return (
@@ -9,6 +10,7 @@ export default function Layout() {
       <Nav />
       <main><Outlet /></main>
       <Footer />
+      <SessionTimeoutWatcher />
     </>
   )
 }

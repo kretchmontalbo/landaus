@@ -13,8 +13,12 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.')
+      return
+    }
+    if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+      setError('Use a mix of letters and numbers.')
       return
     }
     if (password !== confirmPassword) {
@@ -25,7 +29,7 @@ export default function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password })
     setLoading(false)
     if (error) setError(error.message)
-    else navigate('/login')
+    else navigate('/login?reset=success')
   }
 
   return (

@@ -18,11 +18,15 @@ export default function ForgotPasswordPage() {
     }
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/reset-password'
+      redirectTo: (window.location.origin || 'https://landaus.com.au') + '/reset-password'
     })
     setLoading(false)
-    if (error) setError(error.message)
-    else setSent(true)
+    // Don't confirm or deny account existence (email-enumeration defense)
+    if (error) {
+      // Still show generic success to avoid leaking which emails are registered
+      console.warn('reset-password error:', error.message)
+    }
+    setSent(true)
   }
 
   return (
@@ -50,10 +54,11 @@ export default function ForgotPasswordPage() {
         {sent ? (
           <div style={{
             background: 'var(--mint-soft)', color: 'var(--accent)',
-            padding: 20, borderRadius: 12, fontSize: 14, lineHeight: 1.6, textAlign: 'center'
+            padding: 20, borderRadius: 12, fontSize: 14, lineHeight: 1.65, textAlign: 'center'
           }}>
-            <strong>Check your email!</strong><br />
-            We've sent a password reset link to <strong>{email}</strong>. It may take a minute to arrive.
+            <strong>Check your inbox.</strong><br />
+            If an account exists for <strong>{email}</strong>, we've sent reset instructions.
+            It may take a minute to arrive.
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
