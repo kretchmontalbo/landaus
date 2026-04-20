@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import ModeTabs from '../components/ModeTabs.jsx'
+import SEO from '../components/SEO.jsx'
 
 export default function SuburbGuidesPage() {
   const [guides, setGuides] = useState([])
@@ -21,6 +22,11 @@ export default function SuburbGuidesPage() {
 
   return (
     <>
+      <SEO
+        title="Australian suburb guides for newcomers"
+        description="Honest guides covering transport, safety, community, halal and Asian grocery access — what it's actually like to live there."
+        path="/suburbs"
+      />
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft), var(--mint))',
         padding: '48px 20px 48px', textAlign: 'center'

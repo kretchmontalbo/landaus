@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import Arrow from '../components/Arrow.jsx'
+import SEO from '../components/SEO.jsx'
 
 const ALL_STATES = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT']
 
@@ -65,6 +66,11 @@ export default function AffordabilityPage() {
 
   return (
     <>
+      <SEO
+        title="Rental affordability calculator"
+        description="Enter your income and we'll show you which Australian suburbs fit your budget. Free tool by LandAus."
+        path="/affordability"
+      />
       {/* HERO */}
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',

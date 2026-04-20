@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
+import { useFocusTrap } from '../lib/useFocusTrap.js'
 
 const REASONS = [
   { value: 'scam_fraud', label: 'Scam or fraud' },
@@ -24,6 +25,7 @@ const HEADINGS = {
 
 export default function ReportModal({ targetType, targetId, onClose }) {
   const { user, profile } = useAuth()
+  const trapRef = useFocusTrap({ active: true, onEscape: onClose })
   const [reason, setReason] = useState('')
   const [details, setDetails] = useState('')
   const [name, setName] = useState(profile?.full_name || '')
@@ -63,15 +65,25 @@ export default function ReportModal({ targetType, targetId, onClose }) {
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-      display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20
-    }}>
-      <div style={{
-        background: 'var(--white)', borderRadius: 'var(--radius-lg)',
-        padding: 32, maxWidth: 520, width: '100%', boxShadow: 'var(--shadow-lg)',
-        maxHeight: '90vh', overflowY: 'auto'
-      }}>
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+        display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20
+      }}
+    >
+      <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Report"
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: 'var(--white)', borderRadius: 'var(--radius-lg)',
+          padding: 32, maxWidth: 520, width: '100%', boxShadow: 'var(--shadow-lg)',
+          maxHeight: '90vh', overflowY: 'auto'
+        }}
+      >
         {success ? (
           <div style={{ textAlign: 'center', padding: 20 }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🛡️</div>

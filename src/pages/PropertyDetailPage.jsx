@@ -243,8 +243,15 @@ export default function PropertyDetailPage() {
               disabled={submitting || isDemo}
               style={isDemo ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
-              {isDemo ? 'Inquiries available on real listings soon' : submitting ? 'Sending…' : 'Send my inquiry →'}
+              {isDemo ? 'Sample listing — inquiries not available' : submitting ? 'Sending…' : 'Send my inquiry →'}
             </button>
+            {isDemo && (
+              <p style={{ fontSize: 13, color: 'var(--ink-soft)', textAlign: 'center', marginTop: 12, lineHeight: 1.55 }}>
+                Want similar homes? <Link to="/for-tenants" style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                  Get notified when real listings launch →
+                </Link>
+              </p>
+            )}
           </form>
         </aside>
       </div>

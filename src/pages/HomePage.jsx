@@ -6,6 +6,8 @@ import AdSlot from '../components/AdSlot.jsx'
 import AnimatedStat from '../components/AnimatedStat.jsx'
 import Arrow from '../components/Arrow.jsx'
 import ModeTabs from '../components/ModeTabs.jsx'
+import SEO from '../components/SEO.jsx'
+import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 import { useReveal } from '../lib/useReveal.js'
 
@@ -106,6 +108,11 @@ export default function HomePage() {
 
   return (
     <>
+      <SEO
+        title="Australia's rental platform for newcomers"
+        description="Find a home without rental history barriers. LandAus connects immigrants, students, and newcomers with landlords who welcome everyone."
+        path="/"
+      />
       <section className="hero hero-cinematic">
         <span className="aurora aurora-a" aria-hidden="true" />
         <span className="aurora aurora-b" aria-hidden="true" />
@@ -154,11 +161,10 @@ export default function HomePage() {
             <div className="search-input-group">
               <div style={{ flex: 1 }}>
                 <label>Suburb</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Parramatta"
+                <SuburbAutocomplete
                   value={suburb}
                   onChange={(e) => setSuburb(e.target.value)}
+                  onPickState={(s) => setStateFilter(s)}
                 />
               </div>
             </div>

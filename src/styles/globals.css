@@ -95,6 +95,25 @@
 /* Trust strip dots and icons stay mint */
 [data-theme="dark"] .trust-dot { background: var(--accent); }
 
+/* Input placeholders readable on dark */
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] select:invalid {
+  color: var(--ink-muted);
+  opacity: 1;
+}
+
+/* Footer links on dark — var(--ink-soft) is now #B8CBD6, hover uses ink */
+[data-theme="dark"] .footer a { color: var(--ink-soft); }
+[data-theme="dark"] .footer a:hover { color: var(--ink); }
+
+/* Toast — already dark ink background, but bump on dark to stand out */
+[data-theme="dark"] .toast { background: var(--mint); color: #0A2540; }
+
+/* Empty state headings on dark */
+[data-theme="dark"] .empty-state h3 { color: var(--ink); }
+[data-theme="dark"] .empty-state p { color: var(--ink-soft); }
+
 /* Links rendered via inline color: var(--accent) now resolve to brighter mint */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1474,6 +1493,22 @@ a:hover .brand-arrow { transform: translateX(3px); }
 
 /* Custom map pins (Leaflet divIcon) */
 .landaus-marker { background: transparent !important; border: none !important; }
+.landaus-cluster { background: transparent !important; border: none !important; }
+.map-cluster {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(143, 233, 204, 0.95);
+  color: #0A2540;
+  display: grid; place-items: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 14px;
+  border: 3px solid rgba(11, 93, 59, 0.9);
+  box-shadow: 0 4px 12px rgba(10, 37, 64, 0.25);
+}
+/* Override default leaflet.markercluster bubbles since we use divIcon above */
+.leaflet-cluster-anim .leaflet-marker-icon,
+.leaflet-cluster-anim .leaflet-marker-shadow { transition: transform 0.25s ease-out; }
 .map-pin {
   width: 32px; height: 40px;
   position: relative;

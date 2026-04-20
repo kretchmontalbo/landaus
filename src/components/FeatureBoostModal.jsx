@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
+import { useFocusTrap } from '../lib/useFocusTrap.js'
 
 const TIERS = [
   { key: '7d', days: 7, price: 29, label: '7 days', save: null, highlight: false },
@@ -12,6 +13,7 @@ export default function FeatureBoostModal({ property, onClose }) {
   const { user } = useAuth()
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
+  const trapRef = useFocusTrap({ active: true, onEscape: onClose })
 
   async function handleSelect(tier) {
     setSelected(tier)
@@ -35,6 +37,10 @@ export default function FeatureBoostModal({ property, onClose }) {
       }}
     >
       <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Feature this listing"
         onClick={e => e.stopPropagation()}
         style={{
           background: 'var(--white)', borderRadius: 'var(--radius-lg)',

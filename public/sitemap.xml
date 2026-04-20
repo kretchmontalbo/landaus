@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://landaus.com.au/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://landaus.com.au/search</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://landaus.com.au/map</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://landaus.com.au/affordability</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://landaus.com.au/suburbs</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://landaus.com.au/for-landlords</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://landaus.com.au/for-tenants</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://landaus.com.au/advertise</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://landaus.com.au/about</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://landaus.com.au/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://landaus.com.au/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://landaus.com.au/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+</urlset>

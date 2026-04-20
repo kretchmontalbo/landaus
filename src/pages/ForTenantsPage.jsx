@@ -1,9 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO.jsx'
 
 export default function ForTenantsPage() {
   return (
     <>
+      <SEO
+        title="Find welcoming rentals in Australia"
+        description="Tired of being rejected for lack of rental history? LandAus connects newcomers with landlords who welcome immigrants, students, and visa holders."
+        path="/for-tenants"
+      />
       {/* 1. HERO */}
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',

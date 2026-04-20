@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster'
 import { supabase } from '../lib/supabase.js'
+import SEO from '../components/SEO.jsx'
 
 // POI categories: colors + emoji icons
 const POI_CATEGORIES = {
@@ -55,6 +59,50 @@ function FlyTo({ target }) {
   useEffect(() => {
     if (target) map.flyTo([target.lat, target.lng], target.zoom, { duration: 1.2 })
   }, [target, map])
+  return null
+}
+
+/**
+ * Cluster property markers using leaflet.markercluster attached to the
+ * react-leaflet map instance. Popups render as simple HTML strings with a
+ * "View property" link that navigates via full-page load.
+ */
+function ClusteredPropertyPins({ properties, icon }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!map || !L.markerClusterGroup) return
+    const cluster = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      disableClusteringAtZoom: 15,
+      maxClusterRadius: 50,
+      iconCreateFunction: (c) => L.divIcon({
+        html: `<div class="map-cluster"><span>${c.getChildCount()}</span></div>`,
+        className: 'landaus-cluster',
+        iconSize: [40, 40]
+      })
+    })
+    properties.forEach(p => {
+      const title = (p.title || '').replace(/^\[DEMO\]\s*/, '')
+      const thumb = p.property_images?.[0]?.image_url
+      const marker = L.marker([p.latitude, p.longitude], { icon })
+      const html = `
+        <div style="min-width:200px">
+          ${thumb ? `<img src="${thumb}" alt="" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:8px" />` : ''}
+          <div style="font-family: 'Fraunces', Georgia, serif; font-size:16px; font-weight:600; line-height:1.3; margin-bottom:4px;">${title}</div>
+          <div style="font-size:13px; color:#3D4E66; margin-bottom:6px;">${p.suburb || ''}, ${p.state || ''}</div>
+          <div style="font-family: 'Fraunces', Georgia, serif; font-size:18px; font-weight:700; color:#0A2540; margin-bottom:8px;">
+            $${p.price_per_week ?? '—'}
+            <span style="font-size:12px; font-weight:400; color:#6B7A8F;"> / week</span>
+          </div>
+          <a href="/property/${p.id}" style="display:inline-block; background:#0A2540; color:#fff; padding:6px 14px; border-radius:999px; font-size:13px; font-weight:600; text-decoration:none;">View property →</a>
+        </div>`
+      marker.bindPopup(html)
+      cluster.addLayer(marker)
+    })
+    map.addLayer(cluster)
+    return () => { map.removeLayer(cluster) }
+  }, [map, properties, icon])
   return null
 }
 
@@ -143,6 +191,11 @@ export default function NewcomerMapPage() {
 
   return (
     <div className="map-page">
+      <SEO
+        title="Interactive newcomer-friendly rental map"
+        description="Explore Australian rentals alongside cultural points — Filipino, Asian, and Indian grocers, halal food, community centers, transit hubs and more."
+        path="/map"
+      />
       {/* Sidebar */}
       <aside className="map-sidebar" aria-label="Map filters">
         <div className="map-sidebar-inner">
@@ -283,39 +336,7 @@ export default function NewcomerMapPage() {
 
           <FlyTo target={flyTarget} />
 
-          {filteredProperties.map(p => (
-            <Marker key={`prop-${p.id}`} position={[p.latitude, p.longitude]} icon={propertyIcon}>
-              <Popup>
-                <div style={{ minWidth: 200 }}>
-                  {p.property_images?.[0]?.image_url && (
-                    <img
-                      src={p.property_images[0].image_url}
-                      alt=""
-                      style={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 8, marginBottom: 8 }}
-                    />
-                  )}
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 600, lineHeight: 1.3, marginBottom: 4 }}>
-                    {(p.title || '').replace(/^\[DEMO\]\s*/, '')}
-                  </div>
-                  <div style={{ fontSize: 13, color: '#3D4E66', marginBottom: 6 }}>
-                    {p.suburb}, {p.state}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: '#0A2540', marginBottom: 8 }}>
-                    ${p.price_per_week}<span style={{ fontSize: 12, fontWeight: 400, color: '#6B7A8F' }}> / week</span>
-                  </div>
-                  <Link
-                    to={`/property/${p.id}`}
-                    style={{
-                      display: 'inline-block', background: '#0A2540', color: '#fff',
-                      padding: '6px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600
-                    }}
-                  >
-                    View property →
-                  </Link>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
+          <ClusteredPropertyPins properties={filteredProperties} icon={propertyIcon} />
 
           {filteredPois.map(p => (
             <Marker

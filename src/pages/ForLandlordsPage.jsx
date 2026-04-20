@@ -1,9 +1,15 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import SEO from '../components/SEO.jsx'
 
 export default function ForLandlordsPage() {
   return (
     <>
+      <SEO
+        title="List your property — Reach Australia's newcomer community"
+        description="Fill your vacancy faster with verified tenants that other platforms overlook. Free to list, no commissions. Built for Australian landlords who say yes first."
+        path="/for-landlords"
+      />
       {/* 1. HERO */}
       <section style={{
         background: 'linear-gradient(135deg, var(--mint-soft) 0%, var(--mint) 100%)',
