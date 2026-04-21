@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import ReportButton from '../components/ReportButton.jsx'
 import VerifiedBadge from '../components/VerifiedBadge.jsx'
+import HouseholdDetails from '../components/HouseholdDetails.jsx'
 import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
 import { useAuth } from '../lib/auth.jsx'
 import { trackView } from '../lib/recentViews.js'
@@ -166,11 +167,10 @@ export default function PropertyDetailPage() {
               {property.accepts_visa_holders && <span className="signal-tag">🛂 Visa holders welcome</span>}
               {property.furnished && <span className="signal-tag">🛋 Furnished</span>}
               {property.pets_allowed && <span className="signal-tag">🐾 Pets allowed</span>}
-              {property.multilingual_support?.map(lang => (
-                <span key={lang} className="signal-tag">🗣 {lang}</span>
-              ))}
             </div>
           </div>
+
+          <HouseholdDetails property={property} />
 
           {property.available_from && (
             <div className="detail-section">

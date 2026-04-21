@@ -83,8 +83,8 @@ export default function ForTenantsPage() {
           <Card icon="🆓" title="100% free, always">
             No application fees. No subscription. No holding deposits. Browsing, applying, and inquiring is always free for tenants.
           </Card>
-          <Card icon="🌍" title="Multilingual landlords">
-            Filter by language. Find landlords who speak Tagalog, Mandarin, Hindi, Arabic, or your native tongue.
+          <Card icon="🌍" title="Language-matched households">
+            Landlords list the languages spoken in the home. Filter to find a household that speaks Tagalog, Mandarin, Hindi, Arabic, or your native tongue.
           </Card>
           <Card icon="📍" title="Newcomer-friendly suburbs">
             We write honest suburb guides with what matters: transport, Halal/Asian grocery proximity, community, safety. No real estate fluff.

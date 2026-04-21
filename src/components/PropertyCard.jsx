@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import VerifiedBadge from './VerifiedBadge.jsx'
 import { hasBeenViewed } from '../lib/recentViews.js'
+import { LANGUAGE_OPTIONS, isRoomish } from '../lib/householdOptions.js'
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=800'
 
@@ -127,6 +128,9 @@ export default function PropertyCard({ property, style }) {
           {displayTitle}<br />
           {property.suburb}, {property.state} {property.postcode}
         </div>
+        {isRoomish(property.property_type) && (
+          <FlatmateBadges property={property} />
+        )}
         <div className="property-meta">
           <span className="property-meta-item">🛏 {property.bedrooms}</span>
           <span className="property-meta-item">🛁 {property.bathrooms}</span>
@@ -137,5 +141,50 @@ export default function PropertyCard({ property, style }) {
         </div>
       </div>
     </Link>
+  )
+}
+
+function FlatmateBadges({ property }) {
+  const langs = Array.isArray(property.languages_spoken_in_household)
+    ? property.languages_spoken_in_household
+    : []
+  const langCodes = langs
+    .map(v => LANGUAGE_OPTIONS.find(l => l.value === v)?.code)
+    .filter(Boolean)
+  const shownLangs = langCodes.slice(0, 3)
+  const moreLangs = langCodes.length - shownLangs.length
+
+  const items = []
+  if (property.lgbtqia_friendly) items.push('🏳️‍🌈 LGBTQIA+ welcoming')
+  if (property.women_safe_space) items.push('👩 Women-safe')
+  if (property.minimum_stay_months) items.push(`${property.minimum_stay_months} mo minimum`)
+
+  if (items.length === 0 && shownLangs.length === 0) return null
+
+  return (
+    <div style={{
+      display: 'flex', flexWrap: 'wrap', gap: 4,
+      marginTop: 4, marginBottom: 10
+    }}>
+      {items.map(txt => (
+        <span key={txt} style={{
+          fontSize: 11, fontWeight: 600,
+          padding: '2px 8px', borderRadius: 999,
+          background: 'var(--mint-soft)', color: 'var(--accent)',
+          border: '1px solid var(--mint-deep)'
+        }}>{txt}</span>
+      ))}
+      {shownLangs.length > 0 && (
+        <span style={{
+          fontSize: 11, fontWeight: 600,
+          padding: '2px 8px', borderRadius: 999,
+          background: 'var(--mint-soft)', color: 'var(--accent)',
+          border: '1px solid var(--mint-deep)',
+          fontVariant: 'all-small-caps'
+        }}>
+          {shownLangs.join(' · ')}{moreLangs > 0 ? ` +${moreLangs} more` : ''}
+        </span>
+      )}
+    </div>
   )
 }

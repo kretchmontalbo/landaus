@@ -61,6 +61,15 @@ export default function AboutPage() {
           <Belief icon="💰" title="Tenants never pay fees">
             Searching, applying, and inquiring is always 100% free for tenants. We think it should be that way everywhere.
           </Belief>
+          <Belief icon="🌏" title="Cultural community awareness">
+            Our map surfaces Filipino grocers, halal food, Asian supermarkets, migrant support — the community infrastructure that makes a suburb feel like home.
+          </Belief>
+          <Belief icon="🗣" title="Language-matched households">
+            Landlords list which languages they speak at home. Tenants can filter. We don't translate for you — we help you find a household where you already belong.
+          </Belief>
+          <Belief icon="🏳️‍🌈" title="Inclusivity as a filter, not a slogan">
+            LGBTQIA+ friendly, women-safe, disability-accessible — filters that mean something because landlords opt in deliberately.
+          </Belief>
         </div>
       </section>
 

@@ -5,6 +5,7 @@ import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
 import ModeTabs from '../components/ModeTabs.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
+import { ROOM_TYPES, LANGUAGE_OPTIONS, DIETARY_OPTIONS } from '../lib/householdOptions.js'
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -17,6 +18,18 @@ export default function SearchPage() {
   const propertyType = searchParams.get('ptype') || ''   // apartment | house | ...
   const maxPrice = searchParams.get('maxPrice') || ''
   const minBeds = searchParams.get('beds') || ''
+
+  // Flatmate-only filters
+  const fmRoomType = searchParams.get('room') || ''
+  const fmMinStay = searchParams.get('stay') || ''
+  const fmBillsIncluded = searchParams.get('bills') === '1'
+  const fmLgbt = searchParams.get('lgbt') === '1'
+  const fmWomen = searchParams.get('women') === '1'
+  const fmCouples = searchParams.get('couples') === '1'
+  const fmPets = searchParams.get('pets') === '1'
+  const fmLang = searchParams.get('lang') || ''  // comma-separated
+  const fmDiet = searchParams.get('diet') || ''  // comma-separated
+  const isFlatmates = listingMode === 'flatmates'
 
   useEffect(() => {
     loadProperties()
@@ -42,6 +55,25 @@ export default function SearchPage() {
       query = query.eq('listing_type', 'rent').in('property_type', ['room', 'studio'])
     } else {
       query = query.eq('listing_type', 'rent')
+    }
+
+    // Flatmate-only filters
+    if (isFlatmates) {
+      if (fmRoomType) query = query.eq('room_type', fmRoomType)
+      if (fmMinStay) query = query.gte('minimum_stay_months', parseInt(fmMinStay, 10))
+      if (fmBillsIncluded) query = query.eq('bills_included', true)
+      if (fmLgbt) query = query.eq('lgbtqia_friendly', true)
+      if (fmWomen) query = query.eq('women_safe_space', true)
+      if (fmCouples) query = query.eq('accepts_couples', true)
+      if (fmPets) query = query.eq('accepts_pets', true)
+      if (fmLang) {
+        const langs = fmLang.split(',').filter(Boolean)
+        if (langs.length) query = query.overlaps('languages_spoken_in_household', langs)
+      }
+      if (fmDiet) {
+        const diets = fmDiet.split(',').filter(Boolean)
+        if (diets.length) query = query.overlaps('dietary_preferences', diets)
+      }
     }
 
     query = query.order('is_featured', { ascending: false, nullsFirst: false })
@@ -144,6 +176,39 @@ export default function SearchPage() {
         </span>
       </div>
 
+      {isFlatmates && (
+        <div className="filter-bar" style={{ flexWrap: 'wrap', gap: 10 }}>
+          <select value={fmRoomType} onChange={e => updateParam('room', e.target.value)}>
+            <option value="">Any room type</option>
+            {ROOM_TYPES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+          <select value={fmMinStay} onChange={e => updateParam('stay', e.target.value)}>
+            <option value="">Any stay</option>
+            <option value="1">1+ month</option>
+            <option value="3">3+ months</option>
+            <option value="6">6+ months</option>
+            <option value="12">12+ months</option>
+          </select>
+          <FmChip active={fmBillsIncluded} onClick={() => updateParam('bills', fmBillsIncluded ? '' : '1')}>Bills included</FmChip>
+          <FmChip active={fmLgbt} onClick={() => updateParam('lgbt', fmLgbt ? '' : '1')}>🏳️‍🌈 LGBTQIA+ friendly</FmChip>
+          <FmChip active={fmWomen} onClick={() => updateParam('women', fmWomen ? '' : '1')}>👩 Women-safe</FmChip>
+          <FmChip active={fmCouples} onClick={() => updateParam('couples', fmCouples ? '' : '1')}>Accepts couples</FmChip>
+          <FmChip active={fmPets} onClick={() => updateParam('pets', fmPets ? '' : '1')}>🐾 Pet-friendly</FmChip>
+          <MultiSelectChip
+            label="Languages"
+            options={LANGUAGE_OPTIONS}
+            selected={fmLang ? fmLang.split(',').filter(Boolean) : []}
+            onChange={next => updateParam('lang', next.join(','))}
+          />
+          <MultiSelectChip
+            label="Dietary"
+            options={DIETARY_OPTIONS}
+            selected={fmDiet ? fmDiet.split(',').filter(Boolean) : []}
+            onChange={next => updateParam('diet', next.join(','))}
+          />
+        </div>
+      )}
+
       <p style={{
         fontSize: 12, color: 'var(--ink-muted)', textAlign: 'right',
         marginTop: -16, marginBottom: 16
@@ -177,6 +242,61 @@ export default function SearchPage() {
         </aside>
       </div>
     </section>
+  )
+}
+
+function FmChip({ active, children, onClick }) {
+  return (
+    <button type="button" onClick={onClick} style={{
+      padding: '6px 12px', borderRadius: 999,
+      border: `1.5px solid ${active ? 'var(--accent)' : 'var(--line)'}`,
+      background: active ? 'var(--mint-soft)' : 'var(--white)',
+      color: active ? 'var(--accent)' : 'var(--ink-soft)',
+      fontWeight: 600, fontSize: 13, cursor: 'pointer'
+    }}>{children}</button>
+  )
+}
+
+function MultiSelectChip({ label, options, selected, onChange }) {
+  const [open, setOpen] = useState(false)
+  function toggle(v) {
+    if (selected.includes(v)) onChange(selected.filter(x => x !== v))
+    else onChange([...selected, v])
+  }
+  return (
+    <div style={{ position: 'relative' }}>
+      <button type="button" onClick={() => setOpen(o => !o)} style={{
+        padding: '6px 12px', borderRadius: 999,
+        border: `1.5px solid ${selected.length > 0 ? 'var(--accent)' : 'var(--line)'}`,
+        background: selected.length > 0 ? 'var(--mint-soft)' : 'var(--white)',
+        color: selected.length > 0 ? 'var(--accent)' : 'var(--ink-soft)',
+        fontWeight: 600, fontSize: 13, cursor: 'pointer'
+      }}>
+        {label}{selected.length > 0 ? ` (${selected.length})` : ''} ⌄
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 'calc(100% + 6px)', left: 0,
+          background: 'var(--white)', border: '1px solid var(--line)',
+          borderRadius: 12, boxShadow: 'var(--shadow-lg)', padding: 8, zIndex: 60,
+          minWidth: 220, maxHeight: 320, overflowY: 'auto'
+        }}>
+          {options.map(o => {
+            const on = selected.includes(o.value)
+            return (
+              <button key={o.value} type="button" onClick={() => toggle(o.value)} style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '8px 10px', borderRadius: 8,
+                background: on ? 'var(--mint-soft)' : 'transparent',
+                color: 'var(--ink)', fontSize: 14, border: 'none', cursor: 'pointer'
+              }}>
+                {on ? '✓ ' : ''}{o.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 

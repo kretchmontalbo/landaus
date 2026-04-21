@@ -282,8 +282,8 @@ export default function HomePage() {
             <div className="why-feature">
               <div className="why-feature-icon">🌐</div>
               <div>
-                <h4>Multilingual landlords</h4>
-                <p>Filter by language. Find landlords who speak yours.</p>
+                <h4>Language-matched households</h4>
+                <p>Landlords list the languages spoken at home. Filter to find a household that speaks yours.</p>
               </div>
             </div>
             <div className="why-feature">
@@ -326,7 +326,7 @@ const TRUST_ITEMS = [
   { icon: '🇦🇺', label: 'Built and hosted in Sydney' },
   { icon: '⭐', label: 'New to Australia? Welcome home.' },
   { icon: '🔒', label: 'Bank-grade encryption' },
-  { icon: '🌍', label: 'Multilingual support' }
+  { icon: '🌏', label: 'Cultural community matched' }
 ]
 
 function TrustStrip() {
