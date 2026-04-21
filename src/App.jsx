@@ -27,6 +27,7 @@ import PricingPage from './pages/PricingPage.jsx'
 import EmailConfirmedPage from './pages/EmailConfirmedPage.jsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx'
+import AdminRoute from './components/AdminRoute.jsx'
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, isAdmin, loading } = useAuth()
@@ -77,7 +78,7 @@ export default function App() {
             <ProtectedRoute><GetVerifiedPage /></ProtectedRoute>
           } />
           <Route path="/admin" element={
-            <ProtectedRoute adminOnly><AdminPage /></ProtectedRoute>
+            <AdminRoute><AdminPage /></AdminRoute>
           } />
         </Route>
       </Routes>

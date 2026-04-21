@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
+import { useAuth } from '../lib/auth.jsx'
 import PasswordInput from './PasswordInput.jsx'
 
 /**
@@ -8,17 +10,46 @@ import PasswordInput from './PasswordInput.jsx'
  * - 2FA (TOTP) enrolment + disable using Supabase MFA API
  */
 export default function SecuritySection({ onToast }) {
+  const { isAdmin } = useAuth()
+  const [params] = useSearchParams()
+  const adminRequired = params.get('admin_2fa_required') === 'true'
+
   return (
-    <div style={{
-      background: 'var(--white)', border: '1px solid var(--line)',
-      borderRadius: 'var(--radius-lg)', padding: 28, marginBottom: 24
-    }}>
+    <div
+      id="security"
+      style={{
+        background: 'var(--white)', border: '1px solid var(--line)',
+        borderRadius: 'var(--radius-lg)', padding: 28, marginBottom: 24,
+        scrollMarginTop: 90
+      }}
+    >
+      {adminRequired && (
+        <div
+          role="alert"
+          style={{
+            background: 'var(--mint-soft)',
+            border: '1.5px solid var(--accent)',
+            borderRadius: 12, padding: 20, marginBottom: 20,
+            color: 'var(--ink)'
+          }}
+        >
+          <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6, color: 'var(--accent)' }}>
+            ⚠️ 2FA is required for admin accounts
+          </div>
+          <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+            You have administrator access to LandAus. Because admin accounts can reach
+            sensitive user data, we require two-factor authentication to keep the platform safe
+            for everyone. Please enable 2FA below to continue accessing the admin panel.
+          </p>
+        </div>
+      )}
+
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, marginBottom: 16 }}>
         Security
       </h3>
       <ChangePasswordForm onToast={onToast} />
       <div style={{ height: 1, background: 'var(--line)', margin: '24px 0' }} />
-      <TwoFactorPanel onToast={onToast} />
+      <TwoFactorPanel onToast={onToast} isAdmin={isAdmin} forceEnroll={adminRequired} />
     </div>
   )
 }
@@ -84,7 +115,7 @@ function ChangePasswordForm({ onToast }) {
   )
 }
 
-function TwoFactorPanel({ onToast }) {
+function TwoFactorPanel({ onToast, isAdmin, forceEnroll }) {
   const [factors, setFactors] = useState([])
   const [loading, setLoading] = useState(true)
   const [enrolling, setEnrolling] = useState(null) // { id, qr_code, secret, uri }
@@ -92,6 +123,16 @@ function TwoFactorPanel({ onToast }) {
   const [code, setCode] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+
+  // Auto-open the enrol UI when an admin is being forced through here
+  useEffect(() => {
+    if (forceEnroll && !loading && factors.every(f => f.status !== 'verified') && !enrolling && !busy) {
+      // small delay so the screen settles + scroll-to fires
+      const t = setTimeout(() => { startEnroll() }, 300)
+      return () => clearTimeout(t)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [forceEnroll, loading, factors, enrolling])
 
   async function loadFactors() {
     setLoading(true)
@@ -139,6 +180,10 @@ function TwoFactorPanel({ onToast }) {
   }
 
   async function disableFactor(id) {
+    if (isAdmin) {
+      onToast && onToast('Cannot disable 2FA while you have admin privileges. Contact another admin to demote your account first.')
+      return
+    }
     if (!confirm('Disable 2FA? This reduces your account security.')) return
     setBusy(true)
     const { error: err } = await supabase.auth.mfa.unenroll({ factorId: id })
@@ -152,9 +197,13 @@ function TwoFactorPanel({ onToast }) {
 
   return (
     <>
-      <h4 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>Two-factor authentication</h4>
+      <h4 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
+        Two-Factor Authentication {isAdmin ? <span style={{ color: 'var(--accent)', fontWeight: 700 }}>(required for admin accounts)</span> : <span style={{ color: 'var(--ink-muted)', fontWeight: 500 }}>(optional but recommended)</span>}
+      </h4>
       <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.55 }}>
-        Add a 6-digit code from an authenticator app (Google Authenticator, Authy, 1Password) on top of your password.
+        {isAdmin
+          ? "As an administrator, you're required to enable 2FA. This helps protect all users of LandAus."
+          : "Add an extra layer of security. Even if someone learns your password, they won't be able to sign in without your phone."}
       </p>
 
       {loading ? (
@@ -173,8 +222,13 @@ function TwoFactorPanel({ onToast }) {
               fontSize: 13, color: 'var(--ink-soft)', marginBottom: 8
             }}>
               <span>TOTP · {f.friendly_name || 'Authenticator app'}</span>
-              <button onClick={() => disableFactor(f.id)} disabled={busy}
-                className="btn btn-ghost" style={{ padding: '6px 14px', fontSize: 13, color: '#B91C1C' }}>
+              <button
+                onClick={() => disableFactor(f.id)}
+                disabled={busy || isAdmin}
+                className="btn btn-ghost"
+                title={isAdmin ? 'Admin accounts cannot disable 2FA' : 'Disable 2FA'}
+                style={{ padding: '6px 14px', fontSize: 13, color: isAdmin ? 'var(--ink-muted)' : '#B91C1C', opacity: isAdmin ? 0.6 : 1 }}
+              >
                 Disable
               </button>
             </div>
