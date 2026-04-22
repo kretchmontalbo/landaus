@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
 import SecuritySection from '../components/SecuritySection.jsx'
+import AvatarUploader from '../components/AvatarUploader.jsx'
+
+const PRIVACY_OPEN_KEY = 'landaus-privacy-open'
 
 export default function AccountSettingsPage() {
   const { user, profile, updateProfile, signOut } = useAuth()
@@ -16,9 +19,15 @@ export default function AccountSettingsPage() {
 
   const [form, setForm] = useState({
     full_name: profile?.full_name || '',
-    phone: profile?.phone || '',
-    avatar_url: profile?.avatar_url || ''
+    phone: profile?.phone || ''
   })
+
+  const [privacyOpen, setPrivacyOpen] = useState(() => {
+    try { return localStorage.getItem(PRIVACY_OPEN_KEY) === '1' } catch { return false }
+  })
+  useEffect(() => {
+    try { localStorage.setItem(PRIVACY_OPEN_KEY, privacyOpen ? '1' : '0') } catch {}
+  }, [privacyOpen])
 
   async function handleSaveProfile(e) {
     e.preventDefault()
@@ -106,9 +115,17 @@ export default function AccountSettingsPage() {
         Account Settings
       </h1>
 
-      {/* Section A: Profile */}
+      {/* Section: Profile */}
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)', padding: 28, marginBottom: 24 }}>
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, marginBottom: 16 }}>Profile</h3>
+
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--ink)', marginBottom: 10 }}>
+            Profile photo
+          </label>
+          <AvatarUploader onToast={showToast} />
+        </div>
+
         <form onSubmit={handleSaveProfile}>
           <div className="form-field">
             <label>Full name</label>
@@ -118,39 +135,62 @@ export default function AccountSettingsPage() {
             <label>Phone</label>
             <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
           </div>
-          <div className="form-field">
-            <label>Avatar URL</label>
-            <input type="url" value={form.avatar_url} onChange={e => setForm({ ...form, avatar_url: e.target.value })} />
-          </div>
           <button type="submit" className="btn btn-dark" disabled={saving} style={{ padding: '10px 24px' }}>
             {saving ? 'Saving…' : 'Save profile'}
           </button>
         </form>
       </div>
 
-      {/* Section A2: Security (password + 2FA) */}
+      {/* Section: Security (password + 2FA) */}
       <SecuritySection onToast={showToast} />
 
-      {/* Section B: Download Data */}
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)', padding: 28, marginBottom: 24 }}>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, marginBottom: 8 }}>Download my data</h3>
-        <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 16, lineHeight: 1.6 }}>
-          Under the Australian Privacy Act, you have the right to access all personal data we hold about you. This will download your profile, listings, inquiries, and saved properties as a JSON file.
-        </p>
-        <button onClick={handleDownloadData} className="btn btn-ghost" disabled={downloading} style={{ padding: '10px 20px' }}>
-          {downloading ? 'Preparing…' : 'Download all my data'}
+      {/* Section: Privacy & data (collapsible, bottom) */}
+      <div style={{ marginBottom: 24 }}>
+        <button
+          className="collapsible-head"
+          onClick={() => setPrivacyOpen(o => !o)}
+          aria-expanded={privacyOpen}
+          aria-controls="privacy-data-body"
+        >
+          <span>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, display: 'block', color: 'var(--ink)' }}>
+              Privacy & data rights
+            </span>
+            <span style={{ fontSize: 13, color: 'var(--ink-muted)' }}>
+              Access, export, or delete your data (Australian Privacy Act rights)
+            </span>
+          </span>
+          <span className="collapsible-chev" aria-hidden="true">⌄</span>
         </button>
-      </div>
 
-      {/* Section C: Delete Account */}
-      <div style={{ background: 'var(--white)', border: '2px solid #FCA5A5', borderRadius: 'var(--radius-lg)', padding: 28 }}>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600, marginBottom: 8, color: '#B91C1C' }}>Danger zone</h3>
-        <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 16, lineHeight: 1.6 }}>
-          Permanently delete your account, all your listings, photos, inquiries, and saved properties. This action cannot be undone.
-        </p>
-        <button onClick={() => setDeleteModal(true)} className="btn" style={{ background: '#B91C1C', color: 'white', padding: '10px 20px' }}>
-          Delete my account permanently
-        </button>
+        <div
+          id="privacy-data-body"
+          className="collapsible-body"
+          hidden={!privacyOpen}
+          style={{ marginTop: privacyOpen ? 16 : 0 }}
+        >
+          {/* Download data */}
+          <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 'var(--radius-lg)', padding: 24, marginBottom: 16 }}>
+            <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 6 }}>Download my data</h4>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.6 }}>
+              Under the Australian Privacy Act (APP 12), you can request a copy of everything we hold about you — profile, listings, inquiries, and saved properties — as a JSON file.
+            </p>
+            <button onClick={handleDownloadData} className="btn btn-ghost" disabled={downloading} style={{ padding: '10px 20px' }}>
+              {downloading ? 'Preparing…' : 'Download all my data'}
+            </button>
+          </div>
+
+          {/* Danger zone */}
+          <div style={{ background: 'var(--white)', border: '2px solid #FCA5A5', borderRadius: 'var(--radius-lg)', padding: 24 }}>
+            <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 6, color: '#B91C1C' }}>Danger zone</h4>
+            <p style={{ fontSize: 14, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.6 }}>
+              Permanently delete your account, listings, photos, inquiries, and saved properties after a 30-day grace period. This cannot be undone once the grace period ends.
+            </p>
+            <button onClick={() => setDeleteModal(true)} className="btn" style={{ background: '#B91C1C', color: 'white', padding: '10px 20px' }}>
+              Delete my account permanently
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}

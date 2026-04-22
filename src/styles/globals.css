@@ -1392,6 +1392,62 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- AVATAR ---------- */
+.avatar-frame {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--mint-soft);
+  background: var(--mint-soft);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.avatar-frame:hover { transform: scale(1.02); }
+.avatar-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.avatar-placeholder {
+  width: 100%; height: 100%;
+  background: var(--mint);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+[data-theme="dark"] .avatar-frame { border-color: var(--mint-deep); }
+
+/* ---------- COLLAPSIBLE ---------- */
+.collapsible-head {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.collapsible-head:hover { background: var(--mint-pale); }
+.collapsible-chev {
+  transition: transform 0.25s ease;
+  color: var(--ink-muted);
+  font-size: 20px;
+  line-height: 1;
+}
+.collapsible-head[aria-expanded="true"] .collapsible-chev { transform: rotate(180deg); }
+.collapsible-body {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.25s ease;
+}
+
 /* ---------- NEWCOMER MAP ---------- */
 .map-page {
   display: flex;
