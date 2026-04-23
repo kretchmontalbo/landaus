@@ -146,6 +146,13 @@ export default function AvatarUploader({ onToast, onRemove }) {
             Remove photo
           </button>
         )}
+        <p style={{
+          width: '100%', margin: '6px 0 0',
+          fontSize: 12, fontStyle: 'italic', color: 'var(--ink-muted)',
+          lineHeight: 1.5
+        }}>
+          Photo is optional. Verified landlords show a ✓ badge — that's the trust signal that matters.
+        </p>
       </div>
 
       {showConfirmRemove && (

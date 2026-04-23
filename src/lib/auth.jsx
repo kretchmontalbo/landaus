@@ -76,6 +76,8 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
+    // Revoke any server-side email-MFA session marker before tearing the JWT down
+    try { await supabase.rpc('revoke_email_mfa_session') } catch {}
     await supabase.auth.signOut()
     setProfile(null)
   }

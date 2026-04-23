@@ -198,13 +198,31 @@ function TwoFactorPanel({ onToast, isAdmin, forceEnroll }) {
   return (
     <>
       <h4 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>
-        Two-Factor Authentication {isAdmin ? <span style={{ color: 'var(--accent)', fontWeight: 700 }}>(required for admin accounts)</span> : <span style={{ color: 'var(--ink-muted)', fontWeight: 500 }}>(optional but recommended)</span>}
+        Two-factor authentication {isAdmin
+          ? <span style={{ color: 'var(--accent)', fontWeight: 700 }}>(required for admin accounts)</span>
+          : <span style={{ color: 'var(--ink-muted)', fontWeight: 500 }}>(optional but recommended)</span>}
       </h4>
-      <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.55 }}>
-        {isAdmin
-          ? "As an administrator, you're required to enable 2FA. This helps protect all users of LandAus."
-          : "Add an extra layer of security. Even if someone learns your password, they won't be able to sign in without your phone."}
-      </p>
+      {isAdmin ? (
+        <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.55 }}>
+          As an administrator, you must use an authenticator app. Email-based codes are
+          not available for admin accounts because admins can access sensitive user data.
+        </p>
+      ) : (
+        <div style={{ fontSize: 13, color: 'var(--ink-soft)', marginBottom: 14, lineHeight: 1.6 }}>
+          <p style={{ marginBottom: 8 }}>Add an extra layer of security to your account. You have two options:</p>
+          <ul style={{ margin: 0, paddingLeft: 20 }}>
+            <li style={{ marginBottom: 4 }}>
+              🔐 <strong>Authenticator app</strong> (recommended) — Google Authenticator, Authy, 1Password, or any TOTP app
+            </li>
+            <li>
+              📧 <strong>Email backup</strong> — if you don't have your authenticator, we'll email you a code when signing in
+            </li>
+          </ul>
+          <p style={{ marginTop: 8 }}>
+            Enable the authenticator app below for the strongest protection. Email backup works automatically even without setup.
+          </p>
+        </div>
+      )}
 
       {loading ? (
         <p style={{ color: 'var(--ink-muted)', fontSize: 14 }}>Loading…</p>
