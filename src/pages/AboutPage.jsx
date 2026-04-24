@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { TiltCard } from '../components/TiltCard.jsx'
 
 export default function AboutPage() {
   return (
@@ -169,7 +170,7 @@ export default function AboutPage() {
 
 function Belief({ icon, title, children }) {
   return (
-    <div style={{
+    <TiltCard maxTilt={6} style={{
       background: 'var(--white)', border: '1px solid var(--line)',
       borderRadius: 'var(--radius-lg)', padding: 28
     }}>
@@ -182,7 +183,7 @@ function Belief({ icon, title, children }) {
         marginBottom: 8, letterSpacing: '-0.01em'
       }}>{title}</h3>
       <p style={{ color: 'var(--ink-soft)', fontSize: 15, lineHeight: 1.6 }}>{children}</p>
-    </div>
+    </TiltCard>
   )
 }
 

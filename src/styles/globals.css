@@ -1392,6 +1392,141 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- TILT CARD ---------- */
+.tilt-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.tilt-glare {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.18) 0%, transparent 50%
+  );
+  opacity: 0; transition: opacity 300ms ease;
+  z-index: 2; border-radius: inherit;
+}
+.tilt-card:hover .tilt-glare { opacity: 1; }
+.tilt-content { position: relative; z-index: 1; }
+@media (hover: none) {
+  .tilt-card:active { transform: scale(0.98) !important; transition: transform 100ms !important; }
+  .tilt-glare { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card { transition: none !important; }
+  .tilt-card:hover { transform: none !important; }
+  .tilt-glare { display: none; }
+}
+[data-theme="dark"] .tilt-glare {
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(178, 252, 228, 0.12) 0%, transparent 50%
+  );
+}
+
+/* ---------- SIGNUP TWO-COL LAYOUT + ILLUSTRATION ---------- */
+.signup-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  align-items: center;
+}
+.signup-form-col { max-width: 480px; width: 100%; justify-self: end; }
+.signup-visual-col { max-width: 500px; width: 100%; }
+@media (max-width: 968px) {
+  .signup-layout { grid-template-columns: 1fr; padding: 40px 20px; }
+  .signup-form-col { justify-self: center; }
+}
+
+.signup-illustration {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 20px; text-align: center;
+}
+.signup-illustration svg { width: 100%; max-width: 420px; height: auto; }
+.signup-illustration .bg-blob { transform-origin: 200px 200px; animation: blob-pulse 6s ease-in-out infinite; }
+.signup-illustration .bg-blob-inner { transform-origin: 200px 200px; animation: blob-pulse 8s ease-in-out infinite reverse; }
+.signup-illustration .house-group { transform-origin: 200px 260px; animation: house-float 5s ease-in-out infinite; }
+.signup-illustration .smoke { animation: smoke-rise 3s ease-in-out infinite; }
+.signup-illustration .smoke-2 { animation-delay: 0.8s; }
+.signup-illustration .smoke-3 { animation-delay: 1.6s; }
+.signup-illustration .floating-key { transform-box: fill-box; transform-origin: center; }
+.signup-illustration .key-1 { animation: float-key-1 4s ease-in-out infinite; }
+.signup-illustration .key-2 { animation: float-key-2 5s ease-in-out infinite; }
+.signup-illustration .floating-heart { transform-box: fill-box; transform-origin: center; }
+.signup-illustration .heart-1 { animation: heart-bounce 2.5s ease-in-out infinite; }
+.signup-illustration .heart-2 { animation: heart-bounce 3s ease-in-out infinite 0.5s; }
+.signup-illustration .star { animation: star-twinkle 2.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.signup-illustration .star-2 { animation-delay: 0.8s; }
+.signup-illustration .star-3 { animation-delay: 1.4s; }
+
+@keyframes blob-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+@keyframes house-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes smoke-rise {
+  0% { opacity: 0; transform: translateY(0); }
+  50% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+@keyframes float-key-1 {
+  0%, 100% { transform: translate(0, 0) rotate(-8deg); }
+  50% { transform: translate(6px, -12px) rotate(8deg); }
+}
+@keyframes float-key-2 {
+  0%, 100% { transform: translate(0, 0) rotate(8deg); }
+  50% { transform: translate(-6px, -12px) rotate(-8deg); }
+}
+@keyframes heart-bounce {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.25); }
+  50% { transform: scale(1.1); }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.3; transform: scale(0.75) rotate(180deg); }
+}
+
+.illustration-caption { margin-top: 24px; max-width: 400px; }
+.illustration-caption h3 {
+  font-family: var(--font-display); font-size: 32px;
+  color: var(--ink); margin: 0 0 8px; font-weight: 600;
+}
+.illustration-caption p { color: var(--ink-muted); font-size: 16px; margin: 0; font-style: italic; }
+[data-theme="dark"] .illustration-caption h3 { color: var(--mint-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  .signup-illustration * { animation: none !important; }
+}
+@media (max-width: 768px) {
+  .signup-illustration { display: none; }
+}
+
+/* ---------- PARALLAX DECORATION ---------- */
+.parallax-decoration {
+  position: absolute; inset: 0; pointer-events: none;
+  overflow: hidden; z-index: 0;
+}
+.parallax-blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(60px); opacity: 0.3; will-change: transform;
+}
+.parallax-blob-1 {
+  top: 10%; left: -10%; width: 400px; height: 400px;
+  background: radial-gradient(circle, #B2FCE4, transparent);
+}
+.parallax-blob-2 {
+  top: 40%; right: -10%; width: 500px; height: 500px;
+  background: radial-gradient(circle, #8FE9CC, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .parallax-blob { opacity: 0.2; transform: none !important; }
+}
+
 /* ---------- CLICKWRAP CONSENT ---------- */
 .consent-block {
   display: flex;

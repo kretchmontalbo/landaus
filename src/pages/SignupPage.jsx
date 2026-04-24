@@ -4,6 +4,7 @@ import { useAuth } from '../lib/auth.jsx'
 import { supabase } from '../lib/supabase.js'
 import PasswordInput from '../components/PasswordInput.jsx'
 import { isValidEmail } from '../lib/validation.js'
+import SignupIllustration from '../components/SignupIllustration.jsx'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -92,7 +93,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div style={{ minHeight: 'calc(100vh - 160px)', display: 'grid', placeItems: 'center', padding: '48px 20px' }}>
+    <div className="signup-layout">
+      <div className="signup-form-col">
       <div style={{
         width: '100%', maxWidth: 460,
         background: 'var(--white)', padding: 40, borderRadius: 'var(--radius-lg)',
@@ -217,6 +219,10 @@ export default function SignupPage() {
         <p style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--ink-soft)' }}>
           Already have an account? <Link to="/login" style={{ color: 'var(--accent)', fontWeight: 600 }}>Log in</Link>
         </p>
+      </div>
+      </div>
+      <div className="signup-visual-col" aria-hidden="true">
+        <SignupIllustration />
       </div>
     </div>
   )

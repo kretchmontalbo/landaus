@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import SEO from '../components/SEO.jsx'
+import { TiltCard } from '../components/TiltCard.jsx'
 
 export default function ForLandlordsPage() {
   return (
@@ -266,7 +267,7 @@ function PainStat({ icon, label, value }) {
 
 function Feature({ icon, title, children }) {
   return (
-    <div style={{
+    <TiltCard maxTilt={6} style={{
       background: 'var(--mint-soft)', border: '1px solid var(--mint-deep)',
       borderRadius: 'var(--radius-lg)', padding: 28
     }}>
@@ -276,7 +277,7 @@ function Feature({ icon, title, children }) {
         marginBottom: 8, letterSpacing: '-0.01em', color: 'var(--ink)'
       }}>{title}</h3>
       <p style={{ color: 'var(--ink-soft)', fontSize: 15, lineHeight: 1.6 }}>{children}</p>
-    </div>
+    </TiltCard>
   )
 }
 

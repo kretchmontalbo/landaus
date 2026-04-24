@@ -10,6 +10,7 @@ import SEO from '../components/SEO.jsx'
 import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 import { useReveal } from '../lib/useReveal.js'
+import { useParallax } from '../hooks/useParallax.js'
 
 const TAGLINES = [
   'Find home, not rejection.',
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [activeCount, setActiveCount] = useState(null)
   const [suburbCount, setSuburbCount] = useState(null)
   const heroInnerRef = useRef(null)
+  const parallaxRef = useParallax(0.25)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -114,6 +116,10 @@ export default function HomePage() {
         path="/"
       />
       <section className="hero hero-cinematic">
+        <div className="parallax-decoration" ref={parallaxRef} aria-hidden="true">
+          <div className="parallax-blob parallax-blob-1" />
+          <div className="parallax-blob parallax-blob-2" />
+        </div>
         <span className="aurora aurora-a" aria-hidden="true" />
         <span className="aurora aurora-b" aria-hidden="true" />
         <span className="aurora aurora-c" aria-hidden="true" />

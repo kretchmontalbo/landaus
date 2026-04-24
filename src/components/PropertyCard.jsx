@@ -37,7 +37,7 @@ export default function PropertyCard({ property, style }) {
   return (
     <Link
       to={`/property/${property.id}`}
-      className="property-card"
+      className="property-card tilt-card"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={isFeatured
