@@ -1392,6 +1392,53 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- CLICKWRAP CONSENT ---------- */
+.consent-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--mint-soft);
+  border-radius: 12px;
+  margin: 20px 0;
+  border: 1px solid var(--mint-pale);
+}
+.consent-checkbox {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.consent-checkbox input[type="checkbox"] {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.consent-checkbox a {
+  color: var(--accent);
+  text-decoration: underline;
+  font-weight: 500;
+}
+.consent-checkbox a:hover { color: var(--ink); }
+.required-star { color: #D94040; font-weight: 600; }
+.optional-hint { color: var(--ink-muted); font-style: italic; font-size: 13px; }
+.submit-btn:disabled,
+.btn-block:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(30%);
+}
+[data-theme="dark"] .consent-block {
+  background: rgba(178, 252, 228, 0.05);
+  border-color: rgba(178, 252, 228, 0.15);
+}
+
 /* ---------- AVATAR ---------- */
 .avatar-frame {
   width: 96px; height: 96px;

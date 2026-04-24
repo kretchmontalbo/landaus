@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth.jsx'
+import { supabase } from '../lib/supabase.js'
 import PasswordInput from '../components/PasswordInput.jsx'
 import { isValidEmail } from '../lib/validation.js'
 
@@ -10,12 +11,29 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [userType, setUserType] = useState('landlord')
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [termsAgreed, setTermsAgreed] = useState(false)
+  const [marketingOptIn, setMarketingOptIn] = useState(false)
+  const [termsVersion, setTermsVersion] = useState('1.0')
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const { signUp } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    async function fetchVersion() {
+      try {
+        const { data } = await supabase
+          .from('terms_versions')
+          .select('version')
+          .order('effective_date', { ascending: false })
+          .limit(1)
+          .single()
+        if (data?.version) setTermsVersion(data.version)
+      } catch {}
+    }
+    fetchVersion()
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -33,22 +51,44 @@ export default function SignupPage() {
       setError('Passwords do not match.')
       return
     }
-    if (!agreedToTerms) {
+    if (!termsAgreed) {
       setError('You must agree to the Terms of Service and Privacy Policy.')
       return
     }
 
     setLoading(true)
-    const { error } = await signUp(email, password, fullName, userType, {
+    const { data: signUpData, error: signUpErr } = await signUp(email, password, fullName, userType, {
       terms_agreed_at: new Date().toISOString(),
-      terms_version_agreed: '1.0'
+      terms_version_agreed: termsVersion,
+      marketing_consent: marketingOptIn
     })
-    setLoading(false)
-    if (error) setError(error.message)
-    else {
-      setSuccess(true)
-      setTimeout(() => navigate('/dashboard'), 1500)
+
+    if (signUpErr) {
+      setLoading(false)
+      setError(signUpErr.message)
+      return
     }
+
+    // Record clickwrap consent if we have an authenticated session immediately
+    // (email-confirmation OFF). When email-confirmation is ON, the session is
+    // null here — we stash the consent intent in localStorage so auth.jsx can
+    // fire the RPCs on first sign-in instead.
+    const session = signUpData?.session
+    if (session) {
+      await recordConsents(termsVersion, marketingOptIn)
+    } else {
+      try {
+        localStorage.setItem('landaus-pending-consent', JSON.stringify({
+          version: termsVersion,
+          marketing: marketingOptIn,
+          recorded_at: new Date().toISOString()
+        }))
+      } catch {}
+    }
+
+    setLoading(false)
+    setSuccess(true)
+    setTimeout(() => navigate('/dashboard'), 1500)
   }
 
   return (
@@ -126,13 +166,34 @@ export default function SignupPage() {
               <PasswordInput required minLength={6} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
 
-            <div style={{ margin: '16px 0', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-              <input type="checkbox" id="agree-terms" required
-                checked={agreedToTerms}
-                onChange={e => setAgreedToTerms(e.target.checked)}
-                style={{ marginTop: 3, width: 16, height: 16, flexShrink: 0, cursor: 'pointer' }} />
-              <label htmlFor="agree-terms" style={{ fontSize: 13, color: 'var(--ink-soft)', lineHeight: 1.5, cursor: 'pointer' }}>
-                I agree to LandAus's <Link to="/terms" target="_blank" style={{ color: 'var(--accent)', fontWeight: 600 }}>Terms of Service</Link> and <Link to="/privacy" target="_blank" style={{ color: 'var(--accent)', fontWeight: 600 }}>Privacy Policy</Link>. I understand my personal info will be used to connect me with landlords/tenants on LandAus.
+            {/* Clickwrap consent block */}
+            <div className="consent-block">
+              <label className="consent-checkbox required">
+                <input
+                  type="checkbox"
+                  checked={termsAgreed}
+                  onChange={e => setTermsAgreed(e.target.checked)}
+                  aria-required="true"
+                />
+                <span>
+                  I agree to the{' '}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+                  {' '}and{' '}
+                  <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                  {' '}<span className="required-star" aria-label="required">*</span>
+                </span>
+              </label>
+
+              <label className="consent-checkbox optional">
+                <input
+                  type="checkbox"
+                  checked={marketingOptIn}
+                  onChange={e => setMarketingOptIn(e.target.checked)}
+                />
+                <span>
+                  Send me occasional updates about new features and neighbourhoods{' '}
+                  <span className="optional-hint">(optional)</span>
+                </span>
               </label>
             </div>
 
@@ -143,7 +204,11 @@ export default function SignupPage() {
               }}>{error}</div>
             )}
 
-            <button type="submit" className="btn btn-dark btn-block" disabled={loading || !agreedToTerms}>
+            <button
+              type="submit"
+              className="btn btn-dark btn-block submit-btn"
+              disabled={loading || !termsAgreed}
+            >
               {loading ? 'Creating account…' : 'Create account →'}
             </button>
           </form>
@@ -156,3 +221,21 @@ export default function SignupPage() {
     </div>
   )
 }
+
+/**
+ * Fire the three (or two) RPCs to record clickwrap consent.
+ * Wrapped in try/catch — RPC failures should never block signup UX.
+ */
+async function recordConsents(version, marketingOptIn) {
+  try {
+    await supabase.rpc('record_user_consent', { p_consent_type: 'terms', p_version: version })
+    await supabase.rpc('record_user_consent', { p_consent_type: 'privacy', p_version: version })
+    if (marketingOptIn) {
+      await supabase.rpc('record_user_consent', { p_consent_type: 'marketing', p_version: version })
+    }
+  } catch (err) {
+    console.error('Failed to record consent:', err)
+  }
+}
+
+export { recordConsents }

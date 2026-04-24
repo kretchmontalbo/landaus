@@ -44,6 +44,31 @@ export function AuthProvider({ children }) {
           navigate('/auth/confirmed', { replace: true })
         }
       }
+
+      // Flush any deferred clickwrap consent recorded at signup time
+      // (only relevant when email-confirmation is ON and the signup
+      // returned no immediate session)
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          const raw = localStorage.getItem('landaus-pending-consent')
+          if (raw) {
+            const pending = JSON.parse(raw)
+            const v = pending?.version || '1.0'
+            ;(async () => {
+              try {
+                await supabase.rpc('record_user_consent', { p_consent_type: 'terms', p_version: v })
+                await supabase.rpc('record_user_consent', { p_consent_type: 'privacy', p_version: v })
+                if (pending?.marketing) {
+                  await supabase.rpc('record_user_consent', { p_consent_type: 'marketing', p_version: v })
+                }
+                localStorage.removeItem('landaus-pending-consent')
+              } catch (err) {
+                console.error('Failed to flush deferred consent:', err)
+              }
+            })()
+          }
+        } catch {}
+      }
     })
 
     return () => subscription.unsubscribe()
