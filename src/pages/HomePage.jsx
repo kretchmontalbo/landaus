@@ -6,6 +6,7 @@ import AdSlot from '../components/AdSlot.jsx'
 import AnimatedStat from '../components/AnimatedStat.jsx'
 import Arrow from '../components/Arrow.jsx'
 import ModeTabs from '../components/ModeTabs.jsx'
+import SuburbShowcase from '../components/SuburbShowcase.jsx'
 import SEO from '../components/SEO.jsx'
 import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
@@ -241,6 +242,7 @@ export default function HomePage() {
       </section>
 
       <TrustStrip />
+      <SuburbShowcase />
 
       <section className="section">
         <div className="section-head">

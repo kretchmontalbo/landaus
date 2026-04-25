@@ -1392,6 +1392,128 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- SUBURB SHOWCASE ---------- */
+.suburb-showcase {
+  background: var(--white);
+  padding: 64px 0 72px;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+.suburb-showcase-head {
+  max-width: 1080px;
+  margin: 0 auto 28px;
+  padding: 0 24px;
+  text-align: center;
+}
+.suburb-showcase-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.suburb-showcase-head h2 em {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 500;
+}
+.suburb-showcase-head p {
+  color: var(--ink-soft);
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.suburb-showcase-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 24px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--mint-deep) transparent;
+}
+.suburb-showcase-track::-webkit-scrollbar { height: 8px; }
+.suburb-showcase-track::-webkit-scrollbar-thumb { background: var(--mint-deep); border-radius: 999px; }
+.suburb-card {
+  flex: 0 0 360px;
+  height: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  scroll-snap-align: center;
+  text-decoration: none;
+  color: var(--white);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
+  box-shadow: 0 4px 16px rgba(10, 37, 64, 0.12);
+}
+.suburb-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(10, 37, 64, 0.25);
+}
+.suburb-card-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  transition: transform 0.6s ease;
+  will-change: transform;
+}
+.suburb-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,37,64,0.0) 30%, rgba(10,37,64,0.85) 100%);
+}
+.suburb-card-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+.suburb-card-content h3 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 10px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.suburb-tags {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
+}
+.suburb-tag {
+  background: rgba(178, 252, 228, 0.92);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.suburb-rent {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.suburb-link {
+  color: var(--mint);
+  font-weight: 600;
+  font-size: 14px;
+}
+@media (max-width: 640px) {
+  .suburb-card { flex: 0 0 300px; height: 420px; }
+  .suburb-card-content h3 { font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .suburb-card-bg { transition: none; transform: scale(1.08) !important; }
+  .suburb-card:hover { transform: none; }
+}
+
 /* ---------- HERO VIDEO BACKGROUND ---------- */
 .hero-with-video { background: #0A2540; }
 .hero-video {
