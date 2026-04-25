@@ -1716,6 +1716,70 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .suburb-card:hover { transform: none; }
 }
 
+/* ---------- STATIC HERO FALLBACK (3D-disabled / loading) ---------- */
+.hero-fallback {
+  position: relative;
+  min-height: 86vh;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  padding: 60px 24px;
+  overflow: hidden;
+}
+.hero-fallback-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(10,37,64,0.30) 0%, rgba(10,37,64,0.85) 100%);
+  pointer-events: none;
+}
+.hero-fallback-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--white);
+  max-width: 720px;
+}
+.hero-fallback-mintline {
+  width: 64px; height: 4px;
+  background: var(--mint);
+  margin: 0 auto 24px;
+  border-radius: 999px;
+}
+.hero-fallback-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 18px;
+  color: var(--white);
+  text-shadow: 0 2px 18px rgba(0,0,0,0.35);
+}
+.hero-fallback-title em {
+  font-style: italic;
+  color: var(--mint);
+  font-weight: 500;
+}
+.hero-fallback-sub {
+  font-size: clamp(16px, 2vw, 22px);
+  color: rgba(255,255,255,0.92);
+  margin-bottom: 32px;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.3);
+}
+.hero-fallback-ctas {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.hero-fallback-cta { padding: 14px 28px; font-size: 15px; }
+.hero-fallback-cta-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.7);
+}
+.hero-fallback-cta-ghost:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: var(--white);
+}
+
 /* ---------- SYDNEY FLYTHROUGH (3D HERO) ---------- */
 .sf-section {
   position: relative;
