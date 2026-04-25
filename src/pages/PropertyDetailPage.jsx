@@ -5,6 +5,7 @@ import ReportButton from '../components/ReportButton.jsx'
 import VerifiedBadge from '../components/VerifiedBadge.jsx'
 import HouseholdDetails from '../components/HouseholdDetails.jsx'
 import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
+import PropertyGallery from '../components/PropertyGallery.jsx'
 import { useAuth } from '../lib/auth.jsx'
 import { trackView } from '../lib/recentViews.js'
 
@@ -121,14 +122,11 @@ export default function PropertyDetailPage() {
         </div>
       )}
 
-      <div className="detail-gallery">
-        <img src={heroImg} alt={displayTitle} />
-      </div>
-      {sortedImages.length > 1 && (
-        <div className="detail-gallery-strip" aria-label="More photos">
-          {sortedImages.slice(1).map((src, i) => (
-            <img key={`${src}-${i}`} src={src} alt={`${displayTitle} photo ${i + 2}`} loading="lazy" />
-          ))}
+      {sortedImages.length > 0 ? (
+        <PropertyGallery images={sortedImages} alt={displayTitle} />
+      ) : (
+        <div className="detail-gallery">
+          <img src={heroImg} alt={displayTitle} />
         </div>
       )}
 

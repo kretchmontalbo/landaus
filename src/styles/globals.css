@@ -1768,19 +1768,147 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .hero-with-video { min-height: 540px; }
 }
 
-/* ---------- DETAIL GALLERY (TASK 0 — temporary strip below hero) ---------- */
-.detail-gallery-strip {
+/* ---------- PROPERTY GALLERY (Task 5 — Stripe-style lightbox) ---------- */
+.pg-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: 3fr 2fr;
   gap: 8px;
-  margin: -20px 0 32px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 32px;
+  height: 500px;
 }
-.detail-gallery-strip img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 12px;
+@media (max-width: 768px) {
+  .pg-grid { grid-template-columns: 1fr; height: auto; }
+  .pg-grid .pg-thumbs { display: none; }
+  .pg-grid .pg-hero { aspect-ratio: 4 / 3; height: auto; }
+}
+.pg-hero, .pg-thumb {
+  position: relative;
+  display: block;
   background: var(--line-soft);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  border-radius: 12px;
+}
+.pg-hero { height: 100%; }
+.pg-hero img, .pg-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pg-hero:hover img { transform: scale(1.03); }
+.pg-thumb:hover img { transform: scale(1.06); }
+.pg-thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  height: 100%;
+}
+.pg-thumb-more {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 37, 64, 0.6);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  letter-spacing: -0.01em;
+}
+
+/* Lightbox */
+.pg-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  animation: pg-fade 0.18s ease-out;
+}
+@keyframes pg-fade { from { opacity: 0; } to { opacity: 1; } }
+.pg-stage {
+  max-width: 90vw;
+  max-height: 85vh;
+  display: grid;
+  place-items: center;
+}
+.pg-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: pg-slide 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes pg-slide {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.pg-close {
+  position: absolute;
+  top: 20px; right: 24px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  z-index: 5;
+}
+.pg-close:hover { background: rgba(255, 255, 255, 0.22); transform: scale(1.05); }
+.pg-nav {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  border: none;
+  font-size: 36px;
+  line-height: 0;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.15s, transform 0.15s;
+  display: grid;
+  place-items: center;
+  padding-bottom: 4px;
+}
+.pg-nav:hover { background: rgba(255, 255, 255, 0.28); transform: translateY(-50%) scale(1.05); }
+.pg-nav-prev { left: 24px; }
+.pg-nav-next { right: 24px; }
+.pg-counter {
+  position: absolute;
+  bottom: 24px; left: 50%; transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-display);
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+@media (max-width: 640px) {
+  .pg-nav { width: 44px; height: 44px; font-size: 28px; }
+  .pg-nav-prev { left: 8px; }
+  .pg-nav-next { right: 8px; }
+  .pg-close { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pg-image, .pg-lightbox, .pg-hero img, .pg-thumb img { animation: none !important; transition: none !important; }
 }
 
 /* ---------- TILT CARD ---------- */
