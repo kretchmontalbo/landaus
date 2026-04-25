@@ -190,11 +190,13 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .logo-mark {
   width: 32px; height: 32px;
   background: var(--mint);
+  color: var(--accent);
   border-radius: 8px;
   display: grid;
   place-items: center;
   font-size: 18px;
 }
+.logo-mark svg { stroke-width: 2; }
 .nav-links {
   display: flex;
   gap: 32px;
@@ -1228,9 +1230,10 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
   position: relative;
 }
 .trust-icon {
-  font-size: 16px;
-  filter: saturate(1.1);
+  display: inline-flex;
+  color: var(--accent);
 }
+[data-theme="dark"] .trust-icon { color: var(--mint-soft); }
 .trust-dot {
   display: inline-block;
   width: 3px; height: 3px;
@@ -2096,6 +2099,41 @@ a:hover .brand-arrow { transform: translateX(3px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .pg-image, .pg-lightbox, .pg-hero img, .pg-thumb img { animation: none !important; transition: none !important; }
+}
+
+/* ---------- ICON BADGES (Lucide) ---------- */
+.feature-icon { color: var(--accent); stroke-width: 1.5; }
+.feature-icon-bg {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: var(--mint-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  border: 1px solid var(--mint-pale);
+  color: var(--accent);
+}
+.feature-icon-bg svg { stroke-width: 1.5; }
+.feature-icon-bg-sm {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--mint-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--mint-pale);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.feature-icon-bg-sm svg { stroke-width: 1.6; }
+.icon-inline {
+  display: inline-flex; align-items: center; gap: 6px;
+  vertical-align: -3px;
+  color: var(--accent);
+}
+[data-theme="dark"] .feature-icon,
+[data-theme="dark"] .feature-icon-bg,
+[data-theme="dark"] .feature-icon-bg-sm,
+[data-theme="dark"] .icon-inline { color: var(--mint-soft); }
+[data-theme="dark"] .feature-icon-bg,
+[data-theme="dark"] .feature-icon-bg-sm {
+  background: rgba(178, 252, 228, 0.08);
+  border-color: rgba(178, 252, 228, 0.15);
 }
 
 /* ---------- TILT CARD ---------- */

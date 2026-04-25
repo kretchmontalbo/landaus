@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
+import { Star, Heart, UserRound } from 'lucide-react'
 import VerifiedBadge from './VerifiedBadge.jsx'
 import { hasBeenViewed } from '../lib/recentViews.js'
 import { LANGUAGE_OPTIONS, isRoomish } from '../lib/householdOptions.js'
@@ -65,7 +66,7 @@ export default function PropertyCard({ property, style }) {
             background: '#F7C948', color: '#78350F', borderRadius: 999,
             fontSize: 11, padding: '4px 10px', fontWeight: 700, zIndex: 2,
             display: 'inline-flex', alignItems: 'center', gap: 4
-          }}>⭐ FEATURED</span>
+          }}><Star size={11} strokeWidth={2.5} fill="#78350F" /> FEATURED</span>
         )}
         {isDemo && !isFeatured && (
           <span style={{
@@ -155,24 +156,33 @@ function FlatmateBadges({ property }) {
   const moreLangs = langCodes.length - shownLangs.length
 
   const items = []
-  if (property.lgbtqia_friendly) items.push('🏳️‍🌈 LGBTQIA+ welcoming')
-  if (property.women_safe_space) items.push('👩 Women-safe')
+  const flagItems = []
+  if (property.lgbtqia_friendly) flagItems.push({ Icon: Heart, label: 'LGBTQIA+ welcoming' })
+  if (property.women_safe_space) flagItems.push({ Icon: UserRound, label: 'Women-safe' })
   if (property.minimum_stay_months) items.push(`${property.minimum_stay_months} mo minimum`)
 
-  if (items.length === 0 && shownLangs.length === 0) return null
+  if (items.length === 0 && shownLangs.length === 0 && flagItems.length === 0) return null
+
+  const pillStyle = {
+    fontSize: 11, fontWeight: 600,
+    padding: '2px 8px', borderRadius: 999,
+    background: 'var(--mint-soft)', color: 'var(--accent)',
+    border: '1px solid var(--mint-deep)',
+    display: 'inline-flex', alignItems: 'center', gap: 4
+  }
 
   return (
     <div style={{
       display: 'flex', flexWrap: 'wrap', gap: 4,
       marginTop: 4, marginBottom: 10
     }}>
+      {flagItems.map(({ Icon, label }) => (
+        <span key={label} style={pillStyle}>
+          <Icon size={11} strokeWidth={2} /> {label}
+        </span>
+      ))}
       {items.map(txt => (
-        <span key={txt} style={{
-          fontSize: 11, fontWeight: 600,
-          padding: '2px 8px', borderRadius: 999,
-          background: 'var(--mint-soft)', color: 'var(--accent)',
-          border: '1px solid var(--mint-deep)'
-        }}>{txt}</span>
+        <span key={txt} style={pillStyle}>{txt}</span>
       ))}
       {shownLangs.length > 0 && (
         <span style={{

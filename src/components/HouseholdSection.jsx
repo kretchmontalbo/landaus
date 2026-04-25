@@ -1,8 +1,15 @@
+import { Home, Heart, UserRound, Accessibility } from 'lucide-react'
 import {
   ROOM_TYPES, HOUSEHOLD_GENDER, SMOKING_OPTIONS, DRINKING_OPTIONS,
   DIETARY_OPTIONS, RELIGION_OPTIONS, LANGUAGE_OPTIONS, ACCEPT_TOGGLES,
   INCLUSIVITY_TOGGLES
 } from '../lib/householdOptions.js'
+
+const INCL_ICONS = {
+  lgbtqia: Heart,
+  women: UserRound,
+  accessible: Accessibility
+}
 
 /**
  * Household & Flatmate Preferences form section.
@@ -19,8 +26,9 @@ export default function HouseholdSection({ form, setForm, toggleArray }) {
       background: 'var(--white)', border: '1px solid var(--mint-deep)',
       padding: 24, borderRadius: 12, margin: '24px 0'
     }}>
-      <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 20, marginBottom: 4 }}>
-        🏡 Household & Flatmate Preferences
+      <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 20, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span className="icon-inline"><Home size={20} strokeWidth={1.7} /></span>
+        Household & Flatmate Preferences
       </h4>
       <p style={{ fontSize: 13, color: 'var(--ink-muted)', marginBottom: 20 }}>
         All fields optional. The more you share, the better we can match the right flatmates.
@@ -125,13 +133,19 @@ export default function HouseholdSection({ form, setForm, toggleArray }) {
         Only tick if this genuinely applies — misrepresentation isn't fair to applicants.
       </p>
       <div style={{ display: 'grid', gap: 4 }}>
-        {INCLUSIVITY_TOGGLES.map(({ key, icon, label }) => (
-          <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 6 }}>
-            <input type="checkbox" checked={!!form[key]}
-              onChange={e => setForm({ ...form, [key]: e.target.checked })} />
-            <span>{icon} {label}</span>
-          </label>
-        ))}
+        {INCLUSIVITY_TOGGLES.map(({ key, iconKey, label }) => {
+          const Icon = INCL_ICONS[iconKey]
+          return (
+            <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: 6 }}>
+              <input type="checkbox" checked={!!form[key]}
+                onChange={e => setForm({ ...form, [key]: e.target.checked })} />
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                {Icon && <span className="icon-inline"><Icon size={16} strokeWidth={1.7} /></span>}
+                {label}
+              </span>
+            </label>
+          )
+        })}
       </div>
 
       {/* Lifestyle */}

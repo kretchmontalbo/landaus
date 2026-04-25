@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Sparkles, Star } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
 import { useFocusTrap } from '../lib/useFocusTrap.js'
@@ -50,7 +51,7 @@ export default function FeatureBoostModal({ property, onClose }) {
       >
         {submitted ? (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 44, marginBottom: 10 }}>🌟</div>
+            <div style={{ marginBottom: 10, color: 'var(--accent)' }}><Sparkles size={44} strokeWidth={1.4} /></div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, marginBottom: 12 }}>
               Thanks! You're on the list.
             </h3>
@@ -73,8 +74,9 @@ export default function FeatureBoostModal({ property, onClose }) {
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, marginBottom: 4 }}>
-                  ✨ Feature this listing
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 600, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span className="icon-inline"><Sparkles size={22} strokeWidth={1.7} /></span>
+                  Feature this listing
                 </h3>
                 <p style={{ fontSize: 14, color: 'var(--ink-soft)' }}>
                   Pin to the top of search, add a gold badge, and get 3× more views.
@@ -109,7 +111,9 @@ export default function FeatureBoostModal({ property, onClose }) {
                         }}>{t.save}</span>
                       )}
                       {t.highlight && (
-                        <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600 }}>⭐ most popular</span>
+                        <span style={{ fontSize: 11, color: 'var(--accent)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <Star size={11} strokeWidth={2} fill="currentColor" /> most popular
+                        </span>
                       )}
                     </div>
                     <div style={{ fontSize: 13, color: 'var(--ink-muted)', marginTop: 2 }}>

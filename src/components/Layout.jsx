@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../lib/auth.jsx'
+import { Home as HomeIcon } from 'lucide-react'
 import { getTheme, toggleTheme } from '../lib/theme.js'
 import SessionTimeoutWatcher from './SessionTimeoutWatcher.jsx'
 
@@ -37,14 +38,14 @@ function Nav() {
     <nav className="nav">
       <div className="nav-inner">
         <Link to="/" className="logo">
-          <span className="logo-mark">🏡</span>
+          <span className="logo-mark"><HomeIcon size={18} strokeWidth={2} /></span>
           LandAus
         </Link>
         <div className="nav-links">
           <Link to="/search" className="nav-link">Browse</Link>
           <Link to="/for-landlords" className="nav-link">For Landlords</Link>
           <Link to="/for-tenants" className="nav-link">For Tenants</Link>
-          <Link to="/map" className="nav-link">🗺 Map</Link>
+          <Link to="/map" className="nav-link">Map</Link>
           <Link to="/suburbs" className="nav-link">Suburb Guides</Link>
           {user ? (
             <>
@@ -208,7 +209,7 @@ function MobileDrawer({ open, onClose, user, profile, isAdmin, onLogout, theme, 
       >
         <div className="mobile-drawer-head">
           <span className="logo" style={{ fontSize: 20 }}>
-            <span className="logo-mark" style={{ width: 28, height: 28, fontSize: 16 }}>🏡</span>
+            <span className="logo-mark" style={{ width: 28, height: 28 }}><HomeIcon size={16} strokeWidth={2} /></span>
             LandAus
           </span>
           <button
@@ -244,7 +245,7 @@ function MobileDrawer({ open, onClose, user, profile, isAdmin, onLogout, theme, 
           <Link to="/search" onClick={onClose} className="mobile-link">Browse</Link>
           <Link to="/for-landlords" onClick={onClose} className="mobile-link">For Landlords</Link>
           <Link to="/for-tenants" onClick={onClose} className="mobile-link">For Tenants</Link>
-          <Link to="/map" onClick={onClose} className="mobile-link">🗺 Map</Link>
+          <Link to="/map" onClick={onClose} className="mobile-link">Map</Link>
           <Link to="/suburbs" onClick={onClose} className="mobile-link">Suburb Guides</Link>
           {user && (
             <>
@@ -297,7 +298,7 @@ function Footer() {
         <div className="footer-inner">
           <div>
             <div className="logo" style={{ marginBottom: 12 }}>
-              <span className="logo-mark">🏡</span>
+              <span className="logo-mark"><HomeIcon size={18} strokeWidth={2} /></span>
               LandAus
             </div>
             <p style={{ color: 'var(--ink-soft)', fontSize: 14, maxWidth: 340, lineHeight: 1.6 }}>

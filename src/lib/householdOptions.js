@@ -70,10 +70,12 @@ export const ACCEPT_TOGGLES = [
   { key: 'accepts_pets', label: 'Pets allowed', defaultOn: false }
 ]
 
+// `iconKey` is a string key — consumers map it to a Lucide component
+// (kept here as data, not as JSX, so this remains a pure JS module).
 export const INCLUSIVITY_TOGGLES = [
-  { key: 'lgbtqia_friendly', icon: '🏳️‍🌈', label: 'LGBTQIA+ friendly household' },
-  { key: 'women_safe_space', icon: '👩', label: 'Women-safe space' },
-  { key: 'disability_accessible', icon: '♿', label: 'Disability accessible' }
+  { key: 'lgbtqia_friendly', iconKey: 'lgbtqia', label: 'LGBTQIA+ friendly household' },
+  { key: 'women_safe_space', iconKey: 'women', label: 'Women-safe space' },
+  { key: 'disability_accessible', iconKey: 'accessible', label: 'Disability accessible' }
 ]
 
 export function labelFromOptions(value, options) {

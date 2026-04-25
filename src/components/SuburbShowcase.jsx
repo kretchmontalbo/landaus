@@ -5,13 +5,13 @@ import { supabase } from '../lib/supabase.js'
 // Hardcoded fallback for the 7 most diverse suburbs in case the
 // suburb_guides table isn't populated yet.
 const FALLBACK = [
-  { suburb: 'Lakemba',    state: 'NSW', median_rent_weekly: 480, hero_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900', cultural_tags: ['🕌 Halal-friendly', '🇱🇧 Lebanese community', '🚆 Rail link'] },
-  { suburb: 'Cabramatta', state: 'NSW', median_rent_weekly: 520, hero_image_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900', cultural_tags: ['🥢 Vietnamese hub', '🛍 Asian markets', '🌏 Multilingual'] },
-  { suburb: 'Newtown',    state: 'NSW', median_rent_weekly: 720, hero_image_url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900', cultural_tags: ['🏳️‍🌈 LGBTQIA+ inclusive', '🎨 Arts & cafés', '🚆 Inner West rail'] },
-  { suburb: 'Eastwood',   state: 'NSW', median_rent_weekly: 650, hero_image_url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900', cultural_tags: ['👨‍🏫 Mandarin schools', '🥟 Asian dining', '👨‍👩‍👧 Family-oriented'] },
-  { suburb: 'Harris Park',state: 'NSW', median_rent_weekly: 540, hero_image_url: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=900', cultural_tags: ['🇮🇳 Indian community', '🍛 Indian dining', '🚆 Parramatta rail'] },
-  { suburb: 'Auburn',     state: 'NSW', median_rent_weekly: 510, hero_image_url: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=900', cultural_tags: ['🕌 Mosques nearby', '🥙 Middle Eastern food', '🌏 Multicultural'] },
-  { suburb: 'Blacktown',  state: 'NSW', median_rent_weekly: 470, hero_image_url: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=900', cultural_tags: ['👨‍👩‍👧 Family-friendly', '🌏 Diverse community', '🚆 T1 line'] }
+  { suburb: 'Lakemba',    state: 'NSW', median_rent_weekly: 480, hero_image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900', cultural_tags: ['Halal-friendly', 'Lebanese community', 'Rail link'] },
+  { suburb: 'Cabramatta', state: 'NSW', median_rent_weekly: 520, hero_image_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=900', cultural_tags: ['Vietnamese hub', 'Asian markets', 'Multilingual'] },
+  { suburb: 'Newtown',    state: 'NSW', median_rent_weekly: 720, hero_image_url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900', cultural_tags: ['LGBTQIA+ inclusive', 'Arts & cafés', 'Inner West rail'] },
+  { suburb: 'Eastwood',   state: 'NSW', median_rent_weekly: 650, hero_image_url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=900', cultural_tags: ['Mandarin schools', 'Asian dining', 'Family-oriented'] },
+  { suburb: 'Harris Park',state: 'NSW', median_rent_weekly: 540, hero_image_url: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=900', cultural_tags: ['Indian community', 'Indian dining', 'Parramatta rail'] },
+  { suburb: 'Auburn',     state: 'NSW', median_rent_weekly: 510, hero_image_url: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=900', cultural_tags: ['Mosques nearby', 'Middle Eastern food', 'Multicultural'] },
+  { suburb: 'Blacktown',  state: 'NSW', median_rent_weekly: 470, hero_image_url: 'https://images.unsplash.com/photo-1568667256549-094345857637?w=900', cultural_tags: ['Family-friendly', 'Diverse community', 'T1 line'] }
 ]
 
 function slugify(s, st) {

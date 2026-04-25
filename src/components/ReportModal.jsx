@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ShieldCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useAuth } from '../lib/auth.jsx'
 import { useFocusTrap } from '../lib/useFocusTrap.js'
@@ -86,7 +87,7 @@ export default function ReportModal({ targetType, targetId, onClose }) {
       >
         {success ? (
           <div style={{ textAlign: 'center', padding: 20 }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🛡️</div>
+            <div style={{ marginBottom: 12, color: 'var(--accent)' }}><ShieldCheck size={40} strokeWidth={1.4} /></div>
             <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: 12 }}>Report submitted</h3>
             <p style={{ fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6 }}>
               Thanks for reporting. Our team will review this within 24 hours. You're helping keep LandAus safe.

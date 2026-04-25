@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { TiltCard } from '../components/TiltCard.jsx'
+import IconBadge from '../components/IconBadge.jsx'
+import { Sparkles, ShieldCheck, DollarSign, Globe, Languages, Heart } from 'lucide-react'
 
 export default function AboutPage() {
   return (
@@ -53,22 +55,22 @@ export default function AboutPage() {
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24
         }}>
-          <Belief icon="🌟" title="Every tenant deserves a chance">
+          <Belief icon={Sparkles} title="Every tenant deserves a chance">
             Employment letters, bank statements, and visa documents are proof of responsibility — not rental history.
           </Belief>
-          <Belief icon="🛡" title="Verified landlords, always">
+          <Belief icon={ShieldCheck} title="Verified landlords, always">
             Every landlord on LandAus is ID-verified. Every listing is from an owner who said yes to newcomers upfront.
           </Belief>
-          <Belief icon="💰" title="Tenants never pay fees">
+          <Belief icon={DollarSign} title="Tenants never pay fees">
             Searching, applying, and inquiring is always 100% free for tenants. We think it should be that way everywhere.
           </Belief>
-          <Belief icon="🌏" title="Cultural community awareness">
+          <Belief icon={Globe} title="Cultural community awareness">
             Our map surfaces Filipino grocers, halal food, Asian supermarkets, migrant support — the community infrastructure that makes a suburb feel like home.
           </Belief>
-          <Belief icon="🗣" title="Language-matched households">
+          <Belief icon={Languages} title="Language-matched households">
             Landlords list which languages they speak at home. Tenants can filter. We don't translate for you — we help you find a household where you already belong.
           </Belief>
-          <Belief icon="🏳️‍🌈" title="Inclusivity as a filter, not a slogan">
+          <Belief icon={Heart} title="Inclusivity as a filter, not a slogan">
             LGBTQIA+ friendly, women-safe, disability-accessible — filters that mean something because landlords opt in deliberately.
           </Belief>
         </div>
@@ -174,10 +176,7 @@ function Belief({ icon, title, children }) {
       background: 'var(--white)', border: '1px solid var(--line)',
       borderRadius: 'var(--radius-lg)', padding: 28
     }}>
-      <div style={{
-        width: 52, height: 52, borderRadius: 14, background: 'var(--mint)',
-        display: 'grid', placeItems: 'center', fontSize: 26, marginBottom: 16
-      }}>{icon}</div>
+      <IconBadge icon={icon} />
       <h3 style={{
         fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600,
         marginBottom: 8, letterSpacing: '-0.01em'

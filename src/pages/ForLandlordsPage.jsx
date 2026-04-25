@@ -2,6 +2,12 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import SEO from '../components/SEO.jsx'
 import { TiltCard } from '../components/TiltCard.jsx'
+import IconBadge from '../components/IconBadge.jsx'
+import {
+  Clock, DollarSign, Users, Zap, Target, BadgeCheck, Briefcase,
+  Plane, Phone, AlertOctagon, Sparkles, BadgePercent, Handshake,
+  Megaphone, Lock, ShieldCheck, BarChart3, MapPin
+} from 'lucide-react'
 
 export default function ForLandlordsPage() {
   return (
@@ -57,9 +63,9 @@ export default function ForLandlordsPage() {
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
           gap: 24, textAlign: 'center'
         }}>
-          <PainStat icon="⏱" label="Average Sydney vacancy" value="3–6 weeks" />
-          <PainStat icon="💸" label="Lost rent per week vacant" value="$400–$800+" />
-          <PainStat icon="👥" label="Qualified newcomers rejected by default" value="thousands / year" />
+          <PainStat icon={Clock} label="Average Sydney vacancy" value="3–6 weeks" />
+          <PainStat icon={DollarSign} label="Lost rent per week vacant" value="$400–$800+" />
+          <PainStat icon={Users} label="Qualified newcomers rejected by default" value="thousands / year" />
         </div>
         <p style={{
           textAlign: 'center', marginTop: 20,
@@ -97,13 +103,13 @@ export default function ForLandlordsPage() {
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 24px' }}>
         <h2 style={H2}>Why list with LandAus</h2>
         <div style={GRID_3}>
-          <Feature icon="💰" title="Free to list">
+          <Feature icon={DollarSign} title="Free to list">
             No commission fees, no subscription, no hidden charges. Your first listing is free, forever.
           </Feature>
-          <Feature icon="⚡" title="Direct inquiries">
+          <Feature icon={Zap} title="Direct inquiries">
             Instant email notifications when tenants inquire. Their name, phone, email, and message — straight to your inbox.
           </Feature>
-          <Feature icon="🎯" title="Pre-qualified tenants">
+          <Feature icon={Target} title="Pre-qualified tenants">
             Our users have stable jobs, good income, and proof of identity. They just don't have Australian rental history — yet.
           </Feature>
         </div>
@@ -118,19 +124,19 @@ export default function ForLandlordsPage() {
           </p>
         </div>
         <div style={{ display: 'grid', gap: 14 }}>
-          <RiskItem icon="🆔" title="ID-verified tenants">
+          <RiskItem icon={BadgeCheck} title="ID-verified tenants">
             Every tenant uploads government ID before inquiring. No anonymous messages.
           </RiskItem>
-          <RiskItem icon="💼" title="Income & employment proof">
+          <RiskItem icon={Briefcase} title="Income & employment proof">
             Employment letters and recent bank statements on tenant profiles — you see income before replying.
           </RiskItem>
-          <RiskItem icon="🛂" title="Visa status transparency">
+          <RiskItem icon={Plane} title="Visa status transparency">
             Tenants declare their visa type and duration. Know how long they can legally stay.
           </RiskItem>
-          <RiskItem icon="📞" title="Optional references">
+          <RiskItem icon={Phone} title="Optional references">
             Request landlord or employer references before committing. Tenant's choice to share.
           </RiskItem>
-          <RiskItem icon="🚨" title="Report button on every listing">
+          <RiskItem icon={AlertOctagon} title="Report button on every listing">
             Any dodgy behaviour? One click, admin action within 24 hours.
           </RiskItem>
         </div>
@@ -164,16 +170,16 @@ export default function ForLandlordsPage() {
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20
           }}>
-            <EarlyPerk icon="🌟" title="Priority placement">
+            <EarlyPerk icon={Sparkles} title="Priority placement">
               First 20 landlords get top-of-search placement for any property they list — permanently.
             </EarlyPerk>
-            <EarlyPerk icon="🆓" title="Free tier locked in">
+            <EarlyPerk icon={BadgePercent} title="Free tier locked in">
               Our free forever tier is locked in for early landlords. When paid features launch, you keep yours free.
             </EarlyPerk>
-            <EarlyPerk icon="🤝" title="Direct founder support">
+            <EarlyPerk icon={Handshake} title="Direct founder support">
               Talk directly to us. No chatbots, no ticket queues. Real humans solving real problems.
             </EarlyPerk>
-            <EarlyPerk icon="📣" title="Shape the platform">
+            <EarlyPerk icon={Megaphone} title="Shape the platform">
               Feature requests from early landlords go to the top of our roadmap. Help us build the platform you actually want.
             </EarlyPerk>
           </div>
@@ -186,10 +192,10 @@ export default function ForLandlordsPage() {
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 20
         }}>
-          <Trust icon="🔐" title="Bank-grade security">SSL encryption, Australian Privacy Principles compliant.</Trust>
-          <Trust icon="🛡" title="ID-verified landlords">Every landlord verified within 24 hours, free forever.</Trust>
-          <Trust icon="📊" title="Listing moderation">All listings reviewed for quality, reports actioned within 24 hours.</Trust>
-          <Trust icon="🇦🇺" title="Australian hosted">Sydney region servers — your data stays in Australia.</Trust>
+          <Trust icon={Lock} title="Bank-grade security">SSL encryption, Australian Privacy Principles compliant.</Trust>
+          <Trust icon={ShieldCheck} title="ID-verified landlords">Every landlord verified within 24 hours, free forever.</Trust>
+          <Trust icon={BarChart3} title="Listing moderation">All listings reviewed for quality, reports actioned within 24 hours.</Trust>
+          <Trust icon={MapPin} title="Australian hosted">Sydney region servers — your data stays in Australia.</Trust>
         </div>
       </section>
 
@@ -252,10 +258,14 @@ const GRID_3 = {
   gap: 20
 }
 
-function PainStat({ icon, label, value }) {
+function PainStat({ icon: Icon, label, value }) {
   return (
     <div>
-      <div style={{ fontSize: 24, marginBottom: 4 }}>{icon}</div>
+      {Icon && (
+        <div style={{ marginBottom: 6, color: 'var(--mint)' }}>
+          <Icon size={22} strokeWidth={1.6} />
+        </div>
+      )}
       <div style={{
         fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700,
         color: 'var(--mint)', marginBottom: 2
@@ -271,7 +281,7 @@ function Feature({ icon, title, children }) {
       background: 'var(--mint-soft)', border: '1px solid var(--mint-deep)',
       borderRadius: 'var(--radius-lg)', padding: 28
     }}>
-      <div style={{ fontSize: 36, marginBottom: 14 }}>{icon}</div>
+      <IconBadge icon={icon} />
       <h3 style={{
         fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 600,
         marginBottom: 8, letterSpacing: '-0.01em', color: 'var(--ink)'
@@ -288,7 +298,7 @@ function RiskItem({ icon, title, children }) {
       borderRadius: 'var(--radius)', padding: '18px 20px',
       display: 'flex', gap: 16, alignItems: 'flex-start'
     }}>
-      <div style={{ fontSize: 28, flexShrink: 0, lineHeight: 1 }}>{icon}</div>
+      <IconBadge icon={icon} size="sm" />
       <div>
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 4 }}>
           {title}
@@ -325,7 +335,7 @@ function EarlyPerk({ icon, title, children }) {
       background: 'rgba(255,255,255,0.7)', border: '1px solid var(--mint-deep)',
       borderRadius: 'var(--radius-lg)', padding: 24, backdropFilter: 'blur(6px)'
     }}>
-      <div style={{ fontSize: 28, marginBottom: 10 }}>{icon}</div>
+      <IconBadge icon={icon} size="sm" />
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600, marginBottom: 6, color: 'var(--ink)' }}>
         {title}
       </h3>
@@ -341,7 +351,7 @@ function Trust({ icon, title, children }) {
       borderRadius: 'var(--radius)', padding: 24,
       display: 'flex', gap: 16, alignItems: 'flex-start'
     }}>
-      <div style={{ fontSize: 28, flexShrink: 0 }}>{icon}</div>
+      <IconBadge icon={icon} size="sm" />
       <div>
         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 17, fontWeight: 600, marginBottom: 4 }}>
           {title}

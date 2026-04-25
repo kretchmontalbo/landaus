@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { TiltCard } from '../components/TiltCard.jsx'
+import IconBadge from '../components/IconBadge.jsx'
+import { Send, BadgePercent, Languages, MapPin } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 
 export default function ForTenantsPage() {
@@ -78,16 +80,16 @@ export default function ForTenantsPage() {
       <section style={{ maxWidth: 1080, margin: '0 auto', padding: '48px 24px 24px' }}>
         <h2 style={H2}>How LandAus helps</h2>
         <div style={GRID_4}>
-          <Card icon="🙌" title="Apply directly to landlords">
+          <Card icon={Send} title="Apply directly to landlords">
             Skip agent filters. Every landlord here has agreed to welcome newcomers. Your message goes straight to them.
           </Card>
-          <Card icon="🆓" title="100% free, always">
+          <Card icon={BadgePercent} title="100% free, always">
             No application fees. No subscription. No holding deposits. Browsing, applying, and inquiring is always free for tenants.
           </Card>
-          <Card icon="🌍" title="Language-matched households">
+          <Card icon={Languages} title="Language-matched households">
             Landlords list the languages spoken in the home. Filter to find a household that speaks Tagalog, Mandarin, Hindi, Arabic, or your native tongue.
           </Card>
-          <Card icon="📍" title="Newcomer-friendly suburbs">
+          <Card icon={MapPin} title="Newcomer-friendly suburbs">
             We write honest suburb guides with what matters: transport, Halal/Asian grocery proximity, community, safety. No real estate fluff.
           </Card>
         </div>
@@ -230,7 +232,7 @@ function Card({ icon, title, children }) {
       background: 'var(--mint-soft)', border: '1px solid var(--mint-deep)',
       borderRadius: 'var(--radius-lg)', padding: 24
     }}>
-      <div style={{ fontSize: 32, marginBottom: 12 }}>{icon}</div>
+      <IconBadge icon={icon} />
       <h3 style={{
         fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 600,
         marginBottom: 8, letterSpacing: '-0.01em', color: 'var(--ink)'

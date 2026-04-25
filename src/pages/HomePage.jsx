@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import StaticHeroFallback from '../components/StaticHeroFallback.jsx'
+import { ShieldCheck, Heart, Home, MapPin, Lock, Globe, Sparkles, Languages, Compass } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
@@ -144,7 +145,7 @@ export default function HomePage() {
         <span className="aurora aurora-b" aria-hidden="true" />
         <span className="aurora aurora-c" aria-hidden="true" />
         <div className="hero-inner" ref={heroInnerRef}>
-          <span className="eyebrow">🌍 Australia's rental platform for tenants without local rental history</span>
+          <span className="eyebrow">Australia's rental platform for tenants without local rental history</span>
           <h1 className="hero-title">
             Find home, <em>not rejection.</em>
           </h1>
@@ -302,21 +303,21 @@ export default function HomePage() {
           </div>
           <div className="why-features">
             <div className="why-feature">
-              <div className="why-feature-icon">🌟</div>
+              <div className="why-feature-icon"><Sparkles size={22} strokeWidth={1.6} /></div>
               <div>
                 <h4>No rental history? No problem.</h4>
                 <p>Employment letters, bank statements, and visa docs accepted as alternative references.</p>
               </div>
             </div>
             <div className="why-feature">
-              <div className="why-feature-icon">🌐</div>
+              <div className="why-feature-icon"><Languages size={22} strokeWidth={1.6} /></div>
               <div>
                 <h4>Language-matched households</h4>
                 <p>Landlords list the languages spoken at home. Filter to find a household that speaks yours.</p>
               </div>
             </div>
             <div className="why-feature">
-              <div className="why-feature-icon">🧭</div>
+              <div className="why-feature-icon"><Compass size={22} strokeWidth={1.6} /></div>
               <div>
                 <h4>Suburb guides for newcomers</h4>
                 <p>Transport, safety, community, halal & Asian grocery proximity — we tell you what matters.</p>
@@ -379,13 +380,13 @@ function ByTheNumbersStats() {
 
 /* ---------- Trust strip ---------- */
 const TRUST_ITEMS = [
-  { icon: '🛡', label: 'ID-verified landlords only' },
-  { icon: '💚', label: 'Free forever for tenants' },
-  { icon: '🏡', label: 'Hand-reviewed listings' },
-  { icon: '🇦🇺', label: 'Built and hosted in Sydney' },
-  { icon: '⭐', label: 'New to Australia? Welcome home.' },
-  { icon: '🔒', label: 'Bank-grade encryption' },
-  { icon: '🌏', label: 'Cultural community matched' }
+  { Icon: ShieldCheck, label: 'ID-verified landlords only' },
+  { Icon: Heart, label: 'Free forever for tenants' },
+  { Icon: Home, label: 'Hand-reviewed listings' },
+  { Icon: MapPin, label: 'Built and hosted in Sydney' },
+  { Icon: Sparkles, label: 'New to Australia? Welcome home.' },
+  { Icon: Lock, label: 'Bank-grade encryption' },
+  { Icon: Globe, label: 'Cultural community matched' }
 ]
 
 function TrustStrip() {
@@ -394,7 +395,7 @@ function TrustStrip() {
       <div className="trust-strip-track">
         {[...TRUST_ITEMS, ...TRUST_ITEMS].map((t, i) => (
           <span key={i} className="trust-item">
-            <span className="trust-icon">{t.icon}</span>
+            <span className="trust-icon"><t.Icon size={16} strokeWidth={1.7} /></span>
             <span>{t.label}</span>
             <span className="trust-dot" aria-hidden="true" />
           </span>

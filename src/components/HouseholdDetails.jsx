@@ -1,3 +1,4 @@
+import { Heart, UserRound, Accessibility } from 'lucide-react'
 import {
   ROOM_TYPES, HOUSEHOLD_GENDER, SMOKING_OPTIONS, DRINKING_OPTIONS,
   DIETARY_OPTIONS, RELIGION_OPTIONS, LANGUAGE_OPTIONS,
@@ -22,9 +23,9 @@ export default function HouseholdDetails({ property }) {
   const anyAccepts = acceptKeys.some(([k]) => p[k] !== undefined && p[k] !== null)
 
   const inclusivity = [
-    p.lgbtqia_friendly && { icon: '🏳️‍🌈', text: 'LGBTQIA+ friendly' },
-    p.women_safe_space && { icon: '👩', text: 'Women-safe space' },
-    p.disability_accessible && { icon: '♿', text: 'Disability accessible' }
+    p.lgbtqia_friendly && { Icon: Heart, text: 'LGBTQIA+ friendly' },
+    p.women_safe_space && { Icon: UserRound, text: 'Women-safe space' },
+    p.disability_accessible && { Icon: Accessibility, text: 'Disability accessible' }
   ].filter(Boolean)
 
   const roomish = isRoomish(p.property_type)
@@ -75,8 +76,9 @@ export default function HouseholdDetails({ property }) {
         <Sub title="Inclusivity">
           <div style={{ display: 'grid', gap: 6 }}>
             {inclusivity.map(i => (
-              <div key={i.text} style={{ fontSize: 15, color: 'var(--ink)' }}>
-                {i.icon}  {i.text}
+              <div key={i.text} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, color: 'var(--ink)' }}>
+                <span className="icon-inline"><i.Icon size={18} strokeWidth={1.7} /></span>
+                {i.text}
               </div>
             ))}
           </div>
