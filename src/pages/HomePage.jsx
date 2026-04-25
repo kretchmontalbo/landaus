@@ -1,9 +1,6 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import StaticHeroFallback from '../components/StaticHeroFallback.jsx'
-import { use3DSupport } from '../lib/use3DSupport.js'
-
-const SydneyFlythrough = lazy(() => import('../components/SydneyFlythrough.jsx'))
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
 import AdSlot from '../components/AdSlot.jsx'
@@ -40,7 +37,6 @@ export default function HomePage() {
   const [suburbCount, setSuburbCount] = useState(null)
   const heroInnerRef = useRef(null)
   const parallaxRef = useParallax(0.25)
-  const should3D = use3DSupport()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -123,13 +119,7 @@ export default function HomePage() {
         description="Find a home without rental history barriers. LandAus connects immigrants, students, and newcomers with landlords who welcome everyone."
         path="/"
       />
-      {should3D ? (
-        <Suspense fallback={<StaticHeroFallback />}>
-          <SydneyFlythrough />
-        </Suspense>
-      ) : (
-        <StaticHeroFallback />
-      )}
+      <StaticHeroFallback />
       <section className="hero hero-cinematic hero-with-video">
         <video
           className="hero-video"

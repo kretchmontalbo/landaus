@@ -8,15 +8,16 @@ import FeatureBoostModal from '../components/FeatureBoostModal.jsx'
 import PropertyGallery from '../components/PropertyGallery.jsx'
 import { useAuth } from '../lib/auth.jsx'
 import { trackView } from '../lib/recentViews.js'
-import { use3DSupport } from '../lib/use3DSupport.js'
-import { lazy, Suspense } from 'react'
-
-const Property3DCard = lazy(() => import('../components/Property3DCard.jsx'))
+// 3D card paused — review aesthetic before re-enabling.
+// import { use3DSupport } from '../lib/use3DSupport.js'
+// import { lazy, Suspense } from 'react'
+// const Property3DCard = lazy(() => import('../components/Property3DCard.jsx'))
 
 export default function PropertyDetailPage() {
   const { id } = useParams()
   const { user } = useAuth()
-  const should3D = use3DSupport()
+  // 3D card paused — review aesthetic before re-enabling.
+  // const should3D = use3DSupport()
   const [property, setProperty] = useState(null)
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState(null)
@@ -135,17 +136,19 @@ export default function PropertyDetailPage() {
         </div>
       )}
 
-      {should3D && (
-        <Suspense fallback={null}>
-          <Property3DCard
-            bedrooms={property.bedrooms}
-            bathrooms={property.bathrooms}
-            parking={property.parking}
-            propertyType={property.property_type}
-            furnished={property.furnished}
-          />
-        </Suspense>
-      )}
+      {/* 3D card paused — review aesthetic before re-enabling.
+        {should3D && (
+          <Suspense fallback={null}>
+            <Property3DCard
+              bedrooms={property.bedrooms}
+              bathrooms={property.bathrooms}
+              parking={property.parking}
+              propertyType={property.property_type}
+              furnished={property.furnished}
+            />
+          </Suspense>
+        )}
+      */}
 
       <div className="detail-grid">
         <div>

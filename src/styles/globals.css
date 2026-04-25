@@ -1838,6 +1838,12 @@ a:hover .brand-arrow { transform: translateX(3px); }
   background: rgba(255,255,255,0.15);
   border-color: var(--white);
 }
+.hero-fallback-trust {
+  margin-top: 28px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.02em;
+}
 
 /* ---------- SYDNEY FLYTHROUGH (3D HERO) ---------- */
 .sf-section {
