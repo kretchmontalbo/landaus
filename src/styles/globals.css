@@ -21,6 +21,16 @@
   --accent-hot: #FF5A5F;       /* "new" tag */
   --gold: #F7C948;
 
+  /* Aussie warmth palette — used alongside mint */
+  --sandstone: #E5C9A5;
+  --sandstone-deep: #B89968;
+  --eucalyptus: #6B8F5E;
+  --eucalyptus-deep: #3F5C32;
+  --golden-hour: #FFB570;
+  --terracotta: #C66E4A;
+  --harbor-blue: #4A90A4;
+  --cream: #FFF6E6;
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(10, 37, 64, 0.06);
   --shadow-md: 0 4px 16px rgba(10, 37, 64, 0.08);
@@ -48,6 +58,16 @@
   --accent: #5FEBAB;       /* brighter mint for accent text/links on dark */
   --accent-text: #8FE9CC;  /* italic flourish emphasis on dark */
   --accent-muted: #6FD4A5; /* secondary accents on dark */
+
+  /* Aussie warmth — dark-mode adjustments */
+  --sandstone: #6B5A42;
+  --sandstone-deep: #4A3D2C;
+  --eucalyptus: #4F6843;
+  --eucalyptus-deep: #2E3D27;
+  --golden-hour: #B88550;
+  --terracotta: #8E4A30;
+  --harbor-blue: #2E5B6B;
+  --cream: #1F1A12;
   color-scheme: dark;
 }
 [data-theme="dark"] .nav { background: var(--white); border-bottom-color: var(--line); }
