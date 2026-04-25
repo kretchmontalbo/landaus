@@ -8,6 +8,7 @@ import Arrow from '../components/Arrow.jsx'
 import ModeTabs from '../components/ModeTabs.jsx'
 import SuburbShowcase from '../components/SuburbShowcase.jsx'
 import { AnimatedCounter } from '../components/AnimatedCounter.jsx'
+import AffordabilityMapWidget from '../components/AffordabilityMapWidget.jsx'
 import SEO from '../components/SEO.jsx'
 import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
@@ -244,6 +245,7 @@ export default function HomePage() {
 
       <TrustStrip />
       <ByTheNumbersStats />
+      <AffordabilityMapWidget />
       <SuburbShowcase />
 
       <section className="section">

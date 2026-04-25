@@ -1392,6 +1392,154 @@ input, select, textarea { font-family: inherit; font-size: inherit; }
 .btn:hover .brand-arrow,
 a:hover .brand-arrow { transform: translateX(3px); }
 
+/* ---------- AFFORDABILITY WIDGET ---------- */
+.afford-widget {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 24px 48px;
+}
+.afford-widget-head {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.afford-widget-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.afford-widget-head h2 em { font-style: italic; color: var(--accent); font-weight: 500; }
+.afford-widget-head p {
+  color: var(--ink-soft);
+  max-width: 580px;
+  margin: 0 auto;
+  font-size: 16px;
+}
+.afford-widget-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(280px, 1.4fr);
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .afford-widget-grid { grid-template-columns: 1fr; }
+}
+.afford-input-col {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.afford-input-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--ink); margin-bottom: 10px;
+}
+.afford-input-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.afford-currency, .afford-suffix {
+  font-family: var(--font-display);
+  font-size: 20px; color: var(--ink-soft);
+}
+.afford-input-num {
+  flex: 1; min-width: 0;
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--ink);
+  border: none; background: transparent; outline: none;
+}
+.afford-slider { width: 100%; accent-color: var(--accent); }
+.afford-slider-track-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--ink-muted); margin-top: 4px;
+}
+.afford-hint {
+  margin-top: 16px;
+  background: var(--mint-pale);
+  border: 1px solid var(--mint-deep);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.afford-summary {
+  margin-top: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.afford-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--ink-soft);
+}
+.afford-row strong {
+  margin-left: auto;
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-size: 16px;
+}
+.afford-dot {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.afford-dot-affordable { background: #16A34A; }
+.afford-dot-stretch { background: #EAB308; }
+.afford-dot-unaffordable { background: #DC2626; }
+.afford-map-col {
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 380px;
+}
+.afford-map-svg { width: 100%; height: 100%; display: block; aspect-ratio: 1 / 0.8; }
+.afford-dot-pulse {
+  animation: afford-pulse 2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes afford-pulse {
+  0%, 100% { opacity: 0.25; r: 4.2; }
+  50% { opacity: 0; r: 7; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .afford-dot-pulse { animation: none; }
+}
+.afford-tooltip {
+  position: absolute;
+  bottom: 16px; left: 16px; right: 16px;
+  background: var(--white);
+  border: 1px solid var(--mint-deep);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--shadow-md);
+  font-size: 13px;
+  display: flex; flex-direction: column; gap: 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+.afford-tooltip strong { font-size: 15px; color: var(--ink); }
+.afford-tooltip span:nth-child(2) { color: var(--ink-soft); }
+.afford-badge {
+  display: inline-block;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  align-self: flex-start;
+}
+.afford-badge-affordable { background: #DCFCE7; color: #166534; }
+.afford-badge-stretch { background: #FEF3C7; color: #854D0E; }
+.afford-badge-unaffordable { background: #FEE2E2; color: #991B1B; }
+
+[data-theme="dark"] .afford-input-col,
+[data-theme="dark"] .afford-map-col,
+[data-theme="dark"] .afford-tooltip { background: var(--white); }
+
 /* ---------- BY THE NUMBERS ---------- */
 .bynums {
   max-width: 1200px;
