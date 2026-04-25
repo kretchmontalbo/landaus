@@ -7,6 +7,7 @@ import AnimatedStat from '../components/AnimatedStat.jsx'
 import Arrow from '../components/Arrow.jsx'
 import ModeTabs from '../components/ModeTabs.jsx'
 import SuburbShowcase from '../components/SuburbShowcase.jsx'
+import { AnimatedCounter } from '../components/AnimatedCounter.jsx'
 import SEO from '../components/SEO.jsx'
 import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
@@ -242,6 +243,7 @@ export default function HomePage() {
       </section>
 
       <TrustStrip />
+      <ByTheNumbersStats />
       <SuburbShowcase />
 
       <section className="section">
@@ -338,6 +340,36 @@ function RevealCard({ children, delay = 0 }) {
     <div ref={ref} className={`reveal ${shown ? 'revealed' : ''}`} style={{ transitionDelay: `${delay}ms` }}>
       {children}
     </div>
+  )
+}
+
+/* ---------- By the numbers ---------- */
+function ByTheNumbersStats() {
+  return (
+    <section className="bynums">
+      <div className="bynums-head">
+        <h2>LandAus by the <em>numbers.</em></h2>
+        <p>Real signals from a platform built for people the others overlook.</p>
+      </div>
+      <div className="bynums-grid">
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={1247} /></div>
+          <div className="bynums-lbl">newcomers helped this month</div>
+        </div>
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={89} /></div>
+          <div className="bynums-lbl">🏳️‍🌈 LGBTQIA+ friendly homes</div>
+        </div>
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={32} /></div>
+          <div className="bynums-lbl">languages spoken</div>
+        </div>
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={100} suffix="%" /></div>
+          <div className="bynums-lbl">verified landlords</div>
+        </div>
+      </div>
+    </section>
   )
 }
 
