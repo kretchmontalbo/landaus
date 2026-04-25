@@ -73,7 +73,11 @@ export default function PropertyDetailPage() {
     )
   }
 
-  const img = property.property_images?.[0]?.image_url || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=1600'
+  const sortedImages = (property.property_images || [])
+    .slice()
+    .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+    .map(i => i.image_url)
+  const heroImg = sortedImages[0] || 'https://images.unsplash.com/photo-1560184897-ae75f418493e?w=1600'
   const isDemo = property.title?.startsWith('[DEMO]')
   const displayTitle = isDemo ? property.title.replace(/^\[DEMO\]\s*/, '') : property.title
 
@@ -118,8 +122,15 @@ export default function PropertyDetailPage() {
       )}
 
       <div className="detail-gallery">
-        <img src={img} alt={displayTitle} />
+        <img src={heroImg} alt={displayTitle} />
       </div>
+      {sortedImages.length > 1 && (
+        <div className="detail-gallery-strip" aria-label="More photos">
+          {sortedImages.slice(1).map((src, i) => (
+            <img key={`${src}-${i}`} src={src} alt={`${displayTitle} photo ${i + 2}`} loading="lazy" />
+          ))}
+        </div>
+      )}
 
       <div className="detail-grid">
         <div>
