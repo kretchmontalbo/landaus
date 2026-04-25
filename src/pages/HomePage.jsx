@@ -115,7 +115,22 @@ export default function HomePage() {
         description="Find a home without rental history barriers. LandAus connects immigrants, students, and newcomers with landlords who welcome everyone."
         path="/"
       />
-      <section className="hero hero-cinematic">
+      <section className="hero hero-cinematic hero-with-video">
+        <video
+          className="hero-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster="https://images.unsplash.com/photo-1515263487990-61b07816b324?w=1600"
+          aria-hidden="true"
+        >
+          <source src="https://videos.pexels.com/video-files/4434242/4434242-uhd_3840_2160_24fps.mp4" type="video/mp4" />
+          <source src="https://videos.pexels.com/video-files/2169307/2169307-uhd_3840_2160_30fps.mp4" type="video/mp4" />
+          <source src="https://videos.pexels.com/video-files/3214446/3214446-uhd_3840_2160_25fps.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-video-overlay" aria-hidden="true" />
         <div className="parallax-decoration" ref={parallaxRef} aria-hidden="true">
           <div className="parallax-blob parallax-blob-1" />
           <div className="parallax-blob parallax-blob-2" />
