@@ -352,25 +352,25 @@ function ByTheNumbersStats() {
   return (
     <section className="bynums">
       <div className="bynums-head">
-        <h2>LandAus by the <em>numbers.</em></h2>
-        <p>Real signals from a platform built for people the others overlook.</p>
+        <h2>What you can <em>count on.</em></h2>
+        <p>We're new — but our promises aren't. Here's what every tenant and landlord can count on, from day one.</p>
       </div>
-      <div className="bynums-grid">
+      <div className="bynums-grid bynums-grid-4">
         <div className="bynums-card tilt-card">
-          <div className="bynums-num"><AnimatedCounter end={1247} /></div>
-          <div className="bynums-lbl">newcomers helped this month</div>
-        </div>
-        <div className="bynums-card tilt-card">
-          <div className="bynums-num"><AnimatedCounter end={89} /></div>
-          <div className="bynums-lbl">🏳️‍🌈 LGBTQIA+ friendly homes</div>
-        </div>
-        <div className="bynums-card tilt-card">
-          <div className="bynums-num"><AnimatedCounter end={32} /></div>
-          <div className="bynums-lbl">languages spoken</div>
+          <div className="bynums-num"><AnimatedCounter end={30} suffix="+" /></div>
+          <div className="bynums-lbl">suburb guides covering Sydney, Melbourne, Brisbane and beyond</div>
         </div>
         <div className="bynums-card tilt-card">
           <div className="bynums-num"><AnimatedCounter end={100} suffix="%" /></div>
-          <div className="bynums-lbl">verified landlords</div>
+          <div className="bynums-lbl">free for tenants — forever, no exceptions</div>
+        </div>
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={100} suffix="%" /></div>
+          <div className="bynums-lbl">verified landlords — every listing reviewed</div>
+        </div>
+        <div className="bynums-card tilt-card">
+          <div className="bynums-num"><AnimatedCounter end={0} /></div>
+          <div className="bynums-lbl">fees for first contact — DM landlords directly</div>
         </div>
       </div>
     </section>
