@@ -84,19 +84,24 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }
 
-  async function signUp(email, password, fullName, userType = 'tenant', extraMeta = {}) {
+  async function signUp(email, password, fullName, userType = 'tenant', extraMeta = {}, captchaToken = null) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName, user_type: userType, ...extraMeta }
+        data: { full_name: fullName, user_type: userType, ...extraMeta },
+        ...(captchaToken ? { captchaToken } : {})
       }
     })
     return { data, error }
   }
 
-  async function signIn(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  async function signIn(email, password, captchaToken = null) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      ...(captchaToken ? { options: { captchaToken } } : {})
+    })
     return { data, error }
   }
 

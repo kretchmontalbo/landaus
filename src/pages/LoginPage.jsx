@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useAuth } from '../lib/auth.jsx'
 import { supabase } from '../lib/supabase.js'
 import PasswordInput from '../components/PasswordInput.jsx'
 import { isValidEmail } from '../lib/validation.js'
+
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 const LOCKOUT_KEY = email => `landaus-mfa-lockout-${email.toLowerCase()}`
 const MAX_ATTEMPTS = 5
@@ -37,6 +40,8 @@ export default function LoginPage() {
   const [lockoutUntil, setLockoutUntil] = useState(0)
   const [now, setNow] = useState(Date.now())
   const [resendAt, setResendAt] = useState(0)         // timestamp when cooldown clears
+  const [captchaToken, setCaptchaToken] = useState(null)
+  const captchaRef = useRef(null)
   const codeRef = useRef(null)
   const { signIn } = useAuth()
   const navigate = useNavigate()
@@ -65,10 +70,19 @@ export default function LoginPage() {
       setLockoutUntil(lock.until); setStep('locked_out'); return
     }
 
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      setError('Please complete the verification challenge.')
+      return
+    }
+
     setLoading(true)
-    const { error: signInError } = await signIn(email, password)
+    const { error: signInError } = await signIn(email, password, captchaToken)
     if (signInError) {
-      setLoading(false); setError(signInError.message); return
+      setLoading(false)
+      setError(signInError.message)
+      setCaptchaToken(null)
+      try { captchaRef.current?.resetCaptcha?.() } catch {}
+      return
     }
 
     const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
@@ -76,6 +90,9 @@ export default function LoginPage() {
 
     if (aal?.currentLevel === 'aal2') { await routeAfterAuth(); return }
     if (aal?.currentLevel === 'aal1' && aal?.nextLevel === 'aal2') {
+      // Clear captcha while user solves MFA so it doesn't expire mid-flow
+      setCaptchaToken(null)
+      try { captchaRef.current?.resetCaptcha?.() } catch {}
       setChallengeMode('totp')
       setStep('mfa_challenge'); return
     }
@@ -418,6 +435,18 @@ export default function LoginPage() {
           <PasswordInput required value={password} onChange={e => setPassword(e.target.value)} />
         </div>
 
+        {HCAPTCHA_SITE_KEY && (
+          <div className="captcha-wrapper">
+            <HCaptcha
+              ref={captchaRef}
+              sitekey={HCAPTCHA_SITE_KEY}
+              onVerify={(t) => setCaptchaToken(t)}
+              onExpire={() => setCaptchaToken(null)}
+              onError={(err) => { console.error('hCaptcha error:', err); setCaptchaToken(null) }}
+            />
+          </div>
+        )}
+
         {error && (
           <div style={{
             background: '#FEF2F2', color: '#991B1B',
@@ -425,7 +454,11 @@ export default function LoginPage() {
           }}>{error}</div>
         )}
 
-        <button type="submit" className="btn btn-dark btn-block" disabled={loading}>
+        <button
+          type="submit"
+          className="btn btn-dark btn-block"
+          disabled={loading || (HCAPTCHA_SITE_KEY && !captchaToken)}
+        >
           {loading ? 'Logging in…' : 'Log in →'}
         </button>
 

@@ -1,13 +1,18 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { supabase } from '../lib/supabase.js'
 import { isValidEmail } from '../lib/validation.js'
+
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState(null)
+  const captchaRef = useRef(null)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -16,15 +21,22 @@ export default function ForgotPasswordPage() {
       setError('Please enter a valid email address.')
       return
     }
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      setError('Please complete the verification challenge.')
+      return
+    }
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: (window.location.origin || 'https://landaus.com.au') + '/reset-password'
+      redirectTo: (window.location.origin || 'https://landaus.com.au') + '/reset-password',
+      ...(captchaToken ? { captchaToken } : {})
     })
     setLoading(false)
     // Don't confirm or deny account existence (email-enumeration defense)
     if (error) {
       // Still show generic success to avoid leaking which emails are registered
       console.warn('reset-password error:', error.message)
+      setCaptchaToken(null)
+      try { captchaRef.current?.resetCaptcha?.() } catch {}
     }
     setSent(true)
   }
@@ -67,6 +79,18 @@ export default function ForgotPasswordPage() {
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
             </div>
 
+            {HCAPTCHA_SITE_KEY && (
+              <div className="captcha-wrapper">
+                <HCaptcha
+                  ref={captchaRef}
+                  sitekey={HCAPTCHA_SITE_KEY}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={(err) => { console.error('hCaptcha error:', err); setCaptchaToken(null) }}
+                />
+              </div>
+            )}
+
             {error && (
               <div style={{
                 background: '#FEF2F2', color: '#991B1B',
@@ -74,7 +98,11 @@ export default function ForgotPasswordPage() {
               }}>{error}</div>
             )}
 
-            <button type="submit" className="btn btn-dark btn-block" disabled={loading}>
+            <button
+              type="submit"
+              className="btn btn-dark btn-block"
+              disabled={loading || (HCAPTCHA_SITE_KEY && !captchaToken)}
+            >
               {loading ? 'Sending…' : 'Send reset link →'}
             </button>
           </form>

@@ -2101,6 +2101,19 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .pg-image, .pg-lightbox, .pg-hero img, .pg-thumb img { animation: none !important; transition: none !important; }
 }
 
+/* ---------- HCAPTCHA ---------- */
+.captcha-wrapper {
+  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+}
+@media (max-width: 480px) {
+  .captcha-wrapper {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
+
 /* ---------- ICON BADGES (Lucide) ---------- */
 .feature-icon { color: var(--accent); stroke-width: 1.5; }
 .feature-icon-bg {

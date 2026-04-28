@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 import { useAuth } from '../lib/auth.jsx'
 import { supabase } from '../lib/supabase.js'
 import PasswordInput from '../components/PasswordInput.jsx'
 import { isValidEmail } from '../lib/validation.js'
 import SignupIllustration from '../components/SignupIllustration.jsx'
+
+const HCAPTCHA_SITE_KEY = import.meta.env.VITE_HCAPTCHA_SITE_KEY
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -18,6 +21,8 @@ export default function SignupPage() {
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState(null)
+  const captchaRef = useRef(null)
   const { signUp } = useAuth()
   const navigate = useNavigate()
 
@@ -57,16 +62,27 @@ export default function SignupPage() {
       return
     }
 
+    if (HCAPTCHA_SITE_KEY && !captchaToken) {
+      setError('Please complete the verification challenge.')
+      return
+    }
+
     setLoading(true)
-    const { data: signUpData, error: signUpErr } = await signUp(email, password, fullName, userType, {
-      terms_agreed_at: new Date().toISOString(),
-      terms_version_agreed: termsVersion,
-      marketing_consent: marketingOptIn
-    })
+    const { data: signUpData, error: signUpErr } = await signUp(
+      email, password, fullName, userType,
+      {
+        terms_agreed_at: new Date().toISOString(),
+        terms_version_agreed: termsVersion,
+        marketing_consent: marketingOptIn
+      },
+      captchaToken
+    )
 
     if (signUpErr) {
       setLoading(false)
       setError(signUpErr.message)
+      setCaptchaToken(null)
+      try { captchaRef.current?.resetCaptcha?.() } catch {}
       return
     }
 
@@ -199,6 +215,18 @@ export default function SignupPage() {
               </label>
             </div>
 
+            {HCAPTCHA_SITE_KEY && (
+              <div className="captcha-wrapper">
+                <HCaptcha
+                  ref={captchaRef}
+                  sitekey={HCAPTCHA_SITE_KEY}
+                  onVerify={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken(null)}
+                  onError={(err) => { console.error('hCaptcha error:', err); setCaptchaToken(null) }}
+                />
+              </div>
+            )}
+
             {error && (
               <div style={{
                 background: '#FEF2F2', color: '#991B1B',
@@ -209,7 +237,7 @@ export default function SignupPage() {
             <button
               type="submit"
               className="btn btn-dark btn-block submit-btn"
-              disabled={loading || !termsAgreed}
+              disabled={loading || !termsAgreed || (HCAPTCHA_SITE_KEY && !captchaToken)}
             >
               {loading ? 'Creating account…' : 'Create account →'}
             </button>
