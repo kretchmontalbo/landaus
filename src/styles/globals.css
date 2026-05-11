@@ -2668,3 +2668,31 @@ a:hover .brand-arrow { transform: translateX(3px); }
 .world-root .world-hud-slot {
   padding-top: 68px;
 }
+
+/* === World HTML labels === */
+.city-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(20, 14, 10, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 246, 230, 0.18);
+  color: #fff6e6;
+  font: 600 11px/1 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  transform: translateY(-6px);
+}
+.city-label__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffb570;
+  box-shadow: 0 0 6px #ffb570;
+}

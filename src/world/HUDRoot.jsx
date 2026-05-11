@@ -4,18 +4,23 @@ import { useWorldStore } from './store.js'
 import WorldStage from './WorldStage.jsx'
 import DroneRig from './DroneRig.jsx'
 import PocketSlot from './PocketSlot.jsx'
-import PocketContinentCSS from './css-fallback/PocketContinentCSS.jsx'
+import CityMarkers from './CityMarkers.jsx'
+import Landmarks from './Landmarks.jsx'
+import ListingMarkers from './ListingMarkers.jsx'
+import Postprocessing from './Postprocessing.jsx'
+import PocketCSSFallback from './css-fallback/PocketCSSFallback.jsx'
 import HUDFrame from './HUDFrame.jsx'
 
 export default function HUDRoot({ children }) {
   const tier = useWorldStore((s) => s.tier)
+  const pocket = useWorldStore((s) => s.pocket)
   const isStatic = tier === 2
 
   return (
-    <div className="world-root" data-tier={tier ?? 'init'}>
+    <div className="world-root" data-tier={tier ?? 'init'} data-pocket={pocket}>
       <div className="world-canvas-slot" aria-hidden="true">
         {isStatic ? (
-          <PocketContinentCSS />
+          <PocketCSSFallback pocket={pocket} />
         ) : (
           <Canvas
             dpr={tier === 1 ? [1, 1.5] : [1, 2]}
@@ -26,6 +31,10 @@ export default function HUDRoot({ children }) {
               <WorldStage />
               <DroneRig />
               <PocketSlot />
+              <CityMarkers />
+              <Landmarks />
+              <ListingMarkers />
+              <Postprocessing />
             </Suspense>
           </Canvas>
         )}
