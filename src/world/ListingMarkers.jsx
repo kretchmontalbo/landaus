@@ -1,40 +1,22 @@
 import { useEffect, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
 import { useNavigate } from 'react-router-dom'
-import { useRef } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { geoToWorld } from './coords.js'
 import { STATE_CENTERS, jitterFromString } from './data/state-centers.js'
+import PhotoCard from './PhotoCard.jsx'
+
+const PLACEHOLDER = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80&auto=format'
 
 function projectListing(listing) {
   const center = STATE_CENTERS[listing.state] || STATE_CENTERS.NSW
   const [jx, jz] = jitterFromString(listing.id || listing.suburb || '', 0)
   const [x, z] = geoToWorld(center.lat, center.lng)
-  return [x + jx, z + jz]
+  return [x + jx * 1.6, z + jz * 1.6]
 }
 
-function PulseMarker({ position, color, onClick, onHoverIn, onHoverOut }) {
-  const inner = useRef()
-  useFrame(({ clock }) => {
-    if (!inner.current) return
-    const t = clock.getElapsedTime()
-    const pulse = 0.85 + Math.sin(t * 2.4) * 0.1
-    inner.current.scale.setScalar(pulse)
-  })
-  return (
-    <group position={position}>
-      <mesh
-        ref={inner}
-        onClick={(e) => { e.stopPropagation(); onClick?.() }}
-        onPointerOver={(e) => { e.stopPropagation(); onHoverIn?.() }}
-        onPointerOut={() => { onHoverOut?.() }}
-      >
-        <sphereGeometry args={[0.085, 14, 14]} />
-        <meshStandardMaterial color="#fff6e6" emissive={color} emissiveIntensity={2.4} roughness={0.35} />
-      </mesh>
-      <pointLight position={[0, 0.1, 0]} intensity={0.5} distance={0.9} color={color} />
-    </group>
-  )
+function firstPhoto(images) {
+  if (Array.isArray(images) && images.length > 0 && typeof images[0] === 'string') return images[0]
+  return PLACEHOLDER
 }
 
 export default function ListingMarkers() {
@@ -45,9 +27,9 @@ export default function ListingMarkers() {
     let active = true
     supabase
       .from('properties')
-      .select('id, suburb, state, mode')
+      .select('id, suburb, state, mode, price_weekly, price, image_urls, bedrooms')
       .eq('status', 'active')
-      .limit(120)
+      .limit(40)
       .then(({ data }) => {
         if (!active) return
         setListings(Array.isArray(data) ? data : [])
@@ -57,17 +39,28 @@ export default function ListingMarkers() {
 
   return (
     <group>
-      {listings.map((l) => {
+      {listings.map((l, i) => {
         const [x, z] = projectListing(l)
-        const color = l.mode === 'sale' ? '#c66e4a' : l.mode === 'share' ? '#a6c4d2' : '#ffb570'
+        const y = 0.7 + (i % 4) * 0.18
+        const rotY = Math.atan2(-x, -z)
+        const photo = firstPhoto(l.image_urls)
+        const price = l.mode === 'sale'
+          ? (l.price ? `$${Math.round(l.price / 1000)}k` : '')
+          : (l.price_weekly ? `$${l.price_weekly}/wk` : '')
+        const sub = [l.suburb, price].filter(Boolean).join(' · ')
         return (
-          <PulseMarker
+          <PhotoCard
             key={l.id}
-            position={[x, 0.84, z]}
-            color={color}
+            position={[x, y, z]}
+            rotationY={rotY}
+            width={0.95}
+            height={0.65}
+            photo={photo}
+            label={l.bedrooms ? `${l.bedrooms} bed` : 'Rental'}
+            sublabel={sub}
             onClick={() => navigate(`/property/${l.id}`)}
-            onHoverIn={() => { document.body.style.cursor = 'pointer' }}
-            onHoverOut={() => { document.body.style.cursor = 'auto' }}
+            tilt={-0.05}
+            hoverScale={1.08}
           />
         )
       })}

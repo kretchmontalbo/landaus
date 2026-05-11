@@ -2696,3 +2696,79 @@ a:hover .brand-arrow { transform: translateX(3px); }
   background: #ffb570;
   box-shadow: 0 0 6px #ffb570;
 }
+
+/* === Photo card label (replaces the older .city-label) === */
+.photo-card-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: rgba(20, 14, 10, 0.55);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255, 246, 230, 0.16);
+  color: #fff6e6;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+.photo-card-label__title {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+.photo-card-label__sub {
+  font-weight: 500;
+  font-size: 10.5px;
+  opacity: 0.78;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* === Color audit: warm HUD that harmonizes with the world === */
+.world-root .hud-frame {
+  /* Warm-charcoal glass that picks up the world's amber HDRI */
+  background: linear-gradient(180deg, rgba(36, 26, 22, 0.62) 0%, rgba(28, 20, 16, 0.52) 100%);
+  border-color: rgba(255, 200, 140, 0.22);
+  color: #ffe6c8;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.40);
+}
+.world-root .hud-frame__mark {
+  font-family: var(--font-display, Georgia, serif);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+}
+.world-root .hud-frame__tier {
+  color: rgba(255, 200, 140, 0.6);
+}
+.world-root .hud-frame__btn {
+  background: rgba(255, 230, 200, 0.10);
+  border-color: rgba(255, 200, 140, 0.24);
+}
+.world-root .hud-frame__btn:hover {
+  background: rgba(255, 230, 200, 0.20);
+}
+
+/* When the world is on, mint accents on the page need a slightly warmer
+   companion so they don't read as "different site." Add a subtle amber
+   inner-glow ring around mint buttons so they tie to the warm world. */
+.world-root[data-tier="0"] .btn-primary,
+.world-root[data-tier="1"] .btn-primary {
+  box-shadow:
+    0 1px 2px rgba(10, 37, 64, 0.10),
+    0 0 0 1px rgba(255, 200, 140, 0.25),
+    0 12px 30px rgba(0, 0, 0, 0.30);
+}
+
+/* Hero CTAs over the world: softer ink/cream pairing instead of bright mint
+   that fights the warm light. Keep accessibility — text on mint stays dark. */
+.world-root[data-tier="0"] .hero-fallback .btn,
+.world-root[data-tier="1"] .hero-fallback .btn {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}

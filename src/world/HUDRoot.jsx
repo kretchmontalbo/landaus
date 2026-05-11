@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
+import * as THREE from 'three'
 import { useWorldStore } from './store.js'
 import WorldStage from './WorldStage.jsx'
 import DroneRig from './DroneRig.jsx'
@@ -23,8 +24,14 @@ export default function HUDRoot({ children }) {
           <PocketCSSFallback pocket={pocket} />
         ) : (
           <Canvas
+            shadows={tier === 0}
             dpr={tier === 1 ? [1, 1.5] : [1, 2]}
-            gl={{ antialias: tier !== 1, powerPreference: 'high-performance' }}
+            gl={{
+              antialias: tier !== 1,
+              powerPreference: 'high-performance',
+              toneMapping: THREE.ACESFilmicToneMapping,
+              outputColorSpace: THREE.SRGBColorSpace
+            }}
             style={{ width: '100%', height: '100%' }}
           >
             <Suspense fallback={null}>
