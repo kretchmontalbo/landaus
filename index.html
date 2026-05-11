@@ -18,9 +18,18 @@
     <meta name="twitter:description" content="Australia's rental portal for newcomers. No rental history required." />
 
     <script>
-      // Clean up any previously-stored dark-mode preference. Theme toggle
-      // has been removed; site is light-mode only.
-      try { localStorage.removeItem('landaus-theme') } catch (e) {}
+      // Boot-time migrations (one-time per browser):
+      // 1. Theme toggle removed — clear any stale dark-mode preference.
+      // 2. 3D default-on shipped 2026-05-11 — clear stale opt-out flags
+      //    from earlier builds so users don't get trapped in classic.
+      try {
+        localStorage.removeItem('landaus-theme');
+        if (!localStorage.getItem('landaus.3d.migrated.v1')) {
+          localStorage.removeItem('landaus.3d.off');
+          localStorage.removeItem('landaus.3d.on');
+          localStorage.setItem('landaus.3d.migrated.v1', '1');
+        }
+      } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
