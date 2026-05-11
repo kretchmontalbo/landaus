@@ -18,12 +18,9 @@
     <meta name="twitter:description" content="Australia's rental portal for newcomers. No rental history required." />
 
     <script>
-      (function () {
-        try {
-          var t = localStorage.getItem('landaus-theme');
-          if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-        } catch (e) {}
-      })();
+      // Clean up any previously-stored dark-mode preference. Theme toggle
+      // has been removed; site is light-mode only.
+      try { localStorage.removeItem('landaus-theme') } catch (e) {}
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

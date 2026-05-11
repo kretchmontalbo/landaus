@@ -2585,8 +2585,9 @@ a:hover .brand-arrow { transform: translateX(3px); }
 /* === HUD Frame === */
 .hud-frame {
   position: fixed;
-  top: 14px;
-  right: 14px;
+  top: auto;
+  bottom: 18px;
+  right: 18px;
   z-index: 50;
   display: inline-flex;
   align-items: center;
@@ -3099,4 +3100,23 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .world-root[data-tier="1"] .hero.hero-brand .search-bar {
     max-width: 720px;
   }
+}
+
+/* === Page-aware opacity over the 3D world =========================
+   Only the home page should show the canvas through. Every other route
+   gets an opaque <main> so content stays readable. This works because
+   PocketSlot writes the current pocket id to data-pocket on the root. */
+.world-root[data-tier="0"]:not([data-pocket="home"]) .world-hud-slot main,
+.world-root[data-tier="1"]:not([data-pocket="home"]) .world-hud-slot main {
+  background-color: var(--bg);
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - 76px);
+}
+/* Footer always opaque so the 3D doesn't peek behind the legal/links area */
+.world-root[data-tier="0"] .footer,
+.world-root[data-tier="1"] .footer {
+  background-color: var(--white);
+  position: relative;
+  z-index: 2;
 }
