@@ -2798,3 +2798,151 @@ a:hover .brand-arrow { transform: translateX(3px); }
 .world-root .photo-card-label {
   z-index: 30;
 }
+
+/* === Brand hero (replaces video-bg hero) ============================
+   Clean cream → mint-soft gradient with two soft glow blobs. Navy
+   serif title with mint italic flourish. No stock photo background. */
+.hero.hero-brand {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(178, 252, 228, 0.35) 0%, rgba(178, 252, 228, 0) 65%),
+    linear-gradient(180deg, #FFFFFF 0%, #F4FEFA 38%, #FFF6E6 100%);
+  padding: 72px 24px 96px;
+}
+[data-theme="dark"] .hero.hero-brand {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(95, 235, 171, 0.18) 0%, rgba(10, 22, 40, 0) 65%),
+    linear-gradient(180deg, #0F2338 0%, #0A1628 38%, #13304A 100%);
+}
+.hero.hero-brand .hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--ink);
+}
+.hero.hero-brand .eyebrow {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(178, 252, 228, 0.32);
+  border: 1px solid rgba(11, 93, 59, 0.12);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  margin-bottom: 22px;
+}
+.hero.hero-brand .hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 6.2vw, 5rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 auto 14px;
+  max-width: 16ch;
+}
+.hero.hero-brand .hero-title em {
+  font-style: italic;
+  color: var(--accent);
+  background: linear-gradient(180deg, transparent 60%, rgba(178, 252, 228, 0.6) 60%);
+  padding: 0 0.08em;
+}
+.hero.hero-brand .hero-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  color: var(--accent);
+  min-height: 1.8em;
+  margin-bottom: 16px;
+  animation: heroFade 600ms ease both;
+}
+@keyframes heroFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero.hero-brand .hero-sub {
+  font-size: clamp(0.98rem, 1.2vw, 1.18rem);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 56ch;
+  margin: 0 auto 36px;
+}
+
+/* Soft brand glows — replace the aurora blobs */
+.hero-brand-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 0;
+}
+.hero-brand-glow-mint {
+  width: 460px;
+  height: 460px;
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(178, 252, 228, 0.7) 0%, rgba(178, 252, 228, 0) 70%);
+}
+.hero-brand-glow-warm {
+  width: 520px;
+  height: 520px;
+  bottom: -180px;
+  right: -160px;
+  background: radial-gradient(circle, rgba(255, 181, 112, 0.45) 0%, rgba(255, 181, 112, 0) 70%);
+}
+[data-theme="dark"] .hero-brand-glow-mint {
+  background: radial-gradient(circle, rgba(95, 235, 171, 0.35) 0%, rgba(95, 235, 171, 0) 70%);
+}
+[data-theme="dark"] .hero-brand-glow-warm {
+  background: radial-gradient(circle, rgba(255, 181, 112, 0.25) 0%, rgba(255, 181, 112, 0) 70%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero.hero-brand .hero-tagline { animation: none; }
+}
+
+/* ModeTabs + search-bar inside the brand hero — keep their existing
+   styling, just give them breathing room */
+.hero.hero-brand .mode-tabs,
+.hero.hero-brand .search-bar {
+  position: relative;
+  z-index: 2;
+}
+.hero.hero-brand .mode-tabs {
+  margin-bottom: 18px;
+}
+
+/* Stat strip beneath the search bar — make it on-brand instead of
+   floating over a dark photo */
+.hero.hero-brand .stat-strip {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+.hero.hero-brand .stat {
+  text-align: center;
+}
+.hero.hero-brand .stat-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hero.hero-brand .stat-lbl {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import StaticHeroFallback from '../components/StaticHeroFallback.jsx'
 import { ShieldCheck, Heart, Home, MapPin, Lock, Globe, Sparkles, Languages, Compass } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import PropertyCard from '../components/PropertyCard.jsx'
@@ -15,7 +14,6 @@ import SEO from '../components/SEO.jsx'
 import SuburbAutocomplete from '../components/SuburbAutocomplete.jsx'
 import { getActiveFeaturedIds, applyFeaturedMerge } from '../lib/featured.js'
 import { useReveal } from '../lib/useReveal.js'
-import { useParallax } from '../hooks/useParallax.js'
 
 const TAGLINES = [
   'Find home, not rejection.',
@@ -37,7 +35,6 @@ export default function HomePage() {
   const [activeCount, setActiveCount] = useState(null)
   const [suburbCount, setSuburbCount] = useState(null)
   const heroInnerRef = useRef(null)
-  const parallaxRef = useParallax(0.25)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -120,30 +117,9 @@ export default function HomePage() {
         description="Find a home without rental history barriers. LandAus connects immigrants, students, and newcomers with landlords who welcome everyone."
         path="/"
       />
-      <StaticHeroFallback />
-      <section className="hero hero-cinematic hero-with-video">
-        <video
-          className="hero-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster="https://images.unsplash.com/photo-1515263487990-61b07816b324?w=1600"
-          aria-hidden="true"
-        >
-          <source src="https://videos.pexels.com/video-files/4434242/4434242-uhd_3840_2160_24fps.mp4" type="video/mp4" />
-          <source src="https://videos.pexels.com/video-files/2169307/2169307-uhd_3840_2160_30fps.mp4" type="video/mp4" />
-          <source src="https://videos.pexels.com/video-files/3214446/3214446-uhd_3840_2160_25fps.mp4" type="video/mp4" />
-        </video>
-        <div className="hero-video-overlay" aria-hidden="true" />
-        <div className="parallax-decoration" ref={parallaxRef} aria-hidden="true">
-          <div className="parallax-blob parallax-blob-1" />
-          <div className="parallax-blob parallax-blob-2" />
-        </div>
-        <span className="aurora aurora-a" aria-hidden="true" />
-        <span className="aurora aurora-b" aria-hidden="true" />
-        <span className="aurora aurora-c" aria-hidden="true" />
+      <section className="hero hero-brand">
+        <div className="hero-brand-glow hero-brand-glow-mint" aria-hidden="true" />
+        <div className="hero-brand-glow hero-brand-glow-warm" aria-hidden="true" />
         <div className="hero-inner" ref={heroInnerRef}>
           <span className="eyebrow">Australia's rental platform for tenants without local rental history</span>
           <h1 className="hero-title">
