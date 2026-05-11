@@ -2562,3 +2562,22 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .brand-arrow,
   .btn:hover .brand-arrow { transform: none !important; }
 }
+
+/* === 3D World layer === */
+.world-root {
+  position: relative;
+  min-height: 100vh;
+}
+.world-canvas-slot {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.world-hud-slot {
+  position: relative;
+  z-index: 1;
+}
+.world-root[data-tier="2"] .world-canvas-slot {
+  display: none;
+}
