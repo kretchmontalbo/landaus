@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth.jsx'
+import WorldRoot from './world/WorldRoot.jsx'
 import Layout from './components/Layout.jsx'
 import HomePage from './pages/HomePage.jsx'
 import SearchPage from './pages/SearchPage.jsx'
@@ -39,6 +40,7 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
 export default function App() {
   return (
+    <WorldRoot>
     <AuthProvider>
       <Routes>
         <Route element={<Layout />}>
@@ -83,5 +85,6 @@ export default function App() {
         </Route>
       </Routes>
     </AuthProvider>
+    </WorldRoot>
   )
 }

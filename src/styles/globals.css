@@ -2562,3 +2562,109 @@ a:hover .brand-arrow { transform: translateX(3px); }
   .brand-arrow,
   .btn:hover .brand-arrow { transform: none !important; }
 }
+
+/* === 3D World layer === */
+.world-root {
+  position: relative;
+  min-height: 100vh;
+}
+.world-canvas-slot {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.world-hud-slot {
+  position: relative;
+  z-index: 1;
+}
+.world-root[data-tier="2"] .world-canvas-slot {
+  display: none;
+}
+
+/* === HUD Frame === */
+.hud-frame {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: rgba(20, 14, 10, 0.42);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 246, 230, 0.18);
+  color: #fff6e6;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  pointer-events: auto;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.28);
+}
+.hud-frame__mark {
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.hud-frame__tier {
+  font-size: 10px;
+  opacity: 0.55;
+  letter-spacing: 0.1em;
+}
+.hud-frame__actions {
+  display: flex;
+  gap: 8px;
+}
+.hud-frame__btn {
+  background: rgba(255, 246, 230, 0.08);
+  color: inherit;
+  border: 1px solid rgba(255, 246, 230, 0.18);
+  border-radius: 999px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font: inherit;
+  transition: background 120ms ease, transform 120ms ease;
+}
+.hud-frame__btn:hover { background: rgba(255, 246, 230, 0.18); }
+.hud-frame__btn:active { transform: scale(0.97); }
+.hud-frame__btn--exit { font-weight: 500; }
+
+@media (max-width: 600px) {
+  .hud-frame { font-size: 12px; padding: 6px 10px; }
+}
+
+/* === 3D world: transparent hero over canvas === */
+.world-root[data-tier="0"] .hero-fallback,
+.world-root[data-tier="1"] .hero-fallback {
+  background: transparent !important;
+  background-image: none !important;
+}
+.world-root[data-tier="0"] .hero-fallback-overlay,
+.world-root[data-tier="1"] .hero-fallback-overlay {
+  background: linear-gradient(180deg, rgba(20, 14, 10, 0.0) 0%, rgba(20, 14, 10, 0.45) 100%) !important;
+}
+.world-root[data-tier="0"] .hero-fallback,
+.world-root[data-tier="1"] .hero-fallback {
+  color: #fff6e6;
+}
+.world-root[data-tier="0"] .hero-fallback-title,
+.world-root[data-tier="1"] .hero-fallback-title {
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+.world-root[data-tier="0"] .hero-fallback-sub,
+.world-root[data-tier="1"] .hero-fallback-sub {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+
+/* Push content below the persistent HUD strip when 3D is on */
+.world-root .world-hud-slot {
+  padding-top: 68px;
+}
