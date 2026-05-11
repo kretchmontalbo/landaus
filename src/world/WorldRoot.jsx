@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { isWorldEnabled, persistFlagFromUrl } from './feature-flag.js'
 import { detectEnv, classifyTier } from './tier-probe.js'
 import { useWorldStore } from './store.js'
-import HUDRoot from './HUDRoot.jsx'
+
+const HUDRoot = lazy(() => import('./HUDRoot.jsx'))
 
 export default function WorldRoot({ children }) {
   const [enabled, setEnabled] = useState(false)
@@ -23,5 +24,9 @@ export default function WorldRoot({ children }) {
 
   if (!ready) return children
   if (!enabled) return children
-  return <HUDRoot>{children}</HUDRoot>
+  return (
+    <Suspense fallback={children}>
+      <HUDRoot>{children}</HUDRoot>
+    </Suspense>
+  )
 }
