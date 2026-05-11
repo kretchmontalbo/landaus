@@ -5,6 +5,7 @@ import WorldStage from './WorldStage.jsx'
 import DroneRig from './DroneRig.jsx'
 import PocketSlot from './PocketSlot.jsx'
 import PocketContinentCSS from './css-fallback/PocketContinentCSS.jsx'
+import HUDFrame from './HUDFrame.jsx'
 
 export default function HUDRoot({ children }) {
   const tier = useWorldStore((s) => s.tier)
@@ -29,6 +30,7 @@ export default function HUDRoot({ children }) {
           </Canvas>
         )}
       </div>
+      <HUDFrame />
       <div className="world-hud-slot">{children}</div>
     </div>
   )
