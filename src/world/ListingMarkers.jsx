@@ -1,22 +1,39 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { useNavigate } from 'react-router-dom'
+import * as THREE from 'three'
 import { supabase } from '../lib/supabase.js'
 import { geoToWorld } from './coords.js'
 import { STATE_CENTERS, jitterFromString } from './data/state-centers.js'
-import PhotoCard from './PhotoCard.jsx'
 
-const PLACEHOLDER = 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80&auto=format'
+function ListingPin({ position, color, onClick }) {
+  const inner = useRef()
+  useFrame(({ clock }) => {
+    if (!inner.current) return
+    const t = clock.getElapsedTime()
+    inner.current.scale.setScalar(0.85 + Math.sin(t * 2.2 + position[0]) * 0.08)
+  })
+  return (
+    <group
+      position={position}
+      onClick={(e) => { e.stopPropagation(); onClick?.() }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
+      onPointerOut={() => { document.body.style.cursor = 'auto' }}
+    >
+      <mesh ref={inner}>
+        <sphereGeometry args={[0.07, 12, 12]} />
+        <meshStandardMaterial color="#fff6e6" emissive={color} emissiveIntensity={2.6} roughness={0.3} />
+      </mesh>
+      <pointLight intensity={0.45} distance={1.1} color={color} />
+    </group>
+  )
+}
 
 function projectListing(listing) {
   const center = STATE_CENTERS[listing.state] || STATE_CENTERS.NSW
   const [jx, jz] = jitterFromString(listing.id || listing.suburb || '', 0)
   const [x, z] = geoToWorld(center.lat, center.lng)
-  return [x + jx * 1.6, z + jz * 1.6]
-}
-
-function firstPhoto(images) {
-  if (Array.isArray(images) && images.length > 0 && typeof images[0] === 'string') return images[0]
-  return PLACEHOLDER
+  return [x + jx, z + jz]
 }
 
 export default function ListingMarkers() {
@@ -27,9 +44,9 @@ export default function ListingMarkers() {
     let active = true
     supabase
       .from('properties')
-      .select('id, suburb, state, mode, price_weekly, price, image_urls, bedrooms')
+      .select('id, suburb, state, mode')
       .eq('status', 'active')
-      .limit(40)
+      .limit(120)
       .then(({ data }) => {
         if (!active) return
         setListings(Array.isArray(data) ? data : [])
@@ -39,28 +56,15 @@ export default function ListingMarkers() {
 
   return (
     <group>
-      {listings.map((l, i) => {
+      {listings.map((l) => {
         const [x, z] = projectListing(l)
-        const y = 0.7 + (i % 4) * 0.18
-        const rotY = Math.atan2(-x, -z)
-        const photo = firstPhoto(l.image_urls)
-        const price = l.mode === 'sale'
-          ? (l.price ? `$${Math.round(l.price / 1000)}k` : '')
-          : (l.price_weekly ? `$${l.price_weekly}/wk` : '')
-        const sub = [l.suburb, price].filter(Boolean).join(' · ')
+        const color = l.mode === 'sale' ? '#c66e4a' : l.mode === 'share' ? '#a6c4d2' : '#ffb878'
         return (
-          <PhotoCard
+          <ListingPin
             key={l.id}
-            position={[x, y, z]}
-            rotationY={rotY}
-            width={0.95}
-            height={0.65}
-            photo={photo}
-            label={l.bedrooms ? `${l.bedrooms} bed` : 'Rental'}
-            sublabel={sub}
+            position={[x, 0.95, z]}
+            color={color}
             onClick={() => navigate(`/property/${l.id}`)}
-            tilt={-0.05}
-            hoverScale={1.08}
           />
         )
       })}

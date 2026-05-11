@@ -9,21 +9,31 @@ export default function CityMarkers() {
     <group>
       {CITIES.map((c, i) => {
         const [x, z] = geoToWorld(c.lat, c.lng)
-        // Vary card heights so they don't all sit at the same y
-        const y = 1.2 + (i % 3) * 0.35
-        const rotY = Math.atan2(-x, -z) + 0.04 * (i % 2 === 0 ? 1 : -1)
+        const y = 2.2 + (i % 3) * 0.3
+        const rotY = Math.atan2(-x, -z) * 0.45 + 0.04 * (i % 2 === 0 ? 1 : -1)
         return (
-          <PhotoCard
-            key={c.slug}
-            position={[x, y, z]}
-            rotationY={rotY}
-            width={1.7}
-            height={1.1}
-            photo={c.photo}
-            label={c.name}
-            sublabel={c.state}
-            onClick={() => navigate(`/search?state=${c.state}`)}
-          />
+          <group key={c.slug}>
+            {/* anchor line from card down to the city */}
+            <mesh position={[x, y / 2, z]}>
+              <cylinderGeometry args={[0.012, 0.012, y, 6]} />
+              <meshStandardMaterial color="#ffe6c8" emissive="#ffb878" emissiveIntensity={1.4} transparent opacity={0.85} />
+            </mesh>
+            <mesh position={[x, 0.1, z]}>
+              <sphereGeometry args={[0.06, 12, 12]} />
+              <meshStandardMaterial color="#fff6e6" emissive="#ffb878" emissiveIntensity={3} />
+            </mesh>
+            <PhotoCard
+              position={[x, y, z]}
+              rotationY={rotY}
+              width={0.95}
+              height={0.62}
+              photo={c.photo}
+              label={c.name}
+              sublabel={c.state}
+              tilt={-0.10}
+              onClick={() => navigate(`/search?state=${c.state}`)}
+            />
+          </group>
         )
       })}
     </group>

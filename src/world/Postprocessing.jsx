@@ -1,4 +1,4 @@
-import { EffectComposer, Bloom, Vignette, DepthOfField, ChromaticAberration } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { useWorldStore } from './store.js'
 
@@ -7,10 +7,8 @@ export default function Postprocessing() {
   if (tier !== 0) return null
   return (
     <EffectComposer multisampling={0}>
-      <DepthOfField focusDistance={0.012} focalLength={0.05} bokehScale={2.2} height={480} />
-      <Bloom intensity={0.45} luminanceThreshold={0.6} luminanceSmoothing={0.18} mipmapBlur radius={0.8} />
-      <ChromaticAberration offset={[0.0005, 0.0007]} radialModulation={false} modulationOffset={0} />
-      <Vignette offset={0.28} darkness={0.7} blendFunction={BlendFunction.NORMAL} />
+      <Bloom intensity={0.35} luminanceThreshold={0.72} luminanceSmoothing={0.18} mipmapBlur radius={0.7} />
+      <Vignette offset={0.30} darkness={0.55} blendFunction={BlendFunction.NORMAL} />
     </EffectComposer>
   )
 }
