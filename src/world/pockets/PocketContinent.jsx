@@ -3,53 +3,22 @@ import * as THREE from 'three'
 import { useTexture } from '@react-three/drei'
 import { AU_BOUNDS } from '../coords.js'
 import {
-  NASA_EARTH_5400,
-  SAND_NORM,
-  SAND_ROUGH,
-  ROCK_NORM,
-  australiaUVCrop
+  SAND_DIFF, SAND_NORM, SAND_ROUGH,
+  GRASS_DIFF, GRASS_NORM, GRASS_ROUGH
 } from '../data/texture-urls.js'
 
-// Coastline traced from real lat/lng anchors — more points = smoother coast.
+// Coastline traced from real lat/lng anchors.
 const COAST_POINTS_GEO = [
-  [-10.9, 142.5],  // Cape York
-  [-11.3, 142.0],
-  [-12.5, 130.8],  // Darwin
-  [-13.5, 126.5],
-  [-15.0, 124.0],  // Kimberley
-  [-17.5, 122.2],
-  [-20.0, 119.0],  // Pilbara
-  [-22.5, 114.2],
-  [-24.5, 113.5],  // Carnarvon
-  [-27.5, 114.0],
-  [-29.0, 114.5],  // Geraldton
-  [-31.95, 115.86],// Perth
-  [-33.6, 115.0],
-  [-34.5, 117.5],  // Albany
-  [-33.7, 121.8],
-  [-32.5, 127.0],  // Nullarbor
-  [-33.5, 132.5],
-  [-34.0, 135.0],  // Eyre
-  [-34.93, 138.6], // Adelaide
-  [-37.0, 140.5],
-  [-38.4, 142.0],  // SW Vic
-  [-38.5, 143.8],
-  [-37.81, 144.96],// Melbourne
-  [-37.5, 149.0],  // Vic SE corner
-  [-37.0, 150.2],
-  [-35.0, 150.5],  // Eden NSW
-  [-33.87, 151.21],// Sydney
-  [-32.3, 152.5],
-  [-30.0, 153.0],  // Coffs
-  [-28.5, 153.6],
-  [-27.0, 153.5],  // Gold Coast
-  [-25.0, 153.0],
-  [-22.5, 150.0],  // Mackay
-  [-19.0, 147.0],  // Townsville
-  [-17.0, 146.0],
-  [-15.0, 145.0],  // Cooktown
-  [-12.5, 143.0],
-  [-10.9, 142.5]
+  [-10.9, 142.5], [-11.3, 142.0], [-12.5, 130.8], [-13.5, 126.5],
+  [-15.0, 124.0], [-17.5, 122.2], [-20.0, 119.0], [-22.5, 114.2],
+  [-24.5, 113.5], [-27.5, 114.0], [-29.0, 114.5], [-31.95, 115.86],
+  [-33.6, 115.0], [-34.5, 117.5], [-33.7, 121.8], [-32.5, 127.0],
+  [-33.5, 132.5], [-34.0, 135.0], [-34.93, 138.6], [-37.0, 140.5],
+  [-38.4, 142.0], [-38.5, 143.8], [-37.81, 144.96], [-37.5, 149.0],
+  [-37.0, 150.2], [-35.0, 150.5], [-33.87, 151.21], [-32.3, 152.5],
+  [-30.0, 153.0], [-28.5, 153.6], [-27.0, 153.5], [-25.0, 153.0],
+  [-22.5, 150.0], [-19.0, 147.0], [-17.0, 146.0], [-15.0, 145.0],
+  [-12.5, 143.0], [-10.9, 142.5]
 ]
 
 function geoToShape(lat, lng) {
@@ -68,49 +37,25 @@ function continentShape() {
   return s
 }
 
-// Procedural pseudo-elevation: ranges roughly aligned with the real continent
-// (Great Dividing Range east coast, Kimberley NW, MacDonnells centre, etc.)
 function pseudoElevation(x, z) {
-  // Great Dividing Range (east coast)
-  const east = Math.exp(-Math.pow((x - 10) / 2.2, 2)) * Math.exp(-Math.pow((z - 1) / 5, 2)) * 0.55
-  // MacDonnell / centre
-  const centre = Math.exp(-Math.pow((x - 0.5) / 3, 2)) * Math.exp(-Math.pow((z + 0.5) / 2, 2)) * 0.35
-  // Kimberley
+  const east     = Math.exp(-Math.pow((x - 10) / 2.2, 2)) * Math.exp(-Math.pow((z - 1) / 5, 2)) * 0.55
+  const centre   = Math.exp(-Math.pow((x - 0.5) / 3, 2)) * Math.exp(-Math.pow((z + 0.5) / 2, 2)) * 0.35
   const kimberley = Math.exp(-Math.pow((x + 6) / 1.8, 2)) * Math.exp(-Math.pow((z + 5) / 1.5, 2)) * 0.4
-  // Pilbara
-  const pilbara = Math.exp(-Math.pow((x + 9) / 1.6, 2)) * Math.exp(-Math.pow((z + 3) / 1.8, 2)) * 0.3
-  // Flinders Ranges (south)
+  const pilbara  = Math.exp(-Math.pow((x + 9) / 1.6, 2)) * Math.exp(-Math.pow((z + 3) / 1.8, 2)) * 0.3
   const flinders = Math.exp(-Math.pow((x + 0.5) / 1.2, 2)) * Math.exp(-Math.pow((z - 4.5) / 1.2, 2)) * 0.25
-  // Tropical noise
   const fine = (Math.sin(x * 1.7) * Math.cos(z * 1.3) + Math.sin(x * 3.1 + 0.4) * Math.cos(z * 2.7)) * 0.06
   return east + centre + kimberley + pilbara + flinders + fine
 }
 
-function ContinentMesh() {
-  // Load the textures. useTexture suspends until ready.
-  const [earth, sandNorm, sandRough, rockNorm] = useTexture([
-    NASA_EARTH_5400,
-    SAND_NORM,
-    SAND_ROUGH,
-    ROCK_NORM
-  ])
-
-  // Configure the Earth texture so it shows only the Australia portion.
-  const { uMin, uMax, vMin, vMax } = australiaUVCrop()
-  earth.colorSpace = THREE.SRGBColorSpace
-  earth.wrapS = THREE.ClampToEdgeWrapping
-  earth.wrapT = THREE.ClampToEdgeWrapping
-  earth.repeat.set(uMax - uMin, vMax - vMin)
-  earth.offset.set(uMin, 1 - vMax)
-  earth.anisotropy = 16
-  earth.needsUpdate = true
-
-  // Detail maps tile across the surface in their own UV channel.
-  ;[sandNorm, sandRough, rockNorm].forEach((t) => {
+// Base continent — sand-toned PBR with displacement.
+function ContinentBase() {
+  const [sandDiff, sandNorm, sandRough] = useTexture([SAND_DIFF, SAND_NORM, SAND_ROUGH])
+  ;[sandDiff, sandNorm, sandRough].forEach((t) => {
     t.wrapS = t.wrapT = THREE.RepeatWrapping
-    t.repeat.set(6, 4)
+    t.repeat.set(5, 4)
     t.anisotropy = 16
   })
+  sandDiff.colorSpace = THREE.SRGBColorSpace
 
   const geo = useMemo(() => {
     const shape = continentShape()
@@ -124,30 +69,13 @@ function ContinentMesh() {
       steps: 1
     })
     g.rotateX(-Math.PI / 2)
-
-    // The Earth texture is sampled by world-space XZ (matches the shape's
-    // original XY before rotation). The ExtrudeGeometry's built-in UVs only
-    // map the front/back faces correctly, so we override them.
     const pos = g.attributes.position
-    const uv = g.attributes.uv
     for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i)
-      const z = pos.getZ(i)
-      // Normalised AU position in [0..1] across the world rect.
-      const u = (x + 12) / 24
-      const v = (z + 8) / 16
-      uv.setXY(i, u, v)
-    }
-    uv.needsUpdate = true
-
-    // Vertex displacement only on the top face (positive y vertices after rotation).
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i)
       const y = pos.getY(i)
-      const z = pos.getZ(i)
       if (y > 0.05) {
-        const elev = pseudoElevation(x, z)
-        pos.setY(i, y + elev)
+        const x = pos.getX(i)
+        const z = pos.getZ(i)
+        pos.setY(i, y + pseudoElevation(x, z))
       }
     }
     pos.needsUpdate = true
@@ -158,12 +86,84 @@ function ContinentMesh() {
   return (
     <mesh geometry={geo} castShadow receiveShadow>
       <meshStandardMaterial
-        map={earth}
+        map={sandDiff}
         normalMap={sandNorm}
-        normalScale={[0.55, 0.55]}
+        normalScale={[0.7, 0.7]}
         roughnessMap={sandRough}
-        roughness={0.92}
+        roughness={0.95}
         metalness={0.02}
+        color="#d8b186"
+      />
+    </mesh>
+  )
+}
+
+// Red Centre overlay — terracotta tint over the central outback.
+function OutbackOverlay() {
+  return (
+    <mesh position={[0.5, 0.9, -0.5]} rotation={[-Math.PI / 2, 0, 0]}>
+      <circleGeometry args={[3.4, 64]} />
+      <meshStandardMaterial
+        color="#a64228"
+        roughness={1}
+        metalness={0}
+        transparent
+        opacity={0.7}
+        polygonOffset
+        polygonOffsetFactor={-1}
+      />
+    </mesh>
+  )
+}
+
+// Inner Red Centre — deeper terracotta core.
+function OutbackInnerOverlay() {
+  return (
+    <mesh position={[0.5, 0.92, -0.5]} rotation={[-Math.PI / 2, 0, 0]}>
+      <circleGeometry args={[1.6, 48]} />
+      <meshStandardMaterial
+        color="#7a2e18"
+        roughness={1}
+        transparent
+        opacity={0.55}
+        polygonOffset
+        polygonOffsetFactor={-2}
+      />
+    </mesh>
+  )
+}
+
+// Coastal vegetation fringe — eucalyptus green tint near the coast.
+function CoastalOverlay() {
+  const [grassDiff, grassNorm, grassRough] = useTexture([GRASS_DIFF, GRASS_NORM, GRASS_ROUGH])
+  ;[grassDiff, grassNorm, grassRough].forEach((t) => {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping
+    t.repeat.set(8, 5)
+    t.anisotropy = 16
+  })
+  grassDiff.colorSpace = THREE.SRGBColorSpace
+
+  const geo = useMemo(() => {
+    const shape = continentShape()
+    const g = new THREE.ShapeGeometry(shape)
+    g.rotateX(-Math.PI / 2)
+    g.translate(0, 0.88, 0)
+    return g
+  }, [])
+
+  return (
+    <mesh geometry={geo}>
+      <meshStandardMaterial
+        map={grassDiff}
+        normalMap={grassNorm}
+        normalScale={[0.4, 0.4]}
+        roughnessMap={grassRough}
+        roughness={0.85}
+        transparent
+        opacity={0.35}
+        polygonOffset
+        polygonOffsetFactor={-3}
+        color="#5d8a55"
       />
     </mesh>
   )
@@ -172,7 +172,10 @@ function ContinentMesh() {
 export default function PocketContinent() {
   return (
     <group>
-      <ContinentMesh />
+      <ContinentBase />
+      <CoastalOverlay />
+      <OutbackOverlay />
+      <OutbackInnerOverlay />
     </group>
   )
 }
