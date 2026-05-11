@@ -2585,25 +2585,24 @@ a:hover .brand-arrow { transform: translateX(3px); }
 /* === HUD Frame === */
 .hud-frame {
   position: fixed;
-  top: 12px;
-  left: 12px;
-  right: 12px;
+  top: 14px;
+  right: 14px;
   z-index: 50;
-  display: flex;
-  justify-content: space-between;
+  display: inline-flex;
   align-items: center;
-  padding: 8px 14px;
-  border-radius: 14px;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
   background: rgba(20, 14, 10, 0.42);
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid rgba(255, 246, 230, 0.18);
   color: #fff6e6;
   font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 12.5px;
   letter-spacing: 0.02em;
   pointer-events: auto;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.28);
 }
 .hud-frame__mark {
   font-weight: 600;
@@ -2664,10 +2663,7 @@ a:hover .brand-arrow { transform: translateX(3px); }
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
 }
 
-/* Push content below the persistent HUD strip when 3D is on */
-.world-root .world-hud-slot {
-  padding-top: 68px;
-}
+/* HUD is now a corner pill (top-right), so no global top padding needed */
 
 /* === World HTML labels === */
 .city-label {
@@ -2945,4 +2941,162 @@ a:hover .brand-arrow { transform: translateX(3px); }
   color: var(--ink-muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* === When 3D world is on, hero is transparent glass ================
+   The .hero-brand defined above gives the classic (3D off) look —
+   cream gradient backdrop. When the world is mounted, override the
+   hero to let the canvas show through, and apply glass/blur to the
+   floating content so text stays readable. */
+.world-root[data-tier="0"] .hero.hero-brand,
+.world-root[data-tier="1"] .hero.hero-brand {
+  background: transparent;
+  padding-top: 56px;
+  padding-bottom: 80px;
+}
+/* Hide the brand glow blobs — the HDRI sky has its own light */
+.world-root[data-tier="0"] .hero-brand-glow,
+.world-root[data-tier="1"] .hero-brand-glow {
+  display: none;
+}
+/* Text gets a glow shadow for legibility over the moving canvas */
+.world-root[data-tier="0"] .hero.hero-brand .hero-title,
+.world-root[data-tier="1"] .hero.hero-brand .hero-title {
+  color: #fff6e6;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55), 0 0 1px rgba(0,0,0,0.4);
+}
+.world-root[data-tier="0"] .hero.hero-brand .hero-title em,
+.world-root[data-tier="1"] .hero.hero-brand .hero-title em {
+  color: #b2fce4;
+  background: linear-gradient(180deg, transparent 60%, rgba(11, 93, 59, 0.45) 60%);
+}
+.world-root[data-tier="0"] .hero.hero-brand .hero-tagline,
+.world-root[data-tier="1"] .hero.hero-brand .hero-tagline {
+  color: #b2fce4;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+.world-root[data-tier="0"] .hero.hero-brand .hero-sub,
+.world-root[data-tier="1"] .hero.hero-brand .hero-sub {
+  color: rgba(255, 246, 230, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+.world-root[data-tier="0"] .hero.hero-brand .eyebrow,
+.world-root[data-tier="1"] .hero.hero-brand .eyebrow {
+  background: rgba(178, 252, 228, 0.18);
+  border-color: rgba(178, 252, 228, 0.35);
+  color: #b2fce4;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Search bar becomes glass — frosted white with strong backdrop blur */
+.world-root[data-tier="0"] .hero.hero-brand .search-bar,
+.world-root[data-tier="1"] .hero.hero-brand .search-bar {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 246, 230, 0.45);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Mode tabs over the world — give them a glass background pill */
+.world-root[data-tier="0"] .hero.hero-brand .mode-tabs,
+.world-root[data-tier="1"] .hero.hero-brand .mode-tabs {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 246, 230, 0.22);
+  padding: 4px;
+  display: inline-flex;
+}
+
+/* Stat strip over the world — light text + soft shadow */
+.world-root[data-tier="0"] .hero.hero-brand .stat-num,
+.world-root[data-tier="1"] .hero.hero-brand .stat-num {
+  color: #fff6e6;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+.world-root[data-tier="0"] .hero.hero-brand .stat-lbl,
+.world-root[data-tier="1"] .hero.hero-brand .stat-lbl {
+  color: rgba(255, 246, 230, 0.78);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* Sections after the hero get an opaque cream backdrop so the 3D
+   canvas stops "bleeding" through content the user is reading. */
+.world-root[data-tier="0"] .trust-strip,
+.world-root[data-tier="0"] .bynums,
+.world-root[data-tier="0"] .afford-widget,
+.world-root[data-tier="0"] .suburb-showcase,
+.world-root[data-tier="0"] .section,
+.world-root[data-tier="0"] .why-section,
+.world-root[data-tier="0"] .numbers-section,
+.world-root[data-tier="0"] .final-cta,
+.world-root[data-tier="1"] .trust-strip,
+.world-root[data-tier="1"] .bynums,
+.world-root[data-tier="1"] .afford-widget,
+.world-root[data-tier="1"] .suburb-showcase,
+.world-root[data-tier="1"] .section,
+.world-root[data-tier="1"] .why-section,
+.world-root[data-tier="1"] .numbers-section,
+.world-root[data-tier="1"] .final-cta {
+  background-color: var(--bg);
+  position: relative;
+  z-index: 2;
+}
+
+/* The nav already has a white bg — when the world is on, switch it to
+   a frosted-glass white so the canvas peeks through underneath. */
+.world-root[data-tier="0"] .nav,
+.world-root[data-tier="1"] .nav {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border-bottom-color: rgba(227, 232, 238, 0.45);
+}
+
+/* === Hero layout when world is on — left-align + push continent right
+   The 3D continent occupies the centre-right of the frame; the hero copy
+   sits on the left so they don't overlap. Stat strip stays centred. */
+@media (min-width: 900px) {
+  .world-root[data-tier="0"] .hero.hero-brand .hero-inner,
+  .world-root[data-tier="1"] .hero.hero-brand .hero-inner {
+    text-align: left;
+    margin: 0;
+    margin-left: 6vw;
+    max-width: 560px;
+  }
+  .world-root[data-tier="0"] .hero.hero-brand .hero-title,
+  .world-root[data-tier="1"] .hero.hero-brand .hero-title {
+    margin-left: 0;
+    margin-right: auto;
+    max-width: 100%;
+  }
+  .world-root[data-tier="0"] .hero.hero-brand .hero-sub,
+  .world-root[data-tier="1"] .hero.hero-brand .hero-sub {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  .world-root[data-tier="0"] .hero.hero-brand .search-bar,
+  .world-root[data-tier="1"] .hero.hero-brand .search-bar {
+    margin-left: 0;
+  }
+  .world-root[data-tier="0"] .hero.hero-brand .stat-strip,
+  .world-root[data-tier="1"] .hero.hero-brand .stat-strip {
+    justify-content: flex-start;
+    gap: 36px;
+  }
+  .world-root[data-tier="0"] .hero.hero-brand .hero-tagline,
+  .world-root[data-tier="1"] .hero.hero-brand .hero-tagline {
+    text-align: left;
+  }
+}
+
+/* Make the search bar a touch narrower so it doesn't fight the world */
+@media (min-width: 900px) {
+  .world-root[data-tier="0"] .hero.hero-brand .search-bar,
+  .world-root[data-tier="1"] .hero.hero-brand .search-bar {
+    max-width: 720px;
+  }
 }
