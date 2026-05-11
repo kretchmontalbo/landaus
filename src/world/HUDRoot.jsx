@@ -5,9 +5,7 @@ import { useWorldStore } from './store.js'
 import WorldStage from './WorldStage.jsx'
 import DroneRig from './DroneRig.jsx'
 import PocketSlot from './PocketSlot.jsx'
-import CityMarkers from './CityMarkers.jsx'
-import Landmarks from './Landmarks.jsx'
-import ListingMarkers from './ListingMarkers.jsx'
+import ListingCards from './ListingCards.jsx'
 import Postprocessing from './Postprocessing.jsx'
 import PocketCSSFallback from './css-fallback/PocketCSSFallback.jsx'
 import HUDFrame from './HUDFrame.jsx'
@@ -38,9 +36,7 @@ export default function HUDRoot({ children }) {
               <WorldStage />
               <DroneRig />
               <PocketSlot />
-              <CityMarkers />
-              <Landmarks />
-              <ListingMarkers />
+              <ListingCards />
               <Postprocessing />
             </Suspense>
           </Canvas>
