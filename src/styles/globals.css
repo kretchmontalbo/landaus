@@ -3024,8 +3024,10 @@ a:hover .brand-arrow { transform: translateX(3px); }
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
 }
 
-/* Sections after the hero get an opaque cream backdrop so the 3D
-   canvas stops "bleeding" through content the user is reading. */
+/* Lift each home-page section above the canvas so its OWN background
+   colour covers the 3D. Don't override the bg — .bynums/.why-section/
+   .final-cta are designed with dark navy bgs and light text; forcing
+   them to cream makes the light text invisible. */
 .world-root[data-tier="0"] .trust-strip,
 .world-root[data-tier="0"] .bynums,
 .world-root[data-tier="0"] .afford-widget,
@@ -3042,9 +3044,26 @@ a:hover .brand-arrow { transform: translateX(3px); }
 .world-root[data-tier="1"] .why-section,
 .world-root[data-tier="1"] .numbers-section,
 .world-root[data-tier="1"] .final-cta {
-  background-color: var(--bg);
   position: relative;
   z-index: 2;
+}
+
+/* Light-bg sections need an explicit cream bg over the canvas. The
+   dark-bg sections (.why-section, .final-cta) are excluded so their
+   navy bg + light text stays intact. */
+.world-root[data-tier="0"] .trust-strip,
+.world-root[data-tier="0"] .bynums,
+.world-root[data-tier="0"] .afford-widget,
+.world-root[data-tier="0"] .suburb-showcase,
+.world-root[data-tier="0"] .numbers-section,
+.world-root[data-tier="0"] .section,
+.world-root[data-tier="1"] .trust-strip,
+.world-root[data-tier="1"] .bynums,
+.world-root[data-tier="1"] .afford-widget,
+.world-root[data-tier="1"] .suburb-showcase,
+.world-root[data-tier="1"] .numbers-section,
+.world-root[data-tier="1"] .section {
+  background-color: var(--bg);
 }
 
 /* The nav already has a white bg — when the world is on, switch it to
