@@ -15,4 +15,6 @@ export const ROCK_DIFF  = PH('aerial_rocks_02', 'diff')
 export const ROCK_NORM  = PH('aerial_rocks_02', 'nor_gl')
 
 // Polyhaven HDRI environment for the world sky.
-export const HDRI_SUNSET = 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/industrial_sunset_puresky_2k.hdr'
+// "the_sky_is_on_fire" is a dramatic warm sunset — much more cinematic
+// than the muted industrial_sunset alternative.
+export const HDRI_SUNSET = 'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/the_sky_is_on_fire_2k.hdr'

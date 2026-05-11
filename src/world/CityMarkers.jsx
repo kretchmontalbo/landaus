@@ -25,8 +25,8 @@ export default function CityMarkers() {
             <PhotoCard
               position={[x, y, z]}
               rotationY={rotY}
-              width={0.95}
-              height={0.62}
+              width={1.2}
+              height={0.78}
               photo={c.photo}
               label={c.name}
               sublabel={c.state}

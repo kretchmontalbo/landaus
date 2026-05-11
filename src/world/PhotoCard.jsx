@@ -84,7 +84,7 @@ export default function PhotoCard({
       {emissive && (
         <pointLight position={[0, 0, 0.5]} intensity={0.45} distance={2.4} color="#ffe6c8" />
       )}
-      <Html position={[0, -height / 2 - 0.18, 0]} center distanceFactor={9} occlude={false} zIndexRange={[1, 0]}>
+      <Html position={[0, -height / 2 - 0.22, 0]} center distanceFactor={6} occlude={false} zIndexRange={[1, 0]}>
         <div className="photo-card-label" aria-hidden="true">
           <div className="photo-card-label__title">{label}</div>
           {sublabel && <div className="photo-card-label__sub">{sublabel}</div>}

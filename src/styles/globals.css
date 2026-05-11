@@ -2718,15 +2718,17 @@ a:hover .brand-arrow { transform: translateX(3px); }
 }
 .photo-card-label__title {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.01em;
+  color: #fff6e6;
 }
 .photo-card-label__sub {
-  font-weight: 500;
-  font-size: 10.5px;
-  opacity: 0.78;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  font-size: 11px;
+  opacity: 0.9;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: rgba(255, 230, 200, 0.95);
 }
 
 /* === Color audit: warm HUD that harmonizes with the world === */
@@ -2771,4 +2773,28 @@ a:hover .brand-arrow { transform: translateX(3px); }
 .world-root[data-tier="1"] .hero-fallback .btn {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+}
+
+/* === Hero text trim in 3D mode === */
+/* The hero copy is great in classic mode but dominates the canvas. When
+   the world is on, tighten the type and lift it so the map breathes. */
+.world-root[data-tier="0"] .hero-fallback-title,
+.world-root[data-tier="1"] .hero-fallback-title {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+  max-width: 18ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.world-root[data-tier="0"] .hero-fallback-sub,
+.world-root[data-tier="1"] .hero-fallback-sub {
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  max-width: 50ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Keep the city card labels visible above the hero copy */
+.world-root .photo-card-label {
+  z-index: 30;
 }
